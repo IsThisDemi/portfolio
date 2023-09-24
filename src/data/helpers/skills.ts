@@ -32,11 +32,25 @@ export const astro = createSkillFactory({
   url: 'https://astro.build/',
 });
 
+export const bootstrap = createSkillFactory({
+  name: 'Bootstrap',
+  icon: 'simple-icons:bootstrap',
+  iconColor: '#7229f0',
+  url: 'https://getbootstrap.com/',
+});
+
 export const chakraUi = createSkillFactory({
   name: 'Chakra UI',
   icon: 'simple-icons:chakraui',
   iconColor: '#319795',
   url: 'https://chakra-ui.com/',
+});
+
+export const css = createSkillFactory({
+  name: 'CSS',
+  icon: 'simple-icons:css3',
+  iconColor: '#2954f0',
+  url: 'https://en.wikipedia.org/wiki/CSS',
 });
 
 export const cypress = createSkillFactory({
@@ -58,6 +72,13 @@ export const firebase = createSkillFactory({
   icon: 'simple-icons:firebase',
   iconColor: '#FFCA28',
   url: 'https://firebase.google.com/',
+});
+
+export const html = createSkillFactory({
+  name: 'HTML5',
+  icon: 'simple-icons:html5',
+  iconColor: '#f08229',
+  url: 'https://en.wikipedia.org/wiki/HTML',
 });
 
 export const jest = createSkillFactory({
@@ -149,6 +170,13 @@ export const tailwindCss = createSkillFactory({
   icon: 'simple-icons:tailwindcss',
   iconColor: '#06B6D4',
   url: 'https://tailwindcss.com/',
+});
+
+export const threejs = createSkillFactory({
+  name: 'Three.js',
+  icon: 'simple-icons:threedotjs',
+  iconColor: '#d4d4d4',
+  url: 'https://threejs.org/',
 });
 
 export const typescript = createSkillFactory({
