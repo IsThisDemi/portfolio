@@ -31,6 +31,11 @@ export interface Diploma {
   description: string;
 
   /**
+   * Final result of the studies
+   */
+  result: string;
+
+  /**
    * [WEB] Links related to your studies (e.g. course/university website, link to realized project).
    */
   links: LinkButton[];
