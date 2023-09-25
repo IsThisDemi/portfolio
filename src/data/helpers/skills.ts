@@ -39,6 +39,20 @@ export const bootstrap = createSkillFactory({
   url: 'https://getbootstrap.com/',
 });
 
+export const c = createSkillFactory({
+  name: 'C',
+  icon: 'simple-icons:c',
+  iconColor: '#3467eb',
+  url: 'https://en.wikipedia.org/wiki/C_(programming_language)',
+});
+
+export const cplusplus = createSkillFactory({
+  name: 'C++',
+  icon: 'simple-icons:cplusplus',
+  iconColor: '#3467eb',
+  url: 'https://en.wikipedia.org/wiki/C%2B%2B',
+});
+
 export const chakraUi = createSkillFactory({
   name: 'Chakra UI',
   icon: 'simple-icons:chakraui',
