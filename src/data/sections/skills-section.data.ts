@@ -57,14 +57,14 @@ const skillsSectionData = {
         //pnpm({ level: 3 }),
       ],
     },
-    {
-      title: 'I am learning',
-      skills: [apolloGraphql(), astro(), supabase(), cypress()],
-    },
-    {
-      title: 'I want to learn',
-      skills: [apolloGraphql(), astro(), supabase(), cypress()],
-    },
+    // {
+    //   title: 'I am learning',
+    //   skills: [apolloGraphql(), astro(), supabase(), cypress()],
+    // },
+    // {
+    //   title: 'I want to learn',
+    //   skills: [apolloGraphql(), astro(), supabase(), cypress()],
+    // },
     {
       title: 'I speak',
       skills: [
