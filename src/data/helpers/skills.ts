@@ -95,6 +95,13 @@ export const html = createSkillFactory({
   url: 'https://en.wikipedia.org/wiki/HTML',
 });
 
+export const js = createSkillFactory({
+  name: 'JS',
+  icon: 'simple-icons:javascript',
+  iconColor: '#ffe226',
+  url: 'https://en.wikipedia.org/wiki/JavaScript',
+});
+
 export const jest = createSkillFactory({
   name: 'Jest',
   icon: 'simple-icons:jest',
@@ -128,6 +135,13 @@ export const nx = createSkillFactory({
   icon: 'simple-icons:nx',
   iconColor: '#143055',
   url: 'https://nx.dev/',
+});
+
+export const php = createSkillFactory({
+  name: 'php',
+  icon: 'simple-icons:php',
+  iconColor: '#7578ff',
+  url: 'https://www.php.net/',
 });
 
 export const pnpm = createSkillFactory({
@@ -198,6 +212,13 @@ export const typescript = createSkillFactory({
   icon: 'simple-icons:typescript',
   iconColor: '#3178C6',
   url: 'https://www.typescriptlang.org/',
+});
+
+export const unity = createSkillFactory({
+  name: 'Unity',
+  icon: 'simple-icons:unity',
+  iconColor: '#292929',
+  url: 'https://unity.com/',
 });
 
 export const vue = createSkillFactory({
