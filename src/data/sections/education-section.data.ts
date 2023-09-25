@@ -13,7 +13,7 @@ const educationSectionData = {
     {
       title: "Bachelor's Degree",
       institution: 'University of Padova',
-      image: import('@/assets/logos/wroclaw-university-of-technology.jpg'),
+      image: import('@/assets/logos/unipd.png'),
       dates: [new Date('2020.10'), new Date('2024.10')],
       description: "Bachelor's Degree in Computer Science",
       result: 'tba',
@@ -22,7 +22,7 @@ const educationSectionData = {
     {
       title: 'Science High School',
       institution: 'Liceo scientifico G.B.Quadri',
-      image: import('@/assets/logos/wroclaw-university-of-technology.jpg'),
+      image: import('@/assets/logos/quadri.png'),
       dates: [new Date('2015.09'), new Date('2020.07')],
       description: 'High School Diploma. Specialization in applied sciences.',
       result: '88/100',
