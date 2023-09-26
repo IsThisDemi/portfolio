@@ -2,8 +2,10 @@ import type { PortfolioSection } from '@/types/sections/portfolio-section.types'
 import type { ReadonlyDeep } from 'type-fest';
 import { demo, github, mockups, website } from '../helpers/links';
 import {
+  astro,
   bootstrap,
   chakraUi,
+  cplusplus,
   css,
   eslint,
   firebase,
@@ -60,9 +62,9 @@ const portfolioSectionData = {
         "PowsUp! is an Italian group for the organization and creation of Furry events in Lazio and Central Italy. My role in the group is to manage the website and the general IT infrastructure in collaboration with other three developers. We are actively developing a blog to post future events, it's still a work in progress but the main employed tecnologies are Astro and Sanity.",
       tagsList: {
         title: 'Technologies',
-        tags: [html(), css(), php(), js()],
+        tags: [astro(), tailwindCss(), pnpm(), eslint(), prettier()],
       },
-      links: [github({ url: 'https://github.com/IsThisDemi/FitnessCenter' })],
+      links: [website({ url: 'https://powsup.net/' }), github({ url: 'https://github.com/IsThisDemi/FitnessCenter' })],
     },
     {
       name: 'FitnessCenter',
@@ -84,12 +86,39 @@ const portfolioSectionData = {
       //   { src: import('@/assets/portfolio/project-1-screenshot-3.jpg'), alt: 'Third screenshot' },
       // ],
       description:
-        'WebTec Project. The main objective was making a website using only plain HTML and CSS being full WCAG 2.1 Compatible, and using PHP to connect and manage data in a database.',
+        'WebTec University Project. The main objective was making a website using only plain HTML and CSS being full WCAG 2.1 Compatible, and using PHP to connect and manage data in a database.',
       tagsList: {
         title: 'Technologies',
         tags: [html(), css(), php(), js()],
       },
       links: [github({ url: 'https://github.com/IsThisDemi/FitnessCenter' })],
+    },
+    {
+      name: 'Svelasca',
+      image: import('@/assets/portfolio/svelasca.png'),
+      dates: [new Date('2023-07'), new Date('2023-08')],
+      details: [
+        { label: 'Team size', value: '1 person' },
+        { label: 'My role', value: ['Database Modeler', 'Back-end Developer'] },
+        { label: 'Company', value: 'None' },
+        { label: 'Category', value: ['Database Management', 'Website', 'Open source'] },
+      ],
+      pdfDetails: [
+        { label: 'Demo', value: 'https://golden-bulls-d73jd7.netlify.app', url: '#' },
+        { label: 'Repository', value: 'https://github.com/mark-freeman/golden-bulls', url: '#' },
+      ],
+      // screenshots: [
+      //   { src: import('@/assets/portfolio/project-1-screenshot-1.jpg'), alt: 'First screenshot' },
+      //   { src: import('@/assets/portfolio/project-1-screenshot-2.jpg'), alt: 'Second screenshot' },
+      //   { src: import('@/assets/portfolio/project-1-screenshot-3.jpg'), alt: 'Third screenshot' },
+      // ],
+      description:
+        'Database University Project. The main objective was designing, creating, and filling a database in PostgreSQL for a fictional company respecting the given parameters, and show some queries using the PostgreSQL library in C++.',
+      tagsList: {
+        title: 'Technologies',
+        tags: [postgreSql(), cplusplus()],
+      },
+      links: [github({ url: 'https://github.com/IsThisDemi/progetto-basi-di-dati' })],
     },
     {
       name: 'Oziverse',
