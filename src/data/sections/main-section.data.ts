@@ -9,7 +9,7 @@ const mainSectionData = {
     slug: 'profile',
     visible: true,
   },
-  image: import('@/assets/my-image.jpg'),
+  image: import('@/assets/my-image.jpeg'),
   fullName: 'Riccardo Martinello',
   role: 'Computer Science Student',
   details: [
