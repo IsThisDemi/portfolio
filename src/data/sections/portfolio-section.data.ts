@@ -40,7 +40,7 @@ const portfolioSectionData = {
   },
   projects: [
     {
-      name: 'PawsUp',
+      name: 'PowsUp',
       image: import('@/assets/portfolio/paws-up.webp'),
       dates: [new Date('2023-09'), null],
       details: [
