@@ -32,6 +32,13 @@ export const astro = createSkillFactory({
   url: 'https://astro.build/',
 });
 
+export const blender = createSkillFactory({
+  name: 'Blender',
+  icon: 'simple-icons:blender',
+  iconColor: '#fca103',
+  url: 'https://www.blender.org/',
+});
+
 export const bootstrap = createSkillFactory({
   name: 'Bootstrap',
   icon: 'simple-icons:bootstrap',
@@ -135,6 +142,13 @@ export const nx = createSkillFactory({
   icon: 'simple-icons:nx',
   iconColor: '#143055',
   url: 'https://nx.dev/',
+});
+
+export const photoshop = createSkillFactory({
+  name: 'photoshop',
+  icon: 'simple-icons:adobephotoshop',
+  iconColor: '#7578ff',
+  url: 'https://www.adobe.com/products/photoshop.html',
 });
 
 export const php = createSkillFactory({
