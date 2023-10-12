@@ -53,11 +53,6 @@ const portfolioSectionData = {
         { label: 'Demo', value: 'https://golden-bulls-d73jd7.netlify.app', url: '#' },
         { label: 'Repository', value: 'https://github.com/mark-freeman/golden-bulls', url: '#' },
       ],
-      // screenshots: [
-      //   { src: import('@/assets/portfolio/project-1-screenshot-1.jpg'), alt: 'First screenshot' },
-      //   { src: import('@/assets/portfolio/project-1-screenshot-2.jpg'), alt: 'Second screenshot' },
-      //   { src: import('@/assets/portfolio/project-1-screenshot-3.jpg'), alt: 'Third screenshot' },
-      // ],
       description:
         "PowsUp! is an Italian group for the organization and creation of Furry events in Lazio and Central Italy. My role in the group is to manage the website and the general IT infrastructure in collaboration with other three developers. We are actively developing a blog to post future events, it's still a work in progress but the main employed tecnologies are Astro and Sanity.",
       tagsList: {
