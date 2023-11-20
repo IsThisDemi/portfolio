@@ -50,8 +50,12 @@ const portfolioSectionData = {
         { label: 'Category', value: ['Website', 'Open source'] },
       ],
       pdfDetails: [
-        { label: 'Demo', value: 'https://golden-bulls-d73jd7.netlify.app', url: '#' },
-        { label: 'Repository', value: 'https://github.com/mark-freeman/golden-bulls', url: '#' },
+        { label: 'Link', value: 'https://powsup.net/', url: 'https://powsup.net/' },
+        {
+          label: 'Repository',
+          value: 'https://github.com/IsThisDemi/FitnessCenter',
+          url: 'https://github.com/IsThisDemi/FitnessCenter',
+        },
       ],
       description:
         "PowsUp! is an Italian group for the organization and creation of Furry events in Lazio and Central Italy. My role in the group is to manage the website and the general IT infrastructure in collaboration with other three developers. We are actively developing a blog to post future events, it's still a work in progress but the main employed tecnologies are Astro and Sanity.",
@@ -72,8 +76,12 @@ const portfolioSectionData = {
         { label: 'Category', value: ['Website', 'Open source'] },
       ],
       pdfDetails: [
-        { label: 'Demo', value: 'https://golden-bulls-d73jd7.netlify.app', url: '#' },
-        { label: 'Repository', value: 'https://github.com/mark-freeman/golden-bulls', url: '#' },
+        // { label: 'Demo', value: 'https://golden-bulls-d73jd7.netlify.app', url: '#' },
+        {
+          label: 'Repository',
+          value: 'https://github.com/IsThisDemi/FitnessCenter',
+          url: 'https://github.com/IsThisDemi/FitnessCenter',
+        },
       ],
       // screenshots: [
       //   { src: import('@/assets/portfolio/project-1-screenshot-1.jpg'), alt: 'First screenshot' },
@@ -99,8 +107,12 @@ const portfolioSectionData = {
         { label: 'Category', value: ['Database Management', 'Website', 'Open source'] },
       ],
       pdfDetails: [
-        { label: 'Demo', value: 'https://golden-bulls-d73jd7.netlify.app', url: '#' },
-        { label: 'Repository', value: 'https://github.com/mark-freeman/golden-bulls', url: '#' },
+        // { label: 'Demo', value: 'https://golden-bulls-d73jd7.netlify.app', url: '#' },
+        {
+          label: 'Repository',
+          value: 'https://github.com/IsThisDemi/progetto-basi-di-dati',
+          url: 'https://github.com/IsThisDemi/progetto-basi-di-dati',
+        },
       ],
       // screenshots: [
       //   { src: import('@/assets/portfolio/project-1-screenshot-1.jpg'), alt: 'First screenshot' },
