@@ -53,8 +53,8 @@ const portfolioSectionData = {
         { label: 'Link', value: 'https://powsup.net/', url: 'https://powsup.net/' },
         {
           label: 'Repository',
-          value: 'https://github.com/IsThisDemi/FitnessCenter',
-          url: 'https://github.com/IsThisDemi/FitnessCenter',
+          value: 'https://github.com/PowsUp/website',
+          url: 'https://github.com/PowsUp/website',
         },
       ],
       description:
