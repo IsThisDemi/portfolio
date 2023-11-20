@@ -3,17 +3,21 @@ import type { ReadonlyDeep } from 'type-fest';
 import {
   apolloGraphql,
   astro,
+  blender,
   bootstrap,
   c,
   cplusplus,
   css,
   cypress,
   html,
+  photoshop,
+  php,
   //pnpm,
   postgreSql,
   supabase,
   tailwindCss,
   threejs,
+  unity,
   //typescript,
 } from '../helpers/skills';
 import { levels } from 'astro/dist/core/logger/core';
@@ -33,6 +37,7 @@ const skillsSectionData = {
         css({ level: 3 }),
         c({ level: 3 }),
         cplusplus({ level: 3 }),
+        php({ level: 3 }),
         bootstrap({ level: 4 }),
         threejs({ level: 2 }),
         /*react({
@@ -56,6 +61,10 @@ const skillsSectionData = {
         //firebase({ level: 1 }),
         //pnpm({ level: 3 }),
       ],
+    },
+    {
+      title: 'Software I use',
+      skills: [blender({ level: 3 }), photoshop({ level: 3 }), unity({ level: 3 })],
     },
     // {
     //   title: 'I am learning',
