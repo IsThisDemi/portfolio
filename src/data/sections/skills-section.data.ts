@@ -9,16 +9,24 @@ import {
   cplusplus,
   css,
   cypress,
+  git,
   html,
+  js,
+  linux,
+  macos,
   photoshop,
   php,
-  //pnpm,
+  pnpm,
   postgreSql,
+  react,
   supabase,
   tailwindCss,
   threejs,
+  typescript,
   unity,
-  //typescript,
+  visualstudiocode,
+  windows,
+  xampp,
 } from '../helpers/skills';
 import { levels } from 'astro/dist/core/logger/core';
 
@@ -63,17 +71,21 @@ const skillsSectionData = {
       ],
     },
     {
+      title: 'I am learning',
+      skills: [astro()],
+    },
+    {
+      title: 'I want to learn',
+      skills: [js(), react(), typescript(), pnpm()],
+    },
+    {
       title: 'Software I use',
       skills: [blender({ level: 3 }), photoshop({ level: 3 }), unity({ level: 3 })],
     },
-    // {
-    //   title: 'I am learning',
-    //   skills: [apolloGraphql(), astro(), supabase(), cypress()],
-    // },
-    // {
-    //   title: 'I want to learn',
-    //   skills: [apolloGraphql(), astro(), supabase(), cypress()],
-    // },
+    {
+      title: 'Tools I use',
+      skills: [windows(), macos(), linux(), visualstudiocode(), git(), xampp()],
+    },
     {
       title: 'I speak',
       skills: [
