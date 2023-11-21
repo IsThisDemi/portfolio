@@ -1,5 +1,6 @@
 import type { Sections } from '@/types/data';
 import type { ReadonlyDeep } from 'type-fest';
+import certificateData from './certificate-section.data';
 import educationData from './education-section.data';
 import experienceData from './experience-section.data';
 import favoritesData from './favorites-section.data';
@@ -11,11 +12,12 @@ import testimonialsData from './testimonials-section.data';
 export const sections = {
   main: mainData,
   skills: skillsData,
-  experience: experienceData,
+  // experience: experienceData,
   portfolio: portfolioData,
+  // certificates: certificateData,
   education: educationData,
-  testimonials: testimonialsData,
-  favorites: favoritesData,
+  // testimonials: testimonialsData,
+  // favorites: favoritesData,
 } as const satisfies ReadonlyDeep<Sections>;
 
 export default sections;
