@@ -95,6 +95,13 @@ export const firebase = createSkillFactory({
   url: 'https://firebase.google.com/',
 });
 
+export const git = createSkillFactory({
+  name: 'git',
+  icon: 'simple-icons:git',
+  iconColor: '#ff4e21',
+  url: 'https://git-scm.com/',
+});
+
 export const html = createSkillFactory({
   name: 'HTML5',
   icon: 'simple-icons:html5',
@@ -114,6 +121,20 @@ export const jest = createSkillFactory({
   icon: 'simple-icons:jest',
   iconColor: '#C21325',
   url: 'https://jestjs.io/',
+});
+
+export const linux = createSkillFactory({
+  name: 'Linux',
+  icon: 'simple-icons:linux',
+  iconColor: '#2b2b2b',
+  url: 'https://en.wikipedia.org/wiki/Linux',
+});
+
+export const macos = createSkillFactory({
+  name: 'macOS',
+  icon: 'simple-icons:macos',
+  iconColor: '#4a4a4a',
+  url: 'https://en.wikipedia.org/wiki/MacOS',
 });
 
 export const mongoDb = createSkillFactory({
@@ -235,9 +256,30 @@ export const unity = createSkillFactory({
   url: 'https://unity.com/',
 });
 
+export const visualstudiocode = createSkillFactory({
+  name: 'Visual Studio Code',
+  icon: 'simple-icons:visualstudiocode',
+  iconColor: '#4f9bff',
+  url: 'https://code.visualstudio.com/',
+});
+
 export const vue = createSkillFactory({
   name: 'Vue.js',
   icon: 'simple-icons:vuedotjs',
   iconColor: '#4FC08D',
   url: 'https://vuejs.org/',
+});
+
+export const windows = createSkillFactory({
+  name: 'Windows',
+  icon: 'simple-icons:windows',
+  iconColor: '#4281ff',
+  url: 'https://www.microsoft.com/en-us/windows',
+});
+
+export const xampp = createSkillFactory({
+  name: 'XAMPP',
+  icon: 'simple-icons:xampp',
+  iconColor: '#ff6b21',
+  url: 'https://www.apachefriends.org/',
 });
