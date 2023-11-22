@@ -28,6 +28,25 @@ const educationSectionData = {
       result: '88/100',
       links: [website({ url: 'https://www.liceoquadri.edu.it/' })],
     },
+    {
+      title: 'C1 Advanced',
+      institution: 'Cambridge English',
+      image: import('@/assets/logos/cambridge-logo.jpg'),
+      dates: [new Date('2018.10'), new Date('2019.05')],
+      description:
+        'English language examination provided by Cambridge Assessment English. C1 Advanced looks to prove high-level achievement in English and is designed for learners preparing for university or professional life.',
+      result: 'C1 - 185',
+      links: [website({ url: 'https://www.cambridgeenglish.org/exams-and-tests/advanced/' })],
+    },
+    {
+      title: 'ECDL Full Standard',
+      institution: 'AICA',
+      image: import('@/assets/logos/aica-logo.png'),
+      dates: [new Date('2017.10'), new Date('2019.02')],
+      description: 'ECDL is a worldwide recognised computer literacy certification programme.',
+      result: '',
+      links: [website({ url: 'https://www.aicanet.it/aica/qualita/ecdl-full-standard' })],
+    },
   ],
 } as const satisfies ReadonlyDeep<EducationSection>;
 
