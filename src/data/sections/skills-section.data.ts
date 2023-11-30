@@ -14,6 +14,7 @@ import {
   js,
   linux,
   macos,
+  nodeJS,
   photoshop,
   php,
   pnpm,
@@ -72,11 +73,11 @@ const skillsSectionData = {
     },
     {
       title: 'I am learning',
-      skills: [astro()],
+      skills: [astro(), js()],
     },
     {
       title: 'I want to learn',
-      skills: [js(), react(), typescript(), pnpm()],
+      skills: [react(), typescript(), pnpm(), nodeJS()],
     },
     {
       title: 'Software I use',

@@ -158,6 +158,13 @@ export const nextJs = createSkillFactory({
   url: 'https://nextjs.org/',
 });
 
+export const nodeJS = createSkillFactory({
+  name: 'Node.js',
+  icon: 'fa6-brands:node-js',
+  iconColor: '#01852f',
+  url: 'https://nodejs.org/en/',
+});
+
 export const nx = createSkillFactory({
   name: 'Nx',
   icon: 'simple-icons:nx',
