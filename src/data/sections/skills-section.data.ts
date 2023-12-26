@@ -10,6 +10,7 @@ import {
   css,
   cypress,
   git,
+  electron,
   html,
   js,
   linux,
@@ -73,7 +74,7 @@ const skillsSectionData = {
     },
     {
       title: 'I am learning',
-      skills: [astro(), js()],
+      skills: [astro(), js(), electron()],
     },
     {
       title: 'I want to learn',
