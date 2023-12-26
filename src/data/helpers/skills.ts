@@ -81,6 +81,13 @@ export const cypress = createSkillFactory({
   url: 'https://www.cypress.io/',
 });
 
+export const electron = createSkillFactory({
+  name: 'Electron',
+  icon: 'simple-icons:electron',
+  iconColor: '#40899c',
+  url: 'https://www.electronjs.org/',
+});
+
 export const eslint = createSkillFactory({
   name: 'ESLint',
   icon: 'simple-icons:eslint',
@@ -156,6 +163,13 @@ export const nextJs = createSkillFactory({
   icon: 'simple-icons:nextdotjs',
   iconColor: '#000000',
   url: 'https://nextjs.org/',
+});
+
+export const nodeJS = createSkillFactory({
+  name: 'Node.js',
+  icon: 'fa6-brands:node-js',
+  iconColor: '#01852f',
+  url: 'https://nodejs.org/en/',
 });
 
 export const nx = createSkillFactory({
