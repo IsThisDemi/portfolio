@@ -63,7 +63,7 @@ const portfolioSectionData = {
         title: 'Technologies',
         tags: [astro(), tailwindCss(), pnpm(), eslint(), prettier()],
       },
-      links: [website({ url: 'https://powsup.net/' }), github({ url: 'https://github.com/IsThisDemi/FitnessCenter' })],
+      links: [website({ url: 'https://powsup.net/' }), github({ url: 'https://github.com/PowsUp/website' })],
     },
     {
       name: 'FitnessCenter',
