@@ -5,6 +5,7 @@ import {
   astro,
   bootstrap,
   chakraUi,
+  contentful,
   cplusplus,
   css,
   eslint,
@@ -26,6 +27,7 @@ import {
   typescript,
   unity,
 } from '../helpers/skills';
+import differenceInCalendarWeeksWithOptions from 'date-fns/esm/fp/differenceInCalendarWeeksWithOptions/index.js';
 
 const portfolioSectionData = {
   config: {
@@ -61,7 +63,7 @@ const portfolioSectionData = {
         "PowsUp! is an Italian group for the organization and creation of Furry events in Lazio and Central Italy. My role in the group is to manage the website and the general IT infrastructure in collaboration with other three developers. We are actively developing a blog to post future events, it's still a work in progress but the main employed tecnologies are Astro and Sanity.",
       tagsList: {
         title: 'Technologies',
-        tags: [astro(), tailwindCss(), pnpm(), eslint(), prettier()],
+        tags: [astro(), contentful(), tailwindCss(), pnpm(), eslint(), prettier()],
       },
       links: [website({ url: 'https://powsup.net/' }), github({ url: 'https://github.com/PowsUp/website' })],
     },
