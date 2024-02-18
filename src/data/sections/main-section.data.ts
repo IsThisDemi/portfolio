@@ -2,6 +2,15 @@ import type { MainSection } from '@/types/sections/main-section.types';
 import type { ReadonlyDeep } from 'type-fest';
 import { github, linkedin } from '../helpers/links';
 
+import { differenceInYears } from 'date-fns';
+
+const birthday = new Date(2001, 1, 10);
+const currentDate = new Date();
+
+const age = differenceInYears(currentDate, birthday);
+
+console.log(age);
+
 const mainSectionData = {
   config: {
     icon: 'fa6-solid:user',
@@ -25,8 +34,7 @@ const mainSectionData = {
     { label: 'GitHub', value: '/IsThisDemi', url: 'https://github.com' },
     { label: 'Website', value: 'riccardo.martinello.dev', url: '/', fullRow: true },
   ],
-  description:
-    "I'm a computer science student based in Vicenza, Italy. I enjoy creating things that live on the internet, whether that be websites, applications, or anything in between. Skilled in Front-end Development. I have 5+ years of experience in HTML, CSS, C, C++, Bootstrap, Three.js. Hence, I have successfully completed several web projects from scratch. Yet, I learn continuously and never stop exploring new technologies.",
+  description: `I'm a ${age} years old computer science student based in Vicenza, Italy. I enjoy creating things that live on the internet, whether that be websites, applications, or anything in between. Skilled in Front-end Development. I have 5+ years of experience in HTML, CSS, C, C++, Bootstrap, Three.js. Hence, I have successfully completed several web projects from scratch. Yet, I learn continuously and never stop exploring new technologies.`,
   tags: [{ name: 'Open for freelance' }, { name: 'Working on side project' }],
   action: {
     label: 'Download CV',
