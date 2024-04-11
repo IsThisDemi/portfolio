@@ -14,12 +14,12 @@ import {
   jest,
   js,
   nestJs,
-  nextJs,
   nx,
   php,
   pnpm,
   postgreSql,
   prettier,
+  qt,
   react,
   sass,
   tailwindCss,
@@ -66,6 +66,37 @@ const portfolioSectionData = {
         tags: [astro(), contentful(), tailwindCss(), pnpm(), eslint(), prettier()],
       },
       links: [website({ url: 'https://powsup.net/' }), github({ url: 'https://github.com/PowsUp/website' })],
+    },
+    {
+      name: 'WhiskerWatcher',
+      image: import('@/assets/portfolio/WhiskerWatcher-logo.png'),
+      dates: [new Date('2024-01'), null],
+      details: [
+        { label: 'Team size', value: '1 person' },
+        { label: 'My role', value: ['Front-end Developer', 'Back-end Developer'] },
+        { label: 'Company', value: 'None' },
+        { label: 'Category', value: ['Application', 'UI', 'Open source'] },
+      ],
+      pdfDetails: [
+        // { label: 'Demo', value: 'https://golden-bulls-d73jd7.netlify.app', url: '#' },
+        {
+          label: 'Repository',
+          value: 'https://github.com/IsThisDemi/WhiskerWatcher',
+          url: 'https://github.com/IsThisDemi/WhiskerWatcher',
+        },
+      ],
+      // screenshots: [
+      //   { src: import('@/assets/portfolio/project-1-screenshot-1.jpg'), alt: 'First screenshot' },
+      //   { src: import('@/assets/portfolio/project-1-screenshot-2.jpg'), alt: 'Second screenshot' },
+      //   { src: import('@/assets/portfolio/project-1-screenshot-3.jpg'), alt: 'Third screenshot' },
+      // ],
+      description:
+        'Object-Oriented Programming University Project. The main objective was making a sensors application using C++ and Qt.',
+      tagsList: {
+        title: 'Technologies',
+        tags: [cplusplus(), qt()],
+      },
+      links: [github({ url: 'https://github.com/IsThisDemi/WhiskerWatcher' })],
     },
     {
       name: 'FitnessCenter',
