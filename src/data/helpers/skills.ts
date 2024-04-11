@@ -214,6 +214,13 @@ export const prettier = createSkillFactory({
   url: 'https://prettier.io/',
 });
 
+export const qt = createSkillFactory({
+  name: 'Qt',
+  icon: 'logos:qt',
+  iconColor: '#32a852',
+  url: 'https://www.qt.io/',
+});
+
 export const react = createSkillFactory({
   name: 'React.js',
   icon: 'logos:react',
