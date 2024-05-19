@@ -35,7 +35,7 @@ const mainSectionData = {
     { label: 'Website', value: 'riccardo.martinello.dev', url: '/', fullRow: true },
   ],
   description: `I'm a ${age} years old computer science student based in Vicenza, Italy. I enjoy creating things that live on the internet, whether that be websites, applications, or anything in between. Skilled in Front-end Development. I have 5+ years of experience in HTML, CSS, C, C++, Bootstrap, Three.js. Hence, I have successfully completed several web projects from scratch. Yet, I learn continuously and never stop exploring new technologies.`,
-  tags: [{ name: 'Open for freelance' }, { name: 'Working on side project' }],
+  tags: [{ name: 'Open for work' }, { name: 'Working on side project' }],
   action: {
     label: 'Download CV',
     url: '/cv.pdf',
