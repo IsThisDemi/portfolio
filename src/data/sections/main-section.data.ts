@@ -22,8 +22,9 @@ const mainSectionData = {
   fullName: 'Riccardo Martinello',
   role: 'Computer Science Student',
   details: [
-    //{ label: 'Phone', value: '+393315804865', url: 'tel:+393315804865' },
     { label: 'Email', value: 'rickyma686@gmail.com', url: 'mailto:rickyma686@gmail.com' },
+    { label: 'Phone', value: '+393315804865', url: 'tel:+393315804865' },
+    { label: 'Can relocate to', value: 'Padua, Verona, Brescia, Milano, Modena' },
     { label: 'From', value: 'Vicenza, Italy' },
     //{ label: 'Salary range', value: '18 000 - 25 000 PLN' },
   ],

@@ -70,7 +70,7 @@ const portfolioSectionData = {
     {
       name: 'WhiskerWatcher',
       image: import('@/assets/portfolio/WhiskerWatcher-logo.png'),
-      dates: [new Date('2024-01'), null],
+      dates: [new Date('2024-01'), new Date('2024-07')],
       details: [
         { label: 'Team size', value: '1 person' },
         { label: 'My role', value: ['Front-end Developer', 'Back-end Developer'] },
