@@ -29,6 +29,8 @@ import {
   visualstudiocode,
   windows,
   xampp,
+  nestJs,
+  nextJs,
 } from '../helpers/skills';
 import { levels } from 'astro/dist/core/logger/core';
 
@@ -44,12 +46,16 @@ const skillsSectionData = {
       title: 'I already know',
       skills: [
         html({ level: 4 }),
-        css({ level: 3 }),
-        c({ level: 3 }),
-        cplusplus({ level: 3 }),
+        css({ level: 4 }),
+        c({ level: 4 }),
+        cplusplus({ level: 4 }),
         php({ level: 3 }),
         bootstrap({ level: 4 }),
         threejs({ level: 2 }),
+        js({ level: 3 }),
+        typescript({ level: 2 }),
+        react({ level: 3 }),
+        astro({ level: 3 }),
         /*react({
           level: 5,
           description:
@@ -72,13 +78,13 @@ const skillsSectionData = {
         //pnpm({ level: 3 }),
       ],
     },
-    {
-      title: 'I am learning',
-      skills: [astro(), js(), electron()],
-    },
+    // {
+    //   title: 'I am learning',
+    //   skills: [electron()],
+    // },
     {
       title: 'I want to learn',
-      skills: [react(), typescript(), pnpm(), nodeJS()],
+      skills: [pnpm(), nodeJS(), nextJs(), electron()],
     },
     {
       title: 'Software I use',
