@@ -25,6 +25,13 @@ export const apolloGraphql = createSkillFactory({
   url: 'https://www.apollographql.com/',
 });
 
+export const appwrite = createSkillFactory({
+  name: 'Appwrite',
+  icon: 'simple-icons:appwrite',
+  iconColor: '#eb4034',
+  url: 'https://appwrite.io/',
+});
+
 export const astro = createSkillFactory({
   name: 'Astro',
   icon: 'logos:astro-icon',
@@ -163,6 +170,13 @@ export const nestJs = createSkillFactory({
   icon: 'logos:nestjs',
   iconColor: '#E0234E',
   url: 'https://nestjs.com/',
+});
+
+export const nextJs = createSkillFactory({
+  name: 'NextJS',
+  icon: 'logos:nextjs',
+  iconColor: '#E0234E',
+  url: 'https://nextjs.org/',
 });
 
 export const nodeJS = createSkillFactory({
