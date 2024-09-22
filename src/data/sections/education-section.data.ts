@@ -14,7 +14,7 @@ const educationSectionData = {
       title: "Bachelor's Degree",
       institution: 'University of Padova',
       image: import('@/assets/logos/unipd.png'),
-      dates: [new Date('2020.10'), new Date('2024.10')],
+      dates: [new Date('2020.10'), new Date('2025.07')],
       description: "Bachelor's Degree in Computer Science",
       result: 'tba',
       links: [website({ url: 'https://informatica.math.unipd.it/en/' })],
