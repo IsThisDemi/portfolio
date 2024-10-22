@@ -18,6 +18,13 @@ skill({ description: '...' }) — returns skill with a description displayed whe
 
 */
 
+export const angular = createSkillFactory({
+  name: 'Angular',
+  icon: 'logos:angular-icon',
+  iconColor: '#DD0031',
+  url: 'https://angular.io/',
+});
+
 export const apolloGraphql = createSkillFactory({
   name: 'Apollo GraphQL',
   icon: 'simple-icons:apollographql',
@@ -128,6 +135,13 @@ export const html = createSkillFactory({
   icon: 'logos:html-5',
   iconColor: '#f08229',
   url: 'https://en.wikipedia.org/wiki/HTML',
+});
+
+export const java = createSkillFactory({
+  name: 'Java',
+  icon: 'logos:java',
+  iconColor: '#5382a1',
+  url: 'https://www.java.com/',
 });
 
 export const js = createSkillFactory({
