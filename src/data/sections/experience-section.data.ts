@@ -2,9 +2,11 @@ import type { ExperienceSection } from '@/types/sections/experience-section.type
 import type { ReadonlyDeep } from 'type-fest';
 import { facebook, github, instagram, linkedin, twitter, website } from '../helpers/links';
 import {
+  angular,
   chakraUi,
   eslint,
   firebase,
+  java,
   nextJs,
   nx,
   pnpm,
@@ -76,6 +78,22 @@ const experienceSectionData = {
     //   },
     //   links: [twitter({ url: '#' }), github({ url: '#' })],
     // },
+    {
+      role: 'Software Developer Internship',
+      company: 'TEC Systems Engineering S.r.l.',
+      image: import('@/assets/logos/tecsen-logo.png'),
+      dates: [new Date('2024-10'), null],
+      description: `
+      `,
+      tagsList: {
+        title: 'Technologies',
+        tags: [java(), angular()],
+      },
+      links: [
+        website({ url: 'https://www.tecsen.it/' }),
+        linkedin({ url: 'https://www.linkedin.com/company/tecsen-srl' }),
+      ],
+    },
   ],
 } as const satisfies ReadonlyDeep<ExperienceSection>;
 
