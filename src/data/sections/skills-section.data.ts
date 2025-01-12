@@ -31,6 +31,8 @@ import {
   xampp,
   nestJs,
   nextJs,
+  java,
+  angular,
 } from '../helpers/skills';
 import { levels } from 'astro/dist/core/logger/core';
 
@@ -53,9 +55,11 @@ const skillsSectionData = {
         bootstrap({ level: 4 }),
         threejs({ level: 2 }),
         js({ level: 3 }),
+        java({ level: 3 }),
         typescript({ level: 2 }),
         react({ level: 3 }),
         astro({ level: 3 }),
+        angular({ level: 2 }),
         /*react({
           level: 5,
           description:
