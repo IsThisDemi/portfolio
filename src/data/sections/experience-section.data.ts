@@ -79,11 +79,12 @@ const experienceSectionData = {
     //   links: [twitter({ url: '#' }), github({ url: '#' })],
     // },
     {
-      role: 'Software Developer Internship',
+      role: 'Software Developer',
       company: 'TEC Systems Engineering S.r.l.',
       image: import('@/assets/logos/tecsen-logo.png'),
       dates: [new Date('2024-10'), null],
       description: `
+      TEC Systems Engineering S.r.l. (TecSen), founded in 2007 in Padua, Italy, specializes in developing advanced solutions for traffic management and Intelligent Transportation Systems (ITS). Through a partnership with La Semaforica, Italy's leading traffic control systems company, TecSen provides powerful and flexible tools to public administrations, system integrators, and private companies, contributing to urban innovation and improved mobility.
       `,
       tagsList: {
         title: 'Technologies',
