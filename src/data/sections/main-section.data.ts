@@ -39,7 +39,7 @@ const mainSectionData = {
     { label: 'Location', value: 'Vicenza, Italy' },
     { label: 'Can relocate to', value: 'Padua, Verona, Brescia, Milano, Modena', fullRow: true },
   ],
-  description: `I'm a ${age} years old computer science student based in ${location}, Italy. I enjoy creating things that live on the internet, whether that be websites, applications, or anything in between. Skilled in Front-end Development. I have 5+ years of experience in HTML, CSS, C, C++, Bootstrap, Three.js. Hence, I have successfully completed several web projects from scratch. Yet, I learn continuously and never stop exploring new technologies.`,
+  description: `I'm a ${age} years old software developer and computer science student based in ${location}, Italy. I enjoy creating things that live on the internet, whether that be websites, applications, or anything in between. Skilled in Front-end Development. I have 5+ years of experience in HTML, CSS, C, C++, Bootstrap, Three.js. Hence, I have successfully completed several web projects from scratch. Yet, I learn continuously and never stop exploring new technologies.`,
   tags: [{ name: 'Open for work' }, { name: 'Working on side project' }],
   action: {
     label: 'Download CV',
