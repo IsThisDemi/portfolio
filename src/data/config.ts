@@ -13,7 +13,7 @@ const config = {
   meta: {
     title: 'Riccardo Martinello - Developer and CS Student',
     description:
-      "I'm a computer science student that enjoys creating things that live on the internet, whether that be websites, applications, or anything in between.",
+      "I'm a software developer and computer science student that enjoys creating things that live on the internet, whether that be websites, applications, or anything in between.",
     faviconPath: '/src/assets/my-image.jpeg',
   },
   pdf: {
