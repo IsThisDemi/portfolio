@@ -22,7 +22,7 @@ const mainSectionData = {
   },
   image: import('@/assets/my-image.jpeg'),
   fullName: 'Riccardo Martinello',
-  role: 'Computer Science Student',
+  role: 'Software Developer | Computer Science Student',
   details: [
     { label: 'Email', value: 'rickyma686@gmail.com', url: 'mailto:rickyma686@gmail.com' },
     { label: 'Phone', value: '+393315804865', url: 'tel:+393315804865' },
