@@ -45,7 +45,7 @@ const portfolioSectionData = {
     {
       name: 'SnoutSpace',
       image: import('@/assets/portfolio/snoutspace_icon.png'),
-      dates: [new Date('2024-08'), null],
+      dates: [new Date('2024-08'), new Date('2024-10')],
       details: [
         { label: 'Team size', value: '1 person' },
         { label: 'My role', value: ['Full-stack Developer'] },

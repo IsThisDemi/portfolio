@@ -20,7 +20,7 @@ const mainSectionData = {
     slug: 'profile',
     visible: true,
   },
-  image: import('@/assets/my-image.jpeg'),
+  image: import('@/assets/profile.png'),
   fullName: 'Riccardo Martinello',
   role: 'Software Developer | Computer Science Student',
   details: [

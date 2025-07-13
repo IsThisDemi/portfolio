@@ -1,27 +1,29 @@
 import type { SkillsSection } from '@/types/sections/skills-section.types';
 import type { ReadonlyDeep } from 'type-fest';
 import {
-  apolloGraphql,
+  angular,
   astro,
   blender,
   bootstrap,
   c,
   cplusplus,
   css,
-  cypress,
   git,
   electron,
   html,
+  java,
   js,
+  kotlin,
   linux,
   macos,
+  mongoDb,
+  nextJs,
   nodeJS,
   photoshop,
   php,
   pnpm,
   postgreSql,
   react,
-  supabase,
   tailwindCss,
   threejs,
   typescript,
@@ -29,10 +31,7 @@ import {
   visualstudiocode,
   windows,
   xampp,
-  nestJs,
-  nextJs,
-  java,
-  angular,
+  csharp,
 } from '../helpers/skills';
 import { levels } from 'astro/dist/core/logger/core';
 
@@ -51,25 +50,18 @@ const skillsSectionData = {
         css({ level: 4 }),
         c({ level: 4 }),
         cplusplus({ level: 4 }),
+        csharp({ level: 2 }),
         php({ level: 3 }),
         bootstrap({ level: 4 }),
         threejs({ level: 2 }),
         js({ level: 3 }),
         java({ level: 3 }),
+        kotlin({ level: 2 }),
         typescript({ level: 2 }),
         react({ level: 3 }),
-        astro({ level: 3 }),
-        angular({ level: 2 }),
-        /*react({
-          level: 5,
-          description:
-            'Proin ut erat sed massa tempus suscipit. Mauris efficitur nunc sem, nec scelerisque ligula bibendum ut.',
-        }),
-        typescript({
-          level: 4,
-          description: 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
-        }),*/
-        tailwindCss({ level: 2 }),
+        astro({ level: 4 }),
+        angular({ level: 3 }),
+        tailwindCss({ level: 3 }),
         /*prettier({ level: 5 }),
         eslint({
           level: 4,
@@ -77,7 +69,7 @@ const skillsSectionData = {
             'Nulla tempor turpis at vehicula pharetra. Vestibulum tellus tortor, commodo et suscipit id, lobortis id nunc.',
         }),*/
         postgreSql({ level: 3 }),
-        //mongoDb({ level: 1 }),
+        mongoDb({ level: 3 }),
         //firebase({ level: 1 }),
         //pnpm({ level: 3 }),
       ],
@@ -88,7 +80,7 @@ const skillsSectionData = {
     // },
     {
       title: 'I want to learn',
-      skills: [pnpm(), nodeJS(), nextJs(), electron()],
+      skills: [nodeJS(), nextJs(), electron()],
     },
     {
       title: 'Software I use',

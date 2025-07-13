@@ -88,6 +88,13 @@ export const contentful = createSkillFactory({
   url: 'https://www.contentful.com/',
 });
 
+export const csharp = createSkillFactory({
+  name: 'C#',
+  icon: 'logos:c-sharp',
+  iconColor: '#2954f0',
+  url: 'https://en.wikipedia.org/wiki/C_Sharp_(programming_language)',
+});
+
 export const css = createSkillFactory({
   name: 'CSS',
   icon: 'logos:css-3',
@@ -158,6 +165,13 @@ export const jest = createSkillFactory({
   url: 'https://jestjs.io/',
 });
 
+export const kotlin = createSkillFactory({
+  name: 'Kotlin',
+  icon: 'logos:kotlin-icon',
+  iconColor: '#a951e6',
+  url: 'https://kotlinlang.org/',
+});
+
 export const linux = createSkillFactory({
   name: 'Linux',
   icon: 'logos:linux-tux',
@@ -174,7 +188,7 @@ export const macos = createSkillFactory({
 
 export const mongoDb = createSkillFactory({
   name: 'MongoDB',
-  icon: 'logos:mongodb',
+  icon: 'logos:mongodb-icon',
   iconColor: '#47A248',
   url: 'https://www.mongodb.com/',
 });
