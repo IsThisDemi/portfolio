@@ -14,7 +14,7 @@ const config = {
     title: 'Riccardo Martinello - Developer and CS Student',
     description:
       "I'm a software developer and computer science student that enjoys creating things that live on the internet, whether that be websites, applications, or anything in between.",
-    faviconPath: '/src/assets/my-image.jpeg',
+    faviconPath: '/src/assets/profile.png',
   },
   pdf: {
     footer:

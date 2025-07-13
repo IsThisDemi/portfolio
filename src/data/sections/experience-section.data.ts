@@ -3,10 +3,14 @@ import type { ReadonlyDeep } from 'type-fest';
 import { facebook, github, instagram, linkedin, twitter, website } from '../helpers/links';
 import {
   angular,
+  astro,
+  bootstrap,
   chakraUi,
+  csharp,
   eslint,
   firebase,
   java,
+  kotlin,
   nextJs,
   nx,
   pnpm,
@@ -80,15 +84,40 @@ const experienceSectionData = {
     // },
     {
       role: 'Software Developer',
-      company: 'TEC Systems Engineering S.r.l.',
-      image: import('@/assets/logos/tecsen-logo.png'),
-      dates: [new Date('2024-10'), null],
+      company: 'TouchMultimedia S.r.l.',
+      image: import('@/assets/logos/touch-multimedia.jpg'),
+      dates: [new Date('2025-04'), null],
       description: `
-      TEC Systems Engineering S.r.l. (TecSen), founded in 2007 in Padua, Italy, specializes in developing advanced solutions for traffic management and Intelligent Transportation Systems (ITS). Through a partnership with La Semaforica, Italy's leading traffic control systems company, TecSen provides powerful and flexible tools to public administrations, system integrators, and private companies, contributing to urban innovation and improved mobility.
+      Touch Multimedia S.r.l., founded in 1996 and based in Sarcedo (VI), Italy, specializes in the design and development of high-quality, complex digital solutions, including web portals, e-commerce platforms, and custom mobile applications.
+      - Backend development in C# for business logic and API services.
+      - Frontend development in Angular for modern, responsive web portals.
+      - Full-stack implementation and maintenance of web platforms for various clients.
+      - Native Android application development using Kotlin.
       `,
       tagsList: {
         title: 'Technologies',
-        tags: [java(), angular()],
+        tags: [csharp(), bootstrap(), angular(), kotlin()],
+      },
+      links: [
+        website({ url: 'https://www.touchmultimedia.com/' }),
+        linkedin({ url: 'https://www.linkedin.com/company/tecsen-srl' }),
+      ],
+    },
+    {
+      role: 'Software Developer',
+      company: 'TEC Systems Engineering S.r.l.',
+      image: import('@/assets/logos/tecsen-logo.png'),
+      dates: [new Date('2024-10'), new Date('2025-03')],
+      description: `
+      TEC Systems Engineering S.r.l. (TecSen), founded in 2007 in Padua, Italy, specializes in developing advanced solutions for traffic management and Intelligent Transportation Systems (ITS).
+      - Collaborated with Java developers to design and implement a modular internal software platform for the management of urban traffic lights and control systems.
+      - Led the development of the company’s websites and several product-specific sites, ensuring modern standards and usability.
+      - Developed a reporting tool using PDFBox to generate PDF reports directly from the Java interface of the traffic management platform.
+      - Conducted research and development activities focused on traffic light priority solutions to enhance urban mobility.
+      `,
+      tagsList: {
+        title: 'Technologies',
+        tags: [java(), angular(), astro(), tailwindCss()],
       },
       links: [
         website({ url: 'https://www.tecsen.it/' }),
