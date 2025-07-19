@@ -26,7 +26,7 @@ const mainSectionData = {
   details: [
     { label: 'Email', value: 'rickyma686@gmail.com', url: 'mailto:rickyma686@gmail.com' },
     { label: 'Phone', value: '+393315804865', url: 'tel:+393315804865' },
-    { label: 'Can relocate to', value: 'Padua, Verona, Brescia, Milano, Modena' },
+    { label: 'Can relocate to', value: 'Padua, Verona, Rome' },
     { label: 'From', value: 'Vicenza, Italy' },
     //{ label: 'Salary range', value: '18 000 - 25 000 PLN' },
   ],
@@ -37,7 +37,7 @@ const mainSectionData = {
     { label: 'GitHub', value: '/IsThisDemi', url: 'https://github.com' },
     { label: 'Website', value: 'riccardo.martinello.dev', url: '/', fullRow: true },
     { label: 'Location', value: 'Vicenza, Italy' },
-    { label: 'Can relocate to', value: 'Padua, Verona, Brescia, Milano, Modena', fullRow: true },
+    { label: 'Can relocate to', value: 'Padua, Verona, Rome', fullRow: true },
   ],
   description: `I'm a ${age} years old software developer and computer science student based in ${location}, Italy. I enjoy creating things that live on the internet, whether that be websites, applications, or anything in between. Skilled in Front-end Development. I have 5+ years of experience in HTML, CSS, C, C++, Bootstrap, Three.js. Hence, I have successfully completed several web projects from scratch. Yet, I learn continuously and never stop exploring new technologies.`,
   tags: [{ name: 'Open for work' }, { name: 'Working on side project' }],
