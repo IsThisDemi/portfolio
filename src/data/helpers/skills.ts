@@ -18,6 +18,13 @@ skill({ description: '...' }) — returns skill with a description displayed whe
 
 */
 
+export const angular = createSkillFactory({
+  name: 'Angular',
+  icon: 'logos:angular-icon',
+  iconColor: '#DD0031',
+  url: 'https://angular.io/',
+});
+
 export const apolloGraphql = createSkillFactory({
   name: 'Apollo GraphQL',
   icon: 'simple-icons:apollographql',
@@ -25,37 +32,44 @@ export const apolloGraphql = createSkillFactory({
   url: 'https://www.apollographql.com/',
 });
 
+export const appwrite = createSkillFactory({
+  name: 'Appwrite',
+  icon: 'simple-icons:appwrite',
+  iconColor: '#eb4034',
+  url: 'https://appwrite.io/',
+});
+
 export const astro = createSkillFactory({
   name: 'Astro',
-  icon: 'simple-icons:astro',
+  icon: 'logos:astro-icon',
   iconColor: '#FF5D01',
   url: 'https://astro.build/',
 });
 
 export const blender = createSkillFactory({
   name: 'Blender',
-  icon: 'simple-icons:blender',
+  icon: 'logos:blender',
   iconColor: '#fca103',
   url: 'https://www.blender.org/',
 });
 
 export const bootstrap = createSkillFactory({
   name: 'Bootstrap',
-  icon: 'simple-icons:bootstrap',
+  icon: 'logos:bootstrap',
   iconColor: '#7229f0',
   url: 'https://getbootstrap.com/',
 });
 
 export const c = createSkillFactory({
   name: 'C',
-  icon: 'simple-icons:c',
+  icon: 'logos:c',
   iconColor: '#3467eb',
   url: 'https://en.wikipedia.org/wiki/C_(programming_language)',
 });
 
 export const cplusplus = createSkillFactory({
   name: 'C++',
-  icon: 'simple-icons:cplusplus',
+  icon: 'logos:c-plusplus',
   iconColor: '#3467eb',
   url: 'https://en.wikipedia.org/wiki/C%2B%2B',
 });
@@ -67,9 +81,23 @@ export const chakraUi = createSkillFactory({
   url: 'https://chakra-ui.com/',
 });
 
+export const contentful = createSkillFactory({
+  name: 'Contentful',
+  icon: 'logos:contentful',
+  iconColor: '#2478CC',
+  url: 'https://www.contentful.com/',
+});
+
+export const csharp = createSkillFactory({
+  name: 'C#',
+  icon: 'logos:c-sharp',
+  iconColor: '#2954f0',
+  url: 'https://en.wikipedia.org/wiki/C_Sharp_(programming_language)',
+});
+
 export const css = createSkillFactory({
   name: 'CSS',
-  icon: 'simple-icons:css3',
+  icon: 'logos:css-3',
   iconColor: '#2954f0',
   url: 'https://en.wikipedia.org/wiki/CSS',
 });
@@ -81,86 +109,114 @@ export const cypress = createSkillFactory({
   url: 'https://www.cypress.io/',
 });
 
+export const electron = createSkillFactory({
+  name: 'Electron',
+  icon: 'logos:electron',
+  iconColor: '#40899c',
+  url: 'https://www.electronjs.org/',
+});
+
 export const eslint = createSkillFactory({
   name: 'ESLint',
-  icon: 'simple-icons:eslint',
+  icon: 'logos:eslint',
   iconColor: '#4B32C3',
   url: 'https://eslint.org/',
 });
 
 export const firebase = createSkillFactory({
   name: 'Firebase',
-  icon: 'simple-icons:firebase',
+  icon: 'logos:firebase',
   iconColor: '#FFCA28',
   url: 'https://firebase.google.com/',
 });
 
 export const git = createSkillFactory({
   name: 'git',
-  icon: 'simple-icons:git',
+  icon: 'logos:git-icon',
   iconColor: '#ff4e21',
   url: 'https://git-scm.com/',
 });
 
 export const html = createSkillFactory({
   name: 'HTML5',
-  icon: 'simple-icons:html5',
+  icon: 'logos:html-5',
   iconColor: '#f08229',
   url: 'https://en.wikipedia.org/wiki/HTML',
 });
 
+export const java = createSkillFactory({
+  name: 'Java',
+  icon: 'logos:java',
+  iconColor: '#5382a1',
+  url: 'https://www.java.com/',
+});
+
 export const js = createSkillFactory({
   name: 'JS',
-  icon: 'simple-icons:javascript',
+  icon: 'logos:javascript',
   iconColor: '#ffe226',
   url: 'https://en.wikipedia.org/wiki/JavaScript',
 });
 
 export const jest = createSkillFactory({
   name: 'Jest',
-  icon: 'simple-icons:jest',
+  icon: 'logos:jest',
   iconColor: '#C21325',
   url: 'https://jestjs.io/',
 });
 
+export const kotlin = createSkillFactory({
+  name: 'Kotlin',
+  icon: 'logos:kotlin-icon',
+  iconColor: '#a951e6',
+  url: 'https://kotlinlang.org/',
+});
+
 export const linux = createSkillFactory({
   name: 'Linux',
-  icon: 'simple-icons:linux',
+  icon: 'logos:linux-tux',
   iconColor: '#2b2b2b',
   url: 'https://en.wikipedia.org/wiki/Linux',
 });
 
 export const macos = createSkillFactory({
   name: 'macOS',
-  icon: 'simple-icons:macos',
+  icon: 'logos:macosx',
   iconColor: '#4a4a4a',
   url: 'https://en.wikipedia.org/wiki/MacOS',
 });
 
 export const mongoDb = createSkillFactory({
   name: 'MongoDB',
-  icon: 'simple-icons:mongodb',
+  icon: 'logos:mongodb-icon',
   iconColor: '#47A248',
   url: 'https://www.mongodb.com/',
 });
 
 export const nestJs = createSkillFactory({
   name: 'NestJS',
-  icon: 'simple-icons:nestjs',
+  icon: 'logos:nestjs',
   iconColor: '#E0234E',
   url: 'https://nestjs.com/',
 });
 
 export const nextJs = createSkillFactory({
-  name: 'Next.js',
-  icon: 'simple-icons:nextdotjs',
-  iconColor: '#000000',
+  name: 'NextJS',
+  icon: 'logos:nextjs',
+  iconColor: '#E0234E',
   url: 'https://nextjs.org/',
+});
+
+export const nodeJS = createSkillFactory({
+  name: 'Node.js',
+  icon: 'logos:nodejs-icon',
+  iconColor: '#01852f',
+  url: 'https://nodejs.org/en/',
 });
 
 export const nx = createSkillFactory({
   name: 'Nx',
-  icon: 'simple-icons:nx',
+  icon: 'logos:nx',
   iconColor: '#143055',
   url: 'https://nx.dev/',
 });
@@ -174,35 +230,42 @@ export const photoshop = createSkillFactory({
 
 export const php = createSkillFactory({
   name: 'php',
-  icon: 'simple-icons:php',
+  icon: 'logos:php',
   iconColor: '#7578ff',
   url: 'https://www.php.net/',
 });
 
 export const pnpm = createSkillFactory({
   name: 'pnpm',
-  icon: 'simple-icons:pnpm',
+  icon: 'logos:pnpm',
   iconColor: '#F69220',
   url: 'https://pnpm.io/',
 });
 
 export const postgreSql = createSkillFactory({
   name: 'PostgreSQL',
-  icon: 'simple-icons:postgresql',
+  icon: 'logos:postgresql',
   iconColor: '#4169E1',
   url: 'https://www.postgresql.org/',
 });
 
 export const prettier = createSkillFactory({
   name: 'Prettier',
-  icon: 'simple-icons:prettier',
+  icon: 'logos:prettier',
   iconColor: '#F7B93E',
   url: 'https://prettier.io/',
 });
 
+export const qt = createSkillFactory({
+  name: 'Qt',
+  icon: 'logos:qt',
+  iconColor: '#32a852',
+  url: 'https://www.qt.io/',
+});
+
 export const react = createSkillFactory({
   name: 'React.js',
-  icon: 'simple-icons:react',
+  icon: 'logos:react',
   iconColor: '#61DAFB',
   url: 'https://reactjs.org/',
 });
@@ -216,70 +279,70 @@ export const reactQuery = createSkillFactory({
 
 export const sass = createSkillFactory({
   name: 'SASS',
-  icon: 'simple-icons:sass',
+  icon: 'logos:sass',
   iconColor: '#CC6699',
   url: 'https://sass-lang.com/',
 });
 
 export const supabase = createSkillFactory({
   name: 'Supabase',
-  icon: 'simple-icons:supabase',
+  icon: 'logos:supabase',
   iconColor: '#3ECF8E',
   url: 'https://supabase.io/',
 });
 
 export const tailwindCss = createSkillFactory({
   name: 'Tailwind CSS',
-  icon: 'simple-icons:tailwindcss',
+  icon: 'logos:tailwindcss-icon',
   iconColor: '#06B6D4',
   url: 'https://tailwindcss.com/',
 });
 
 export const threejs = createSkillFactory({
   name: 'Three.js',
-  icon: 'simple-icons:threedotjs',
+  icon: 'logos:threejs',
   iconColor: '#d4d4d4',
   url: 'https://threejs.org/',
 });
 
 export const typescript = createSkillFactory({
   name: 'TypeScript',
-  icon: 'simple-icons:typescript',
+  icon: 'logos:typescript-icon',
   iconColor: '#3178C6',
   url: 'https://www.typescriptlang.org/',
 });
 
 export const unity = createSkillFactory({
   name: 'Unity',
-  icon: 'simple-icons:unity',
+  icon: 'logos:unity',
   iconColor: '#292929',
   url: 'https://unity.com/',
 });
 
 export const visualstudiocode = createSkillFactory({
   name: 'Visual Studio Code',
-  icon: 'simple-icons:visualstudiocode',
+  icon: 'logos:visual-studio-code',
   iconColor: '#4f9bff',
   url: 'https://code.visualstudio.com/',
 });
 
 export const vue = createSkillFactory({
   name: 'Vue.js',
-  icon: 'simple-icons:vuedotjs',
+  icon: 'logos:vue',
   iconColor: '#4FC08D',
   url: 'https://vuejs.org/',
 });
 
 export const windows = createSkillFactory({
   name: 'Windows',
-  icon: 'simple-icons:windows',
+  icon: 'logos:microsoft-windows-icon',
   iconColor: '#4281ff',
   url: 'https://www.microsoft.com/en-us/windows',
 });
 
 export const xampp = createSkillFactory({
   name: 'XAMPP',
-  icon: 'simple-icons:xampp',
+  icon: 'logos:xampp',
   iconColor: '#ff6b21',
   url: 'https://www.apachefriends.org/',
 });

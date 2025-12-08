@@ -2,9 +2,11 @@ import type { PortfolioSection } from '@/types/sections/portfolio-section.types'
 import type { ReadonlyDeep } from 'type-fest';
 import { demo, github, mockups, website } from '../helpers/links';
 import {
+  appwrite,
   astro,
   bootstrap,
   chakraUi,
+  contentful,
   cplusplus,
   css,
   eslint,
@@ -13,12 +15,12 @@ import {
   jest,
   js,
   nestJs,
-  nextJs,
   nx,
   php,
   pnpm,
   postgreSql,
   prettier,
+  qt,
   react,
   sass,
   tailwindCss,
@@ -26,6 +28,7 @@ import {
   typescript,
   unity,
 } from '../helpers/skills';
+import differenceInCalendarWeeksWithOptions from 'date-fns/esm/fp/differenceInCalendarWeeksWithOptions/index.js';
 
 const portfolioSectionData = {
   config: {
@@ -39,6 +42,35 @@ const portfolioSectionData = {
     },
   },
   projects: [
+    {
+      name: 'SnoutSpace',
+      image: import('@/assets/portfolio/snoutspace_icon.png'),
+      dates: [new Date('2024-08'), new Date('2024-10')],
+      details: [
+        { label: 'Team size', value: '1 person' },
+        { label: 'My role', value: ['Full-stack Developer'] },
+        { label: 'Company', value: 'None' },
+        { label: 'Category', value: ['Website', 'Open source'] },
+      ],
+      pdfDetails: [
+        { label: 'Link', value: 'https://snoutspace.vercel.app/', url: 'https://snoutspace.vercel.app/' },
+        {
+          label: 'Repository',
+          value: 'https://github.com/IsThisDemi/snoutspace',
+          url: 'https://github.com/IsThisDemi/snoutspace',
+        },
+      ],
+      description:
+        "SnoutSpace is a social networking platform where users can create profiles, share photos, and engage with content from other users, similar to popular platforms like Instagram and DeviantArt. Whether you're an artist showcasing your latest work, a photographer sharing your favorite shots, or just someone looking to connect with others, SnoutSpace provides a fun and interactive space to express yourself.",
+      tagsList: {
+        title: 'Technologies',
+        tags: [react(), tailwindCss(), typescript(), appwrite()],
+      },
+      links: [
+        website({ url: 'https://snoutspace.vercel.app/' }),
+        github({ url: 'https://github.com/IsThisDemi/snoutspace' }),
+      ],
+    },
     {
       name: 'PowsUp',
       image: import('@/assets/portfolio/paws-up.webp'),
@@ -61,9 +93,40 @@ const portfolioSectionData = {
         "PowsUp! is an Italian group for the organization and creation of Furry events in Lazio and Central Italy. My role in the group is to manage the website and the general IT infrastructure in collaboration with other three developers. We are actively developing a blog to post future events, it's still a work in progress but the main employed tecnologies are Astro and Sanity.",
       tagsList: {
         title: 'Technologies',
-        tags: [astro(), tailwindCss(), pnpm(), eslint(), prettier()],
+        tags: [astro(), contentful(), tailwindCss(), pnpm(), eslint(), prettier()],
       },
-      links: [website({ url: 'https://powsup.net/' }), github({ url: 'https://github.com/IsThisDemi/FitnessCenter' })],
+      links: [website({ url: 'https://powsup.net/' }), github({ url: 'https://github.com/PowsUp/website' })],
+    },
+    {
+      name: 'WhiskerWatcher',
+      image: import('@/assets/portfolio/WhiskerWatcher-logo.png'),
+      dates: [new Date('2024-01'), new Date('2024-07')],
+      details: [
+        { label: 'Team size', value: '1 person' },
+        { label: 'My role', value: ['Front-end Developer', 'Back-end Developer'] },
+        { label: 'Company', value: 'None' },
+        { label: 'Category', value: ['Application', 'UI', 'Open source'] },
+      ],
+      pdfDetails: [
+        // { label: 'Demo', value: 'https://golden-bulls-d73jd7.netlify.app', url: '#' },
+        {
+          label: 'Repository',
+          value: 'https://github.com/IsThisDemi/WhiskerWatcher',
+          url: 'https://github.com/IsThisDemi/WhiskerWatcher',
+        },
+      ],
+      // screenshots: [
+      //   { src: import('@/assets/portfolio/project-1-screenshot-1.jpg'), alt: 'First screenshot' },
+      //   { src: import('@/assets/portfolio/project-1-screenshot-2.jpg'), alt: 'Second screenshot' },
+      //   { src: import('@/assets/portfolio/project-1-screenshot-3.jpg'), alt: 'Third screenshot' },
+      // ],
+      description:
+        'Object-Oriented Programming University Project. The main objective was making a sensors application using C++ and Qt.',
+      tagsList: {
+        title: 'Technologies',
+        tags: [cplusplus(), qt()],
+      },
+      links: [github({ url: 'https://github.com/IsThisDemi/WhiskerWatcher' })],
     },
     {
       name: 'FitnessCenter',
