@@ -11,6 +11,6 @@ const { skillLevel } = Astro.props;
 const levels = [1, 2, 3, 4, 5] as const;
 ---
 
-<div class="flex gap-1">
+<div class="flex w-full gap-1.5">
   {levels.map((tileLevel) => <SkillLevelTile tileLevel={tileLevel} skillLevel={skillLevel} />)}
 </div>

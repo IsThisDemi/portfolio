@@ -12,7 +12,23 @@ const { meta, i18n, sections } = Astro.props;
 <!DOCTYPE html>
 <html lang={i18n.locale.code} class="scroll-smooth">
   <Head meta={meta} sections={sections} />
-  <body class="flex justify-center overflow-x-hidden bg-gray-50 dark:bg-gray-900 xl:relative xl:left-7">
+  <body class="flex justify-center min-h-screen bg-main text-gray-200 selection:bg-primary-500 selection:text-white overflow-x-hidden lg:overflow-visible">
+    <div class="fixed inset-0 -z-10 h-full w-full bg-main bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
     <slot />
+    <style is:global>
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #3f3f46;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #52525b;
+      }
+    </style>
   </body>
 </html>
