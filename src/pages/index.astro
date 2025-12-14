@@ -16,15 +16,17 @@ const { config, sections } = cv();
 
 <Layout {...config} sections={sections}>
   <ThemeToggle />
-  <main class="w-full max-w-5xl space-y-4 px-2 py-3 sm:space-y-6 sm:px-8 sm:py-12 lg:space-y-8 lg:py-20">
-    <MainSection {...sections.main} />
-    <SkillsSection {...sections.skills} />
-    <ExperienceSection {...sections.experience} />
-    <PortfolioSection {...sections.portfolio} />
-    <EducationSection {...sections.education} />
-    <!-- <TestimonialsSection {...sections.testimonials} />
-    <FavoritesSection {...sections.favorites} /> -->
-  </main>
-  <Sidebar sections={sections} className="sticky top-8 mt-20" />
+  <div class="flex w-full max-w-7xl justify-center gap-8 px-4 py-8 xl:px-8">
+    <main class="flex-1 space-y-4 sm:space-y-6 lg:space-y-8">
+      <MainSection {...sections.main} />
+      <SkillsSection {...sections.skills} />
+      <ExperienceSection {...sections.experience} />
+      <PortfolioSection {...sections.portfolio} />
+      <EducationSection {...sections.education} />
+      <!-- <TestimonialsSection {...sections.testimonials} />
+      <FavoritesSection {...sections.favorites} /> -->
+    </main>
+    <Sidebar sections={sections} className="sticky top-8 mt-20" />
+  </div>
   <script src="../web/scripts/initialize-tooltips.ts"></script>
 </Layout>

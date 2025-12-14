@@ -10,8 +10,11 @@ module.exports = {
       transparent: 'transparent',
       current: 'currentColor',
       white: colors.white,
-      primary: colors.indigo,
-      gray: colors.gray,
+      black: colors.black,
+      primary: colors.violet,
+      gray: colors.slate,
+      main: '#09090b', // Zinc 950
+      card: 'rgba(24, 24, 27, 0.6)', // Zinc 900 with opacity
     },
     extend: {
       spacing: {
@@ -28,6 +31,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+        heading: ['Outfit', ...defaultTheme.fontFamily.sans],
       },
     },
   },

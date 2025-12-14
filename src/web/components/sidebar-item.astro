@@ -9,20 +9,28 @@ const { icon, slug, title } = Astro.props;
 
 <a
   href={`#${slug}`}
-  class="inline-flex h-10 w-10 items-center justify-center rounded-lg transition"
+  class="group relative flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-300 hover:bg-white/10"
   aria-label={`${title} section`}
   data-tooltip={title}
   data-tooltip-placement="left"
 >
-  <Icon name={icon} size={20} />
+  <div
+    class="absolute inset-0 rounded-xl bg-primary-500/20 opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-100"
+  >
+  </div>
+  <Icon name={icon} size={22} class="relative z-10 transition-transform duration-300 group-hover:scale-110" />
 </a>
 
 <style>
   [aria-current='page'] {
-    @apply bg-primary-600 text-white;
+    @apply bg-primary-500 text-white shadow-[0_0_20px_rgba(139,92,246,0.3)];
+  }
+
+  [aria-current='page'] .absolute {
+    @apply opacity-100;
   }
 
   :not([aria-current='page']) {
-    @apply text-gray-400 hover:bg-primary-600 hover:text-white dark:text-gray-200;
+    @apply text-gray-400 hover:text-gray-100;
   }
 </style>
