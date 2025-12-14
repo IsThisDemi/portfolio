@@ -3,12 +3,16 @@ import type { ReadonlyDeep } from 'type-fest';
 import {
   angular,
   astro,
+  aws,
   blender,
   bootstrap,
   c,
+  clickup,
   cplusplus,
   css,
+  docker,
   git,
+  gitlab,
   electron,
   html,
   java,
@@ -21,8 +25,9 @@ import {
   nodeJS,
   photoshop,
   php,
-  pnpm,
-  postgreSql,
+  postgresql,
+  procreate,
+  qt,
   react,
   tailwindCss,
   threejs,
@@ -30,10 +35,8 @@ import {
   unity,
   visualstudiocode,
   windows,
-  xampp,
   csharp,
 } from '../helpers/skills';
-import { levels } from 'astro/dist/core/logger/core';
 
 const skillsSectionData = {
   config: {
@@ -44,51 +47,41 @@ const skillsSectionData = {
   },
   skillSets: [
     {
-      title: 'I already know',
+      title: 'Currently Using',
       skills: [
-        html({ level: 4 }),
-        css({ level: 4 }),
-        c({ level: 4 }),
-        cplusplus({ level: 4 }),
-        csharp({ level: 2 }),
-        php({ level: 3 }),
-        bootstrap({ level: 4 }),
-        threejs({ level: 2 }),
-        js({ level: 3 }),
-        java({ level: 3 }),
-        kotlin({ level: 2 }),
-        typescript({ level: 2 }),
-        react({ level: 3 }),
-        astro({ level: 4 }),
-        angular({ level: 3 }),
-        tailwindCss({ level: 3 }),
-        /*prettier({ level: 5 }),
-        eslint({
-          level: 4,
-          description:
-            'Nulla tempor turpis at vehicula pharetra. Vestibulum tellus tortor, commodo et suscipit id, lobortis id nunc.',
-        }),*/
-        postgreSql({ level: 3 }),
-        mongoDb({ level: 3 }),
-        //firebase({ level: 1 }),
-        //pnpm({ level: 3 }),
+        angular(),
+        react(),
+        astro(),
+        tailwindCss(),
+        bootstrap(),
+        threejs(),
+        csharp(),
+        qt(),
+        mongoDb(),
+        js(),
+        typescript(),
+        kotlin(),
       ],
+    },
+    {
+      title: 'Proficient',
+      skills: [html(), css(), c(), cplusplus(), php(), java(), postgresql()],
     },
     // {
     //   title: 'I am learning',
     //   skills: [electron()],
     // },
     {
-      title: 'I want to learn',
+      title: 'Learning Focus',
       skills: [nodeJS(), nextJs(), electron()],
     },
     {
-      title: 'Software I use',
-      skills: [blender({ level: 3 }), photoshop({ level: 3 }), unity({ level: 3 })],
+      title: 'Creative Stack',
+      skills: [blender(), photoshop(), procreate(), unity()],
     },
     {
-      title: 'Tools I use',
-      skills: [windows(), macos(), linux(), visualstudiocode(), git(), xampp()],
+      title: 'Development Tools',
+      skills: [windows(), macos(), linux(), visualstudiocode(), git(), gitlab(), aws(), docker(), clickup()],
     },
     {
       title: 'I speak',
