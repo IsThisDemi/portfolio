@@ -46,6 +46,13 @@ export const astro = createSkillFactory({
   url: 'https://astro.build/',
 });
 
+export const aws = createSkillFactory({
+  name: 'AWS',
+  icon: 'logos:aws',
+  iconColor: '#FF9900',
+  url: 'https://aws.amazon.com/',
+});
+
 export const blender = createSkillFactory({
   name: 'Blender',
   icon: 'logos:blender',
@@ -79,6 +86,13 @@ export const chakraUi = createSkillFactory({
   icon: 'simple-icons:chakraui',
   iconColor: '#319795',
   url: 'https://chakra-ui.com/',
+});
+
+export const clickup = createSkillFactory({
+  name: 'ClickUp',
+  icon: 'simple-icons:clickup',
+  iconColor: '#7B68EE',
+  url: 'https://clickup.com/',
 });
 
 export const contentful = createSkillFactory({
@@ -135,6 +149,13 @@ export const git = createSkillFactory({
   icon: 'logos:git-icon',
   iconColor: '#ff4e21',
   url: 'https://git-scm.com/',
+});
+
+export const gitlab = createSkillFactory({
+  name: 'GitLab',
+  icon: 'logos:gitlab',
+  iconColor: '#FC6D26',
+  url: 'https://about.gitlab.com/',
 });
 
 export const html = createSkillFactory({
@@ -242,11 +263,25 @@ export const pnpm = createSkillFactory({
   url: 'https://pnpm.io/',
 });
 
-export const postgreSql = createSkillFactory({
+export const docker = createSkillFactory({
+  name: 'Docker',
+  icon: 'logos:docker-icon',
+  iconColor: '#2496ED',
+  url: 'https://www.docker.com/',
+});
+
+export const postgresql = createSkillFactory({
   name: 'PostgreSQL',
   icon: 'logos:postgresql',
   iconColor: '#4169E1',
   url: 'https://www.postgresql.org/',
+});
+
+export const procreate = createSkillFactory({
+  name: 'Procreate',
+  icon: 'mdi:palette', // Fallback icon as simple-icons:procreate seems missing
+  iconColor: '#E6E6E6',
+  url: 'https://procreate.art/',
 });
 
 export const prettier = createSkillFactory({

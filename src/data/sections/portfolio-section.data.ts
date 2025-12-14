@@ -2,30 +2,23 @@ import type { PortfolioSection } from '@/types/sections/portfolio-section.types'
 import type { ReadonlyDeep } from 'type-fest';
 import { demo, github, mockups, website } from '../helpers/links';
 import {
-  appwrite,
+  apolloGraphql,
   astro,
   bootstrap,
-  chakraUi,
   contentful,
   cplusplus,
   css,
   eslint,
-  firebase,
   html,
-  jest,
   js,
-  nestJs,
-  nx,
   php,
   pnpm,
-  postgreSql,
+  postgresql,
   prettier,
   qt,
   react,
-  sass,
   tailwindCss,
   threejs,
-  typescript,
   unity,
 } from '../helpers/skills';
 import differenceInCalendarWeeksWithOptions from 'date-fns/esm/fp/differenceInCalendarWeeksWithOptions/index.js';
@@ -64,7 +57,7 @@ const portfolioSectionData = {
         "SnoutSpace is a social networking platform where users can create profiles, share photos, and engage with content from other users, similar to popular platforms like Instagram and DeviantArt. Whether you're an artist showcasing your latest work, a photographer sharing your favorite shots, or just someone looking to connect with others, SnoutSpace provides a fun and interactive space to express yourself.",
       tagsList: {
         title: 'Technologies',
-        tags: [react(), tailwindCss(), typescript(), appwrite()],
+        tags: [react(), tailwindCss(), apolloGraphql(), postgresql()],
       },
       links: [
         website({ url: 'https://snoutspace.vercel.app/' }),
@@ -186,7 +179,7 @@ const portfolioSectionData = {
         'Database University Project. The main objective was designing, creating, and filling a database in PostgreSQL for a fictional company respecting the given parameters, and show some queries using the PostgreSQL library in C++.',
       tagsList: {
         title: 'Technologies',
-        tags: [postgreSql(), cplusplus()],
+        tags: [postgresql(), cplusplus()],
       },
       links: [github({ url: 'https://github.com/IsThisDemi/progetto-basi-di-dati' })],
     },

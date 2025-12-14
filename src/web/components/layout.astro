@@ -10,10 +10,15 @@ const { meta, i18n, sections } = Astro.props;
 ---
 
 <!DOCTYPE html>
-<html lang={i18n.locale.code} class="scroll-smooth">
+<html lang={i18n.locale.code} class="dark scroll-smooth">
   <Head meta={meta} sections={sections} />
-  <body class="flex justify-center min-h-screen bg-main text-gray-200 selection:bg-primary-500 selection:text-white overflow-x-hidden lg:overflow-visible">
-    <div class="fixed inset-0 -z-10 h-full w-full bg-main bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
+  <body
+    class="flex min-h-screen justify-center overflow-x-hidden bg-main text-gray-200 selection:bg-primary-500 selection:text-white lg:overflow-visible"
+  >
+    <div
+      class="fixed inset-0 -z-10 h-full w-full bg-main bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"
+    >
+    </div>
     <slot />
     <style is:global>
       ::-webkit-scrollbar {
