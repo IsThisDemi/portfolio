@@ -1,6 +1,5 @@
 ---
 import type { MainSection } from '@/types/sections/main-section.types';
-import Description from '@/web/components/description.astro';
 import DownloadButton from '@/web/components/download-button.astro';
 import LinkButton from '@/web/components/link-button.astro';
 import Photo from '@/components/photo.astro';
@@ -36,9 +35,9 @@ const d_cursor       = tick();
   <div class="flex flex-col gap-8 xl:flex-row xl:gap-10">
 
     <!-- ── Mobile profile bar (hidden on XL) ─────────── -->
-    <div class="flex xl:hidden items-center gap-4 rounded-xs border border-white/[0.08] bg-[#0F0F0E] px-4 py-3">
+    <div class="flex xl:hidden items-center gap-4 rounded-xs border border-white/8 bg-[#0F0F0E] px-4 py-3">
       <!-- Mini photo -->
-      <div class="relative flex-shrink-0">
+      <div class="relative shrink-0">
         <Photo
           src={image}
           alt={fullName}
@@ -55,7 +54,7 @@ const d_cursor       = tick();
         <div class="font-mono text-[10px] text-gray-600 mt-0.5 truncate">{role}</div>
       </div>
       <!-- Actions -->
-      <div class="flex items-center gap-2 flex-shrink-0">
+      <div class="flex items-center gap-2 shrink-0">
         {links.map((link) => <LinkButton {...link} />)}
         <DownloadButton {...action} />
       </div>
@@ -63,7 +62,7 @@ const d_cursor       = tick();
 
     <!-- ── Terminal window ─────────────────────────────── -->
     <div class="min-w-0 flex-1">
-      <div class="overflow-hidden rounded-sm border border-white/[0.1] shadow-[0_4px_40px_rgba(0,0,0,0.5)]">
+      <div class="overflow-hidden rounded-sm border border-white/10 shadow-[0_4px_40px_rgba(0,0,0,0.5)]">
 
         <!-- Window chrome bar -->
         <div class="flex items-center gap-3 border-b border-white/[0.07] bg-[#161614] px-4 py-2.5">
@@ -163,10 +162,10 @@ const d_cursor       = tick();
     </div>
 
     <!-- ── Sidebar: desktop (XL+) ─────────────────────── -->
-    <div class="hidden xl:flex xl:w-44 xl:flex-shrink-0 xl:flex-col xl:items-start xl:gap-4">
+    <div class="hidden xl:flex xl:w-44 xl:shrink-0 xl:flex-col xl:items-start xl:gap-4">
 
       <!-- Photo with bracket corners -->
-      <div class="relative flex-shrink-0">
+      <div class="relative shrink-0">
         <Photo
           src={image}
           alt={fullName}
