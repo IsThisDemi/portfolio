@@ -1,6 +1,7 @@
 ---
 import type { Config, Sections } from '@/types/data';
 import Head from '@/web/head/head.astro';
+import '@/styles/global.css';
 
 export interface Props extends Config {
   sections: Sections;
@@ -13,7 +14,7 @@ const { meta, i18n, sections } = Astro.props;
 <html lang={i18n.locale.code} class="dark scroll-smooth">
   <Head meta={meta} sections={sections} />
   <body
-    class="relative flex min-h-screen flex-col justify-start overflow-x-hidden bg-main text-gray-100 selection:bg-primary-500 selection:text-black lg:overflow-visible"
+    class="relative flex min-h-screen flex-col justify-start overflow-x-hidden bg-main text-gray-100 lg:overflow-visible"
   >
     <!-- Grain texture overlay -->
     <div
@@ -56,76 +57,22 @@ const { meta, i18n, sections } = Astro.props;
       <div class="flex items-center gap-4 font-mono text-[10px] text-gray-600">
         <span id="statusbar-clock">--:--</span>
         <span class="text-gray-700">│</span>
-        <span id="statusbar-section">Ln 1, Col 1</span>
+        <span id="statusbar-section">~/</span>
         <span class="text-gray-700">│</span>
         <span class="text-primary-500/60">●</span>
         <span>riccardo-martinello</span>
       </div>
     </div>
 
-    <style is:global>
-      /* ── Scrollbar ─────────────────────────────── */
-      ::-webkit-scrollbar { width: 4px; }
-      ::-webkit-scrollbar-track { background: transparent; }
-      ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.07); border-radius: 2px; }
-      ::-webkit-scrollbar-thumb:hover { background: rgba(200,255,0,0.3); }
-
-      /* ── Terminal line entrance ─────────────────── */
-      @keyframes termLine {
-        from { opacity: 0; transform: translateX(-6px); }
-        to   { opacity: 1; transform: translateX(0); }
-      }
-      .term-line {
-        opacity: 0;
-        animation: termLine 0.25s ease forwards;
-      }
-
-      /* ── Cursor blink ───────────────────────────── */
-      @keyframes cursorBlink {
-        0%, 100% { opacity: 1; }
-        50%       { opacity: 0; }
-      }
-      .term-cursor {
-        display: inline-block;
-        width: 8px;
-        height: 1.1em;
-        vertical-align: text-bottom;
-        background: #C8FF00;
-        animation: cursorBlink 1.1s step-end infinite;
-      }
-
-      /* ── Section card entrance ──────────────────── */
-      @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to   { opacity: 1; transform: translateY(0); }
-      }
-      main > [data-type="section"] {
-        opacity: 0;
-        animation: fadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      }
-      main > [data-type="section"]:nth-child(1) { animation-delay: 80ms; }
-      main > [data-type="section"]:nth-child(2) { animation-delay: 200ms; }
-      main > [data-type="section"]:nth-child(3) { animation-delay: 320ms; }
-      main > [data-type="section"]:nth-child(4) { animation-delay: 440ms; }
-      main > [data-type="section"]:nth-child(5) { animation-delay: 560ms; }
-      main > [data-type="section"]:nth-child(6) { animation-delay: 680ms; }
-
-      /* ── Selection ──────────────────────────────── */
-      ::selection { background: #C8FF00; color: #0B0B0A; }
-    </style>
-
     <script>
-      // Live clock in status bar
       const clock = document.getElementById('statusbar-clock');
       const updateClock = () => {
         if (!clock) return;
-        const t = new Date();
-        clock.textContent = t.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+        clock.textContent = new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
       };
       updateClock();
       setInterval(updateClock, 15000);
 
-      // Section tracker in status bar
       const sectionLabel = document.getElementById('statusbar-section');
       const sections = [...document.querySelectorAll('[data-type="section"]')];
       const updateSection = () => {

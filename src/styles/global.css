@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+/* ── Dark mode: class-based (.dark on <html>) ────────── */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ── Theme tokens ────────────────────────────────────── */
+@theme {
+  /* Acid chartreuse accent */
+  --color-primary-400: #D6FF4D;
+  --color-primary-500: #C8FF00;
+  --color-primary-600: #A3CC00;
+  --color-primary: #C8FF00;
+
+  /* Warm dark surfaces */
+  --color-main: #0B0B0A;
+  --color-card: #111110;
+
+  /* Map gray → zinc (warmer neutral, matches CodeGuardian aesthetic) */
+  --color-gray-50:  var(--color-zinc-50);
+  --color-gray-100: var(--color-zinc-100);
+  --color-gray-200: var(--color-zinc-200);
+  --color-gray-300: var(--color-zinc-300);
+  --color-gray-400: var(--color-zinc-400);
+  --color-gray-500: var(--color-zinc-500);
+  --color-gray-600: var(--color-zinc-600);
+  --color-gray-700: var(--color-zinc-700);
+  --color-gray-800: var(--color-zinc-800);
+  --color-gray-900: var(--color-zinc-900);
+  --color-gray-950: var(--color-zinc-950);
+
+  /* Typography */
+  --font-sans:    "IBM Plex Sans",  ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Syne",           ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    "IBM Plex Mono",  ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Spacing extension */
+  --spacing-18: 4.5rem;
+
+  /* Animations */
+  --animate-show:     show 225ms ease-in-out;
+  --animate-fade-up:  fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Keyframes ───────────────────────────────────────── */
+@keyframes show {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Terminal animations ─────────────────────────────── */
+@keyframes termLine {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes fadeUpSection {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Global element styles ───────────────────────────── */
+::selection {
+  background: #C8FF00;
+  color: #0B0B0A;
+}
+
+::-webkit-scrollbar        { width: 4px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: rgba(255,255,255,0.07); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(200,255,0,0.3); }
+
+/* ── Terminal utility classes ────────────────────────── */
+.term-line {
+  opacity: 0;
+  animation: termLine 0.25s ease forwards;
+}
+
+.term-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1.1em;
+  vertical-align: text-bottom;
+  background: #C8FF00;
+  animation: cursorBlink 1.1s step-end infinite;
+}
+
+/* ── Section entrance animations ────────────────────── */
+main > [data-type="section"] {
+  opacity: 0;
+  animation: fadeUpSection 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+main > [data-type="section"]:nth-child(1) { animation-delay: 80ms; }
+main > [data-type="section"]:nth-child(2) { animation-delay: 200ms; }
+main > [data-type="section"]:nth-child(3) { animation-delay: 320ms; }
+main > [data-type="section"]:nth-child(4) { animation-delay: 440ms; }
+main > [data-type="section"]:nth-child(5) { animation-delay: 560ms; }
+main > [data-type="section"]:nth-child(6) { animation-delay: 680ms; }

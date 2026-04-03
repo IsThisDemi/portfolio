@@ -38,10 +38,12 @@ const { content, classList } = Astro.props;
 
 <style is:global>
   .description ul {
-    @apply list-disc pl-5;
+    list-style-type: disc;
+    padding-left: 1.25rem;
   }
 
   .description a {
-    @apply underline opacity-90;
+    text-decoration: underline;
+    opacity: 0.9;
   }
 </style>

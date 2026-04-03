@@ -1,6 +1,6 @@
 ---
 import type { Photo } from '@/types/shared';
-import { Image } from '@astrojs/image/components';
+import { Image } from 'astro:assets';
 
 export interface Props {
   src: Photo;
@@ -19,6 +19,6 @@ const isRemoteImage = typeof src === 'string';
   isRemoteImage ? (
     <img src={src} {...props} />
   ) : (
-    <Image format="webp" fit="cover" loading="eager" src={src} {...props} />
+    <Image format="webp" loading="eager" src={src} {...props} />
   )
 }

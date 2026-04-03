@@ -35,6 +35,32 @@ const d_cursor       = tick();
 <SectionCard {...config} hideTitle>
   <div class="flex flex-col gap-8 xl:flex-row xl:gap-10">
 
+    <!-- ── Mobile profile bar (hidden on XL) ─────────── -->
+    <div class="flex xl:hidden items-center gap-4 rounded-xs border border-white/[0.08] bg-[#0F0F0E] px-4 py-3">
+      <!-- Mini photo -->
+      <div class="relative flex-shrink-0">
+        <Photo
+          src={image}
+          alt={fullName}
+          width={96}
+          height={96}
+          class="h-12 w-12 rounded-xs object-cover"
+        />
+        <span class="pointer-events-none absolute -left-1 -top-1 h-3 w-3 border-l border-t border-primary-500/70"></span>
+        <span class="pointer-events-none absolute -right-1 -bottom-1 h-3 w-3 border-r border-b border-primary-500/70"></span>
+      </div>
+      <!-- Name + role -->
+      <div class="min-w-0 flex-1">
+        <div class="font-heading text-sm font-bold text-gray-100 leading-tight">{fullName}</div>
+        <div class="font-mono text-[10px] text-gray-600 mt-0.5 truncate">{role}</div>
+      </div>
+      <!-- Actions -->
+      <div class="flex items-center gap-2 flex-shrink-0">
+        {links.map((link) => <LinkButton {...link} />)}
+        <DownloadButton {...action} />
+      </div>
+    </div>
+
     <!-- ── Terminal window ─────────────────────────────── -->
     <div class="min-w-0 flex-1">
       <div class="overflow-hidden rounded-sm border border-white/[0.1] shadow-[0_4px_40px_rgba(0,0,0,0.5)]">
@@ -136,8 +162,8 @@ const d_cursor       = tick();
       </div>
     </div>
 
-    <!-- ── Sidebar: photo + download + links ───────────── -->
-    <div class="flex flex-row items-start gap-6 xl:w-44 xl:flex-shrink-0 xl:flex-col xl:items-start">
+    <!-- ── Sidebar: desktop (XL+) ─────────────────────── -->
+    <div class="hidden xl:flex xl:w-44 xl:flex-shrink-0 xl:flex-col xl:items-start xl:gap-4">
 
       <!-- Photo with bracket corners -->
       <div class="relative flex-shrink-0">
@@ -146,7 +172,7 @@ const d_cursor       = tick();
           alt={fullName}
           width={320}
           height={320}
-          class="h-28 w-28 rounded-sm object-cover sm:h-36 sm:w-36 xl:h-44 xl:w-44"
+          class="h-44 w-44 rounded-xs object-cover"
         />
         <span class="pointer-events-none absolute -left-1.5 -top-1.5 h-5 w-5 border-l-2 border-t-2 border-primary-500/60"></span>
         <span class="pointer-events-none absolute -right-1.5 -top-1.5 h-5 w-5 border-r-2 border-t-2 border-primary-500/60"></span>

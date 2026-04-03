@@ -9,7 +9,7 @@ const { icon, slug, title } = Astro.props;
 
 <a
   href={`#${slug}`}
-  class="group relative flex h-9 w-9 items-center justify-center rounded-sm transition-all duration-200 hover:bg-white/[0.06]"
+  class="sidebar-item group relative flex h-9 w-9 items-center justify-center rounded-xs transition-all duration-200 hover:bg-white/[0.06]"
   aria-label={`${title} section`}
   data-tooltip={title}
   data-tooltip-placement="left"
@@ -22,16 +22,17 @@ const { icon, slug, title } = Astro.props;
 </a>
 
 <style>
-  [aria-current='page'] {
+  .sidebar-item[aria-current='page'] {
     background: rgba(200, 255, 0, 0.1);
     color: #C8FF00;
     box-shadow: inset 0 0 0 1px rgba(200, 255, 0, 0.2), 0 0 12px rgba(200, 255, 0, 0.1);
   }
 
-  :not([aria-current='page']) {
+  .sidebar-item:not([aria-current='page']) {
     color: #52525b;
   }
-  :not([aria-current='page']):hover {
+
+  .sidebar-item:not([aria-current='page']):hover {
     color: #d4d4d8;
   }
 </style>
