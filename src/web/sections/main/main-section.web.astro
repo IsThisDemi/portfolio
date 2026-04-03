@@ -5,52 +5,165 @@ import DownloadButton from '@/web/components/download-button.astro';
 import LinkButton from '@/web/components/link-button.astro';
 import Photo from '@/components/photo.astro';
 import SectionCard from '@/web/components/section-card.astro';
-import TagsList from '@/web/components/tags-list.astro';
-import Typography from '@/web/components/typography.astro';
-import LabelledValue from '@/web/components/labelled-value.astro';
 
 export interface Props extends MainSection {}
 
 const { action, config, description, details, fullName, image, links, role, tags } = Astro.props;
+
+// Sequential animation delays
+let t = 250;
+const tick = (step = 130) => { const v = t; t += step; return v; };
+
+const d_whoami_cmd   = tick();
+const d_whoami_out   = tick();
+const d_blank1       = tick(60);
+const d_role_cmd     = tick();
+const d_role_out     = tick();
+const d_blank2       = tick(60);
+const d_env_cmd      = tick();
+const envDelays      = details.map(() => tick(110));
+const d_blank3       = tick(60);
+const d_cat_cmd      = tick();
+const d_cat_out      = tick(80);
+const d_blank4       = tick(60);
+const d_status_cmd   = tick();
+const tagDelays      = tags.map(() => tick(100));
+const d_blank5       = tick(60);
+const d_cursor       = tick();
 ---
 
 <SectionCard {...config} hideTitle>
-  <div class="flex flex-col items-start gap-6 sm:flex-row">
-    <div class="flex items-center gap-4 sm:flex-col">
-      <Photo
-        src={image}
-        alt={fullName}
-        width={320}
-        height={320}
-        class="h-24 w-24 max-w-none rounded-lg sm:h-36 sm:w-36 md:h-52 md:w-52"
-      />
-      <DownloadButton {...action} />
-    </div>
-    <div class="flex w-full flex-col gap-5">
-      <div class="flex w-full flex-col justify-between gap-2 sm:flex-row">
-        <div class="w-full">
-          <Typography variant="main-title">{fullName}</Typography>
-          <Typography variant="main-subtitle">{role}</Typography>
+  <div class="flex flex-col gap-8 xl:flex-row xl:gap-10">
+
+    <!-- ── Terminal window ─────────────────────────────── -->
+    <div class="min-w-0 flex-1">
+      <div class="overflow-hidden rounded-sm border border-white/[0.1] shadow-[0_4px_40px_rgba(0,0,0,0.5)]">
+
+        <!-- Window chrome bar -->
+        <div class="flex items-center gap-3 border-b border-white/[0.07] bg-[#161614] px-4 py-2.5">
+          <div class="flex items-center gap-1.5">
+            <span class="h-3 w-3 rounded-full bg-[#FF5F57] shadow-[0_0_5px_rgba(255,95,87,0.4)]"></span>
+            <span class="h-3 w-3 rounded-full bg-[#FEBC2E] shadow-[0_0_5px_rgba(254,188,46,0.35)]"></span>
+            <span class="h-3 w-3 rounded-full bg-[#28C840] shadow-[0_0_5px_rgba(40,200,64,0.4)]"></span>
+          </div>
+          <span class="flex-1 text-center font-mono text-[11px] text-gray-700">riccardo — zsh</span>
+          <span class="w-14"></span>
         </div>
-        {
-          links.length > 0 && (
-            <div class="flex flex-wrap gap-3 sm:flex-nowrap">
-              {links.map((link) => (
-                <LinkButton {...link} />
-              ))}
-            </div>
-          )
-        }
+
+        <!-- Terminal body -->
+        <div class="bg-[#0C0C0B] px-6 py-5 font-mono text-sm leading-[1.8]">
+
+          <!-- whoami -->
+          <div class="term-line flex gap-3" style={`animation-delay:${d_whoami_cmd}ms`}>
+            <span class="select-none text-primary-500/50">$</span>
+            <span class="text-gray-300">whoami</span>
+          </div>
+          <div class="term-line pl-6 text-primary-500 font-semibold" style={`animation-delay:${d_whoami_out}ms`}>
+            {fullName}
+          </div>
+
+          <div class="term-line h-4" style={`animation-delay:${d_blank1}ms`}></div>
+
+          <!-- cat role.txt -->
+          <div class="term-line flex gap-3" style={`animation-delay:${d_role_cmd}ms`}>
+            <span class="select-none text-primary-500/50">$</span>
+            <span class="text-gray-300">cat <span class="text-gray-500">role.txt</span></span>
+          </div>
+          <div class="term-line pl-6 text-gray-300" style={`animation-delay:${d_role_out}ms`}>
+            {role}
+          </div>
+
+          <div class="term-line h-4" style={`animation-delay:${d_blank2}ms`}></div>
+
+          <!-- printenv CONTACT -->
+          <div class="term-line flex gap-3" style={`animation-delay:${d_env_cmd}ms`}>
+            <span class="select-none text-primary-500/50">$</span>
+            <span class="text-gray-300">printenv <span class="text-gray-500">CONTACT</span></span>
+          </div>
+          {details.map((detail, i) => {
+            const key = String(detail.label).toUpperCase().replace(/\s+/g, '_');
+            const val = Array.isArray(detail.value) ? detail.value.join(', ') : String(detail.value);
+            return (
+              <div class="term-line pl-6 flex items-baseline gap-0 text-xs leading-[1.9]" style={`animation-delay:${envDelays[i]}ms`}>
+                <span class="text-gray-600">{key}</span>
+                <span class="text-gray-700 mx-0.5">=</span>
+                {detail.url ? (
+                  <a href={detail.url} class="text-primary-400 underline decoration-primary-500/25 underline-offset-2 hover:text-primary-500 transition-colors">
+                    {val}
+                  </a>
+                ) : (
+                  <span class="text-gray-400">{val}</span>
+                )}
+              </div>
+            );
+          })}
+
+          <div class="term-line h-4" style={`animation-delay:${d_blank3}ms`}></div>
+
+          <!-- cat about.md -->
+          <div class="term-line flex gap-3" style={`animation-delay:${d_cat_cmd}ms`}>
+            <span class="select-none text-primary-500/50">$</span>
+            <span class="text-gray-300">cat <span class="text-gray-500">about.md</span></span>
+          </div>
+          <div class="term-line pl-6 max-w-lg text-xs leading-relaxed text-gray-500" style={`animation-delay:${d_cat_out}ms`}>
+            {description}
+          </div>
+
+          <div class="term-line h-4" style={`animation-delay:${d_blank4}ms`}></div>
+
+          <!-- status -->
+          <div class="term-line flex gap-3" style={`animation-delay:${d_status_cmd}ms`}>
+            <span class="select-none text-primary-500/50">$</span>
+            <span class="text-gray-300">cat <span class="text-gray-500">status.json</span></span>
+          </div>
+          <div class="pl-6">
+            {tags.map((tag, i) => (
+              <div class="term-line flex items-center gap-2 text-xs" style={`animation-delay:${tagDelays[i]}ms`}>
+                <span class="text-primary-500/70">›</span>
+                <span class="text-primary-500/80 font-medium">{tag.name}</span>
+              </div>
+            ))}
+          </div>
+
+          <div class="term-line h-4" style={`animation-delay:${d_blank5}ms`}></div>
+
+          <!-- Blinking cursor -->
+          <div class="term-line flex items-center gap-3" style={`animation-delay:${d_cursor}ms`}>
+            <span class="select-none text-primary-500/50">$</span>
+            <span class="term-cursor"></span>
+          </div>
+        </div>
       </div>
-      <div class="flex flex-col gap-6">
-        <div class="inline-grid xl:grid-cols-[auto_auto]">
-          {details.map((detail) => <LabelledValue {...detail} />)}
-        </div>
-        <div class="flex flex-col gap-4">
-          <Description content={description} />
-          <TagsList tags={tags} />
-        </div>
+    </div>
+
+    <!-- ── Sidebar: photo + download + links ───────────── -->
+    <div class="flex flex-row items-start gap-6 xl:w-44 xl:flex-shrink-0 xl:flex-col xl:items-start">
+
+      <!-- Photo with bracket corners -->
+      <div class="relative flex-shrink-0">
+        <Photo
+          src={image}
+          alt={fullName}
+          width={320}
+          height={320}
+          class="h-28 w-28 rounded-sm object-cover sm:h-36 sm:w-36 xl:h-44 xl:w-44"
+        />
+        <span class="pointer-events-none absolute -left-1.5 -top-1.5 h-5 w-5 border-l-2 border-t-2 border-primary-500/60"></span>
+        <span class="pointer-events-none absolute -right-1.5 -top-1.5 h-5 w-5 border-r-2 border-t-2 border-primary-500/60"></span>
+        <span class="pointer-events-none absolute -bottom-1.5 -left-1.5 h-5 w-5 border-b-2 border-l-2 border-primary-500/60"></span>
+        <span class="pointer-events-none absolute -bottom-1.5 -right-1.5 h-5 w-5 border-b-2 border-r-2 border-primary-500/60"></span>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex-col gap-3">
+        <DownloadButton {...action} />
+        {links.length > 0 && (
+          <div class="flex flex-wrap gap-2">
+            {links.map((link) => <LinkButton {...link} />)}
+          </div>
+        )}
       </div>
     </div>
+
   </div>
 </SectionCard>

@@ -10,14 +10,14 @@ const { skillLevel, tileLevel } = Astro.props;
 
 const isFilled = skillLevel >= tileLevel;
 const classes = /* tw */ {
-  filled: 'bg-primary-500 shadow-[0_0_8px_rgba(139,92,246,0.6)] scale-105',
-  empty: 'bg-white/10',
+  filled: 'bg-primary-500 shadow-[0_0_6px_rgba(200,255,0,0.5)]',
+  empty: 'bg-white/[0.08]',
 };
 ---
 
 <div
   class:list={[
-    'h-1.5 w-6 rounded-full transition-all duration-300',
+    'h-1 w-5 rounded-sm transition-all duration-200',
     isFilled ? classes.filled : classes.empty,
   ]}
 >

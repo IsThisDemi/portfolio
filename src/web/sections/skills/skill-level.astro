@@ -1,6 +1,5 @@
 ---
 import type { SkillLevel } from '@/types/sections/skills-section.types';
-import SkillLevelTile from './skill-level-tile.astro';
 
 export interface Props {
   skillLevel: SkillLevel;
@@ -8,9 +7,18 @@ export interface Props {
 
 const { skillLevel } = Astro.props;
 
-const levels = [1, 2, 3, 4, 5] as const;
+// ASCII block progress bar
+const total = 5;
+const filled = skillLevel;
+const empty = total - filled;
+const bar = '█'.repeat(filled) + '░'.repeat(empty);
+const pct = Math.round((skillLevel / total) * 100);
 ---
 
-<div class="flex w-full gap-1.5">
-  {levels.map((tileLevel) => <SkillLevelTile tileLevel={tileLevel} skillLevel={skillLevel} />)}
+<div class="flex items-center gap-2 font-mono">
+  <span
+    class="text-xs tracking-tight"
+    style={`color: ${skillLevel >= 4 ? '#C8FF00' : skillLevel >= 3 ? '#A8A8A3' : '#666660'}`}
+  >{bar}</span>
+  <span class="text-[10px] text-gray-700">{pct}%</span>
 </div>

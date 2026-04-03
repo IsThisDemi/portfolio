@@ -9,7 +9,7 @@ const { name, description, icon, iconColor, url } = Astro.props;
 
 const className =
   /* tw */
-  'flex h-9 w-fit items-center gap-x-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-gray-200 backdrop-blur-md transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:text-white hover:shadow-lg hover:shadow-purple-500/10 hover:-translate-y-0.5';
+  'flex h-6 w-fit items-center gap-x-1.5 rounded-sm border border-white/[0.08] bg-white/[0.03] px-2.5 font-mono text-[11px] text-gray-400 transition-all duration-200 hover:border-primary-500/35 hover:bg-primary-500/[0.07] hover:text-primary-400 hover:-translate-y-px cursor-default';
 const customProps = url
   ? ({
       href: url,
@@ -24,12 +24,8 @@ const customProps = url
 ---
 
 <Typography variant="tag" data-tooltip={description} {...customProps}>
-  {
-    icon && (
-      <div class="flex items-center justify-center rounded-lg p-1 shadow-[0_0_8px_rgba(168,85,247,0.2)] backdrop-blur-sm">
-        <Icon name={icon} color={iconColor} size={14} />
-      </div>
-    )
-  }
+  {icon && (
+    <Icon name={icon} color={iconColor} size={11} />
+  )}
   {name}
 </Typography>

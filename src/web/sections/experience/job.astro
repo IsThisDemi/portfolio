@@ -12,19 +12,28 @@ export interface Props extends Job {}
 const { role, company, dates, description, links, tagsList, image } = Astro.props;
 ---
 
-<div class="flex flex-col gap-3">
-  <div class="flex w-full justify-between gap-2">
-    <div class="flex gap-4">
+<div class="flex flex-col gap-4 py-1">
+  <div class="flex w-full items-start justify-between gap-3">
+    <div class="flex items-start gap-4">
+      <!-- Company logo -->
       <Thumbnail src={image} alt={`${company} logo`} size="large" />
-      <div class="flex flex-col">
+
+      <div class="flex flex-col gap-0.5">
+        <!-- Role: heading style -->
         <Typography variant="item-title">{role}</Typography>
-        <Typography variant="item-subtitle-primary" class="mb-0.5">{company}</Typography>
-        <Timestamp dates={dates} />
+
+        <!-- Company + date: terminal meta row -->
+        <div class="flex flex-wrap items-center gap-2 font-mono text-xs">
+          <span class="text-primary-500">{company}</span>
+          <span class="text-gray-700">·</span>
+          <Timestamp dates={dates} />
+        </div>
       </div>
     </div>
+
     {
       links.length > 0 && (
-        <div class="flex flex-wrap gap-3 sm:flex-nowrap">
+        <div class="flex flex-shrink-0 gap-2">
           {links.map((link) => (
             <LinkButton {...link} />
           ))}
@@ -32,6 +41,10 @@ const { role, company, dates, description, links, tagsList, image } = Astro.prop
       )
     }
   </div>
-  <Description content={description} class="mb-3" />
-  <TagsList {...tagsList} />
+
+  <!-- Description with left border accent -->
+  <div class="ml-1 border-l-2 border-white/[0.06] pl-4">
+    <Description content={description} class="mb-3" />
+    <TagsList {...tagsList} />
+  </div>
 </div>
