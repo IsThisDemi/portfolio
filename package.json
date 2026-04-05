@@ -52,7 +52,7 @@
     "prettier-plugin-tailwindcss": "0.3.0",
     "puppeteer": "24.40.0",
     "puppeteer-report": "3.1.0",
-    "rollup-plugin-visualizer": "5.9.2",
+    "rollup-plugin-visualizer": "7.0.1",
     "ts-node": "10.9.1",
     "type-fest": "3.13.0",
     "typescript": "5.1.6"
