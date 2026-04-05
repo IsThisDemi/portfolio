@@ -12,7 +12,7 @@
   "scripts": {
     "postinstall": "npm run generate-favicons",
     "dev": "astro dev",
-    "prebuild": "move-file ./src/pages/pdf.astro ./src/pages/_pdf.astro && npm run generate-favicons",
+    "prebuild": "npm install @rolldown/binding-linux-x64-gnu@1.0.0-rc.12 -f --no-save && move-file ./src/pages/pdf.astro ./src/pages/_pdf.astro && npm run generate-favicons",
     "build": "astro build",
     "postbuild": "move-file ./src/pages/_pdf.astro ./src/pages/pdf.astro",
     "preview": "astro preview",
