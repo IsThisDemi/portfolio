@@ -88,11 +88,11 @@ const experienceSectionData = {
       image: import('@/assets/logos/touch-multimedia.jpg'),
       dates: [new Date('2025-04'), null],
       description: `
-      Touch Multimedia S.r.l., founded in 1996 and based in Sarcedo (VI), Italy, specializes in the design and development of high-quality, complex digital solutions, including web portals, e-commerce platforms, and custom mobile applications.
-      - Backend development in C# for business logic and API services.
-      - Frontend development in Angular for modern, responsive web portals.
-      - Full-stack implementation and maintenance of web platforms for various clients.
-      - Native Android application development using Kotlin.
+      Touch Multimedia S.r.l. (founded 1996, Sarcedo, Italy) designs and builds complex digital solutions — web portals, e-commerce platforms, and custom mobile applications.
+      - Built and maintained backend business logic and API services in C#/.NET powering client e-commerce and web-portal platforms.
+      - Developed responsive front-ends in Angular, shipping production features across multiple client projects.
+      - Delivered native Android applications in Kotlin, owning features end-to-end from spec to release.
+      - Worked full-stack on the implementation and ongoing maintenance of web platforms for a range of clients.
       `,
       tagsList: {
         title: 'Technologies',
@@ -109,11 +109,11 @@ const experienceSectionData = {
       image: import('@/assets/logos/tecsen-logo.png'),
       dates: [new Date('2024-10'), new Date('2025-03')],
       description: `
-      TEC Systems Engineering S.r.l. (TecSen), founded in 2007 in Padua, Italy, specializes in developing advanced solutions for traffic management and Intelligent Transportation Systems (ITS).
-      - Collaborated with Java developers to design and implement a modular internal software platform for the management of urban traffic lights and control systems.
-      - Led the development of the company’s websites and several product-specific sites, ensuring modern standards and usability.
-      - Developed a reporting tool using PDFBox to generate PDF reports directly from the Java interface of the traffic management platform.
-      - Conducted research and development activities focused on traffic light priority solutions to enhance urban mobility.
+      TEC Systems Engineering S.r.l. (TecSen, founded 2007, Padua, Italy) builds advanced solutions for traffic management and Intelligent Transportation Systems (ITS).
+      - Co-designed and implemented a modular Java platform for managing urban traffic lights and control systems, working alongside a team of Java developers.
+      - Built an automated PDF reporting tool with PDFBox, integrated into the platform's Java interface to replace manual report generation.
+      - Led R&D on traffic-light priority algorithms to improve urban mobility.
+      - Led development of the company website and several product-specific sites to modern standards of usability and performance.
       `,
       tagsList: {
         title: 'Technologies',

@@ -2,17 +2,6 @@ import type { MainSection } from '@/types/sections/main-section.types';
 import type { ReadonlyDeep } from 'type-fest';
 import { github, linkedin } from '../helpers/links';
 
-import { differenceInYears } from 'date-fns';
-
-const birthday = new Date(2001, 1, 10);
-const currentDate = new Date();
-
-const age = differenceInYears(currentDate, birthday);
-
-const location = 'Vicenza';
-
-console.log(age);
-
 const mainSectionData = {
   config: {
     icon: 'fa6-solid:user',
@@ -22,12 +11,12 @@ const mainSectionData = {
   },
   image: import('@/assets/profile.png'),
   fullName: 'Riccardo Martinello',
-  role: 'Software Developer | Computer Science Student',
+  role: 'Full-Stack Developer | Computer Science Student',
   details: [
     { label: 'Email', value: 'rickyma686@gmail.com', url: 'mailto:rickyma686@gmail.com' },
     { label: 'Phone', value: '+393315804865', url: 'tel:+393315804865' },
-    { label: 'Can relocate to', value: 'Padua, Verona, Rome' },
-    { label: 'From', value: 'Vicenza, Italy' },
+    { label: 'Location', value: 'Vicenza, Italy' },
+    { label: 'Relocation', value: 'Open to relocation' },
     //{ label: 'Salary range', value: '18 000 - 25 000 PLN' },
   ],
   pdfDetails: [
@@ -37,10 +26,10 @@ const mainSectionData = {
     { label: 'GitHub', value: '/IsThisDemi', url: 'https://github.com' },
     { label: 'Website', value: 'riccardo.martinello.dev', url: '/', fullRow: true },
     { label: 'Location', value: 'Vicenza, Italy' },
-    { label: 'Can relocate to', value: 'Padua, Verona, Rome', fullRow: true },
+    { label: 'Relocation', value: 'Open to relocation', fullRow: true },
   ],
-  description: `I'm a ${age} years old software developer and computer science student based in ${location}, Italy. I enjoy creating things that live on the internet, whether that be websites, applications, or anything in between. Skilled in Front-end Development. I have 5+ years of experience in HTML, CSS, C, C++, Bootstrap, Three.js. Hence, I have successfully completed several web projects from scratch. Yet, I learn continuously and never stop exploring new technologies.`,
-  tags: [{ name: 'Open for work' }, { name: 'Working on side project' }],
+  description: `Full-stack software developer with professional experience building production web platforms and native mobile apps. I work across the stack in C#/.NET, Angular, and Java, and ship native Android in Kotlin. Currently completing my BSc in Computer Science at the University of Padova (expected Oct 2026) while delivering client solutions in e-commerce, web portals, and intelligent transportation systems. Fluent in English (C1) and always exploring new technologies.`,
+  tags: [{ name: 'Open for work' }, { name: 'Open to relocation' }],
   action: {
     label: 'Download CV',
     url: '/cv.pdf',
