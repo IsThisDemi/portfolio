@@ -70,4 +70,59 @@ export const tech = {
 
 export type TechKey = keyof typeof tech;
 
+/** How each technology is filed in the résumé's Skills section (the headings ATS parsers look for). */
+export const categories = {
+  language: 'Programming and markup languages',
+  framework: 'Frameworks and libraries',
+  database: 'Databases',
+  tool: 'Tools and platforms',
+  design: 'Design and 3D',
+  spoken: 'Languages',
+} as const;
+
+export const techCategory: Record<TechKey, keyof typeof categories> = {
+  csharp: 'language',
+  java: 'language',
+  kotlin: 'language',
+  typescript: 'language',
+  javascript: 'language',
+  php: 'language',
+  c: 'language',
+  cpp: 'language',
+  html: 'language',
+  css: 'language',
+  angular: 'framework',
+  react: 'framework',
+  astro: 'framework',
+  tailwind: 'framework',
+  bootstrap: 'framework',
+  threejs: 'framework',
+  qt: 'framework',
+  nodejs: 'framework',
+  nextjs: 'framework',
+  electron: 'framework',
+  apollo: 'framework',
+  mongodb: 'database',
+  postgresql: 'database',
+  git: 'tool',
+  gitlab: 'tool',
+  docker: 'tool',
+  aws: 'tool',
+  vscode: 'tool',
+  clickup: 'tool',
+  contentful: 'tool',
+  pnpm: 'tool',
+  eslint: 'tool',
+  prettier: 'tool',
+  windows: 'tool',
+  macos: 'tool',
+  linux: 'tool',
+  blender: 'design',
+  photoshop: 'design',
+  procreate: 'design',
+  unity: 'design',
+  italian: 'spoken',
+  english: 'spoken',
+};
+
 registerSpriteIcons(Object.values(tech).map((item) => item.icon));

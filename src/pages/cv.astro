@@ -1,0 +1,337 @@
+---
+/**
+ * The résumé, from the same data as the site. `npm run cv` prints this page to public/cv.pdf.
+ *
+ * Written for applicant tracking systems as much as for people: one column in reading order,
+ * standard section headings, real text (no icons, tables or images carrying information),
+ * full URLs, and dates as "Mon YYYY – Present".
+ */
+import { education, jobs, profile, projects, skills } from '@/data/cv';
+import { categories, tech, techCategory, type TechKey } from '@/data/tech';
+import { formatPeriod } from '@/lib/format';
+
+const detail = (label: string) => profile.details.find((item) => item.label === label)!;
+const bare = (url: string) => url.replace(/^(https?:\/\/)?(www\.)?/, '').replace(/\/$/, '');
+const linkedin = profile.links.find((link) => link.label === 'LinkedIn')!;
+const github = profile.links.find((link) => link.label === 'GitHub')!;
+
+const contacts = [
+  { text: `${detail('Location').value} (open to relocation)` },
+  { text: detail('Phone').value, url: detail('Phone').url },
+  { text: profile.email, url: `mailto:${profile.email}` },
+  { text: bare(linkedin.url), url: linkedin.url },
+  { text: bare(github.url), url: github.url },
+  { text: bare(profile.website), url: profile.website },
+];
+
+// Skills grouped by what they are, in order of how much they are used (the site's skill groups).
+const learning = new Set(skills.find((group) => group.title === 'Learning')?.items ?? []);
+const ordered = skills.flatMap((group) => group.items).filter((key) => !learning.has(key));
+const skillLines = (Object.keys(categories) as (keyof typeof categories)[])
+  .filter((category) => category !== 'spoken')
+  .map((category) => ({
+    label: categories[category],
+    items: ordered.filter((key) => techCategory[key] === category).map((key) => tech[key].name),
+  }))
+  .filter((line) => line.items.length);
+
+const names = (keys: TechKey[]) => keys.map((key) => tech[key].name).join(', ');
+const degrees = education.filter((item) => !item.certificate);
+const grade = (item: (typeof education)[number]) =>
+  item.period.to && item.result ? ` Final grade: ${item.result}.` : '';
+const certificates = education.filter((item) => item.certificate);
+// One string, so the formatter can't slip a space between the bold title and the comma.
+const escapeHtml = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const certificateLine = (item: (typeof education)[number]) =>
+  `<strong>${escapeHtml(item.title)}</strong>${escapeHtml(
+    `, ${item.institution}${item.result ? ` (${item.result})` : ''}, ${formatPeriod(item.period).split(' – ')[1]}`,
+  )}`;
+const keywords = [
+  ...new Set(
+    [...ordered, ...jobs.flatMap((job) => job.stack)]
+      .filter((key) => techCategory[key] !== 'spoken')
+      .map((key) => tech[key].name),
+  ),
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>{profile.name} — CV</title>
+    <meta name="author" content={profile.name} />
+    <meta name="description" content={`${profile.role}, ${profile.subtitle}`} />
+    <meta name="keywords" content={keywords.join(', ')} />
+  </head>
+  <body>
+    <main class="cv">
+      <header>
+        <h1>{profile.name}</h1>
+        <p class="headline">{profile.role} | {profile.subtitle}</p>
+        <p class="contacts">
+          {
+            contacts.map((item, index) => (
+              <>
+                {index > 0 && <span class="sep"> | </span>}
+                {item.url ? <a href={item.url}>{item.text}</a> : <span>{item.text}</span>}
+              </>
+            ))
+          }
+        </p>
+      </header>
+
+      <section>
+        <h2>Summary</h2>
+        <p>{profile.about}</p>
+      </section>
+
+      <section>
+        <h2>Experience</h2>
+        {
+          jobs.map((job) => (
+            <article>
+              <h3>
+                {job.role}, {job.company}
+              </h3>
+              <p class="meta">
+                {formatPeriod(job.period)} | {job.place}
+              </p>
+              <p>{job.summary}</p>
+              <ul>
+                {job.highlights.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+              <p class="tech">
+                <strong>Technologies:</strong> {names(job.stack)}
+              </p>
+            </article>
+          ))
+        }
+      </section>
+
+      <section>
+        <h2>Education</h2>
+        {
+          degrees.map((item) => (
+            <article>
+              <h3>
+                {item.title}, {item.institution}
+              </h3>
+              <p class="meta">
+                {formatPeriod(item.period)} | {item.description}
+                {grade(item)}
+              </p>
+            </article>
+          ))
+        }
+      </section>
+
+      <section>
+        <h2>Skills</h2>
+        <ul class="skills">
+          {
+            skillLines.map((line) => (
+              <li>
+                <strong>{line.label}:</strong> {line.items.join(', ')}
+              </li>
+            ))
+          }
+          {
+            learning.size > 0 && (
+              <li>
+                <strong>Currently learning:</strong> {names([...learning])}
+              </li>
+            )
+          }
+        </ul>
+      </section>
+
+      <section>
+        <h2>Projects</h2>
+        {
+          projects.map((project) => (
+            <article class="project">
+              <h3>
+                {project.name}, {project.roles.join(', ')}
+              </h3>
+              <p class="meta">{formatPeriod(project.period)}</p>
+              <p>
+                {project.description} {project.team > 1 ? `Team of ${project.team}.` : 'Solo project.'}
+              </p>
+              <p class="tech">
+                <strong>Technologies:</strong> {names(project.stack)}
+                {project.links.map((link) => (
+                  <>
+                    {' | '}
+                    <a href={link.url}>{bare(link.url)}</a>
+                  </>
+                ))}
+              </p>
+            </article>
+          ))
+        }
+      </section>
+
+      <section>
+        <h2>Certifications</h2>
+        <ul class="plain">
+          {certificates.map((item) => <li set:html={certificateLine(item)} />)}
+        </ul>
+      </section>
+
+      <section>
+        <h2>Languages</h2>
+        <p>Italian (native), English (C1, Cambridge C1 Advanced)</p>
+      </section>
+
+      <p class="consent">{profile.consent}</p>
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  @page {
+    size: A4;
+    margin: 14mm 16mm 14mm;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    background: #fff;
+    color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .cv h1,
+  .cv h2,
+  .cv h3,
+  .cv p,
+  .cv ul {
+    margin: 0;
+  }
+
+  .cv {
+    max-width: 178mm;
+    margin: 0 auto;
+    /* Static fonts only: Chrome turns variable fonts into Type 3 fonts, which some parsers misread. */
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 9.6pt;
+    line-height: 1.4;
+  }
+
+  @media screen {
+    .cv {
+      padding: 14mm 16mm;
+    }
+  }
+
+  .cv a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .cv h1 {
+    font-size: 21pt;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #0b2a55;
+  }
+
+  .cv .headline {
+    margin-top: 2pt;
+    font-size: 11pt;
+    font-weight: 500;
+  }
+
+  .cv .contacts {
+    margin-top: 5pt;
+    font-size: 9pt;
+    color: #3a3a3c;
+  }
+
+  .cv .sep {
+    color: #a1a1a6;
+  }
+
+  .cv section {
+    margin-top: 11pt;
+  }
+
+  .cv h2 {
+    margin-bottom: 5pt;
+    padding-bottom: 2pt;
+    font-size: 10pt;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #0b2a55;
+    border-bottom: 0.75pt solid #c7cfdb;
+    break-after: avoid;
+  }
+
+  .cv article {
+    break-inside: avoid;
+  }
+
+  .cv article + article {
+    margin-top: 7pt;
+  }
+
+  .cv h3 {
+    font-size: 10pt;
+    font-weight: 700;
+  }
+
+  .cv .meta {
+    font-size: 9pt;
+    color: #4a4a4f;
+  }
+
+  .cv p + p,
+  .cv p + ul {
+    margin-top: 2pt;
+  }
+
+  .cv ul {
+    padding-left: 13pt;
+    list-style: disc;
+  }
+
+  .cv li + li {
+    margin-top: 1.5pt;
+  }
+
+  .cv ul.skills,
+  .cv ul.plain {
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .cv .tech {
+    margin-top: 2pt;
+    font-size: 9pt;
+    color: #3a3a3c;
+  }
+
+  .cv strong {
+    font-weight: 700;
+    color: #1d1d1f;
+  }
+
+  .cv .consent {
+    margin-top: 14pt;
+    font-size: 7.5pt;
+    color: #6e6e73;
+  }
+</style>

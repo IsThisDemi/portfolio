@@ -28,7 +28,10 @@ On a phone, apps open out of their icon and close with the home indicator (tap o
 - `src/data/tech.ts`: every technology (name, logo, link), referenced by key from `cv.ts`.
 - `src/data/apps.ts`: which apps exist, in Dock order.
 
-The downloadable résumé is the static file `public/cv.pdf`.
+The résumé is generated from the same data: `src/pages/cv.astro` is the layout (one column, standard
+headings, plain text, so applicant tracking systems parse it cleanly) and `npm run cv` prints it with the local
+Google Chrome to `public/cv.pdf`, tagged and with title, author and keywords in its metadata. Run it after
+editing the content and commit the PDF.
 
 ## Development
 
@@ -37,6 +40,7 @@ npm install
 npm run dev      # http://localhost:4321
 npm run check    # type check
 npm run build    # static site in dist/
+npm run cv       # regenerate public/cv.pdf (needs Google Chrome)
 ```
 
 ## Structure

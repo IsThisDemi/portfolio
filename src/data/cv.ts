@@ -52,6 +52,10 @@ export const profile = {
   about:
     'Full-stack software developer with professional experience building production web platforms and native mobile apps. I work across the stack in C#/.NET, Angular, and Java, and ship native Android in Kotlin. Currently completing my BSc in Computer Science at the University of Padova (expected Oct 2026) while delivering client solutions in e-commerce, web portals, and intelligent transportation systems. Fluent in English (C1) and always exploring new technologies.',
   cv: { url: '/cv.pdf', fileName: 'CV-Riccardo_Martinello.pdf' },
+  website: 'https://riccardo.martinello.dev',
+  /** Closing line of the résumé; Italian recruiters expect the GDPR consent. */
+  consent:
+    'I hereby consent to the processing of the personal data contained in this CV for recruitment purposes, in accordance with Regulation (EU) 2016/679 (GDPR).',
   email: 'rickyma686@gmail.com',
   links: [
     github('https://github.com/IsThisDemi'),
@@ -271,6 +275,8 @@ export interface Diploma {
   description: string;
   result?: string;
   url: string;
+  /** A certification rather than a school: listed under Certifications in the résumé. */
+  certificate?: boolean;
 }
 
 export const education: Diploma[] = [
@@ -301,6 +307,7 @@ export const education: Diploma[] = [
       'Cambridge Assessment English exam certifying high-level English for university and professional life.',
     result: 'C1 · 185',
     url: 'https://www.cambridgeenglish.org/exams-and-tests/advanced/',
+    certificate: true,
   },
   {
     title: 'ECDL Full Standard',
@@ -309,5 +316,6 @@ export const education: Diploma[] = [
     period: { from: '2017-10', to: '2019-02' },
     description: 'Internationally recognised computer literacy certification.',
     url: 'https://www.aicanet.it/aica/qualita/ecdl-full-standard',
+    certificate: true,
   },
 ];
