@@ -157,7 +157,10 @@ export const jobs: Job[] = [
       'Worked full-stack on the implementation and ongoing maintenance of web platforms for a range of clients.',
     ],
     stack: ['csharp', 'angular', 'kotlin', 'bootstrap'],
-    links: [website('https://www.touchmultimedia.com/'), linkedin('https://www.linkedin.com/company/tecsen-srl')],
+    links: [
+      website('https://www.touchmultimedia.com/'),
+      linkedin('https://www.linkedin.com/company/touch-multimedia-s-r-l/'),
+    ],
   },
   {
     role: 'Software Developer',
@@ -212,7 +215,7 @@ export const projects: Project[] = [
     period: { from: '2023-09', to: null },
     tagline: 'Events website and IT for a community group',
     description:
-      'PowsUp! is an Italian group that organizes furry events in Lazio and Central Italy. I manage the website and the general IT infrastructure together with three other developers. We are building a blog to post upcoming events; it is a work in progress, built with Astro and Sanity.',
+      'PowsUp! is an Italian group that organizes furry events in Lazio and Central Italy. I manage the website and the general IT infrastructure together with three other developers. We are building a blog to post upcoming events; it is a work in progress, built with Astro and Contentful.',
     team: 10,
     roles: ['Volunteer', 'Front-end Developer'],
     categories: ['Website', 'Open source'],
