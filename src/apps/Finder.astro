@@ -1,0 +1,985 @@
+---
+import { Image } from 'astro:assets';
+import { projects, skills } from '@/data/cv';
+import { tech, type Tech } from '@/data/tech';
+import { formatPeriod, periodYears, slugify } from '@/lib/format';
+import { iconSvg } from '@/lib/icon';
+import AppFrame from '@/components/AppFrame.astro';
+import Glyph from '@/components/Glyph.astro';
+
+// Finder's tag colors, assigned to project categories.
+const tagColors: Record<string, string> = {
+  Website: '#ff453a',
+  Application: '#0a84ff',
+  'Video game': '#bf5af2',
+  Database: '#ff9f0a',
+  'Open source': '#30d158',
+};
+const tags = Object.keys(tagColors);
+
+const items = projects.map((project) => ({
+  ...project,
+  id: `project-${slugify(project.name)}`,
+  kind: project.categories[0]!,
+  years: periodYears(project.period),
+  tags: project.categories.filter((category) => category in tagColors),
+}));
+
+const techUrl = (key: keyof typeof tech) => {
+  const item: Tech = tech[key];
+  return item.url;
+};
+
+const logo = (key: keyof typeof tech) => {
+  const item = tech[key];
+  return iconSvg(item.icon, 'color' in item ? { style: `color:${item.color}` } : {});
+};
+---
+
+<AppFrame id="finder" name="Finder" label="Finder — Projects">
+  <aside class="sidebar" aria-label="Sidebar">
+    <p class="sidebar-heading">Favorites</p>
+    <button class="sidebar-item" data-place="projects" aria-current="true"><Glyph name="folder" /> Projects</button>
+    <button class="sidebar-item" data-place="stack" aria-current="false"><Glyph name="apps" /> Stack</button>
+    <button class="sidebar-item" data-open-app="preview"><Glyph name="doc" /> Résumé.pdf</button>
+    <p class="sidebar-heading">Tags</p>
+    {
+      tags.map((tag) => (
+        <button class="sidebar-item" data-tag={tag} aria-current="false">
+          <span class="tag-dot" style={`--dot:${tagColors[tag]}`} />
+          {tag}
+        </button>
+      ))
+    }
+  </aside>
+
+  <div class="main">
+    <header class="toolbar" data-drag>
+      <div class="tb-group mac-only">
+        <button class="tb-button" data-history="back" aria-label="Back" disabled><Glyph name="chevron-left" /></button>
+        <button class="tb-button" data-history="forward" aria-label="Forward" disabled
+          ><Glyph name="chevron-right" /></button
+        >
+      </div>
+      <span class="toolbar-title" data-finder-title>Projects</span>
+      <span class="toolbar-spacer"></span>
+      <div class="tb-group" role="radiogroup" aria-label="View" data-view-switch>
+        <button class="tb-button is-active" role="radio" aria-checked="true" data-view="icons" aria-label="as Icons">
+          <Glyph name="grid" />
+        </button>
+        <button class="tb-button" role="radio" aria-checked="false" data-view="list" aria-label="as List">
+          <Glyph name="list" />
+        </button>
+      </div>
+      <label class="search-field mac-only">
+        <Glyph name="search" />
+        <input type="search" placeholder="Search" aria-label="Search projects" data-finder-search />
+      </label>
+    </header>
+
+    <div class="ios-only files-switch" role="tablist">
+      <button role="tab" aria-selected="true" data-place="projects">Projects</button>
+      <button role="tab" aria-selected="false" data-place="stack">Stack</button>
+    </div>
+
+    <div class="finder-body">
+      <div class="pane finder-content" tabindex="0">
+        <!-- Projects -->
+        <section class="place" data-place-view="projects" aria-label="Projects">
+          <ul class="icon-grid" role="listbox" aria-label="Projects">
+            {
+              items.map((item, index) => (
+                <li
+                  class="file"
+                  role="option"
+                  id={item.id}
+                  data-file={item.id}
+                  data-tags={item.tags.join('|')}
+                  data-search={`${item.name} ${item.kind} ${item.stack.map((key) => tech[key].name).join(' ')}`}
+                  aria-selected={index === 0 ? 'true' : 'false'}
+                  tabindex="-1"
+                >
+                  <span class="file-icon">
+                    <Image src={item.icon} alt="" width={128} height={128} />
+                  </span>
+                  <span class="file-name">{item.name}</span>
+                  <span class="file-date">{item.years}</span>
+                  <span class="file-kind">{item.kind}</span>
+                  <span class="file-team">{item.team === 1 ? 'Solo' : `${item.team} people`}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+
+        <!-- Stack -->
+        <section class="place" data-place-view="stack" aria-label="Stack" hidden>
+          {
+            skills.map((group) => (
+              <div class="stack-group">
+                <h3>{group.title}</h3>
+                <ul class="icon-grid stack-grid">
+                  {group.items.map((key) => (
+                    <li>
+                      <a class="stack-item" href={techUrl(key)} target="_blank" rel="noopener noreferrer">
+                        <span class="logo-tile" style="--size: 52px" set:html={logo(key)} />
+                        <span class="file-name">{tech[key].name}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </section>
+      </div>
+
+      <!-- Preview pane (Projects) -->
+      <aside class="finder-preview" aria-label="Preview">
+        {
+          items.map((item, index) => (
+            <div class="preview-card" data-preview={item.id} hidden={index !== 0}>
+              <span class="preview-icon">
+                <Image src={item.icon} alt="" width={192} height={192} />
+              </span>
+              <h3>{item.name}</h3>
+              <p class="secondary">
+                {item.kind} · {item.years}
+              </p>
+              {item.tags.length > 0 && (
+                <p class="preview-tags">
+                  {item.tags.map((tag) => (
+                    <span class="tag-dot" style={`--dot:${tagColors[tag]}`} title={tag} />
+                  ))}
+                </p>
+              )}
+              <div class="preview-info">
+                <p class="preview-heading">Information</p>
+                <dl>
+                  <div>
+                    <dt>Created</dt>
+                    <dd>{formatPeriod(item.period)}</dd>
+                  </div>
+                  <div>
+                    <dt>Team</dt>
+                    <dd>{item.team === 1 ? 'Solo project' : `${item.team} people`}</dd>
+                  </div>
+                  <div>
+                    <dt>Role</dt>
+                    <dd>{item.roles.join(', ')}</dd>
+                  </div>
+                </dl>
+                <p class="preview-heading">Built with</p>
+                <p class="preview-stack">
+                  {item.stack.map((key) => (
+                    <span class="logo-tile" style="--size: 24px" title={tech[key].name} set:html={logo(key)} />
+                  ))}
+                </p>
+                <p class="preview-heading">Comments</p>
+                <p class="preview-comments">{item.description}</p>
+              </div>
+              <div class="preview-actions">
+                <button class="tb-button text" data-quicklook-open={item.id}>
+                  <Glyph name="eye" /> Quick Look
+                </button>
+                {item.links.map((link) => (
+                  <a class="tb-button text" href={link.url} target="_blank" rel="noopener noreferrer">
+                    <Glyph name={link.label === 'GitHub' ? 'link' : 'globe'} /> {link.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </aside>
+    </div>
+
+    <footer class="statusbar" data-finder-status>1 of {items.length} selected</footer>
+  </div>
+
+  <!-- Quick Look content, copied into the panel on demand. -->
+  {
+    items.map((item) => (
+      <div class="ql-source" data-quicklook={item.id} hidden>
+        <div class="ql-hero">
+          <span class="ql-icon">
+            <Image src={item.icon} alt="" width={200} height={200} />
+          </span>
+          <div>
+            <h3>{item.name}</h3>
+            <p class="secondary">
+              {item.kind} · {formatPeriod(item.period)}
+            </p>
+          </div>
+        </div>
+        {item.screenshots && (
+          <div class="ql-gallery">
+            {item.screenshots.map((shot) => (
+              <figure>
+                <Image src={shot.src} alt={shot.alt} width={1100} />
+                <figcaption>{shot.alt}</figcaption>
+              </figure>
+            ))}
+          </div>
+        )}
+        <p class="ql-text">{item.description}</p>
+        <p class="ql-meta secondary">
+          {item.roles.join(', ')} · {item.team === 1 ? 'solo project' : `team of ${item.team}`} ·{' '}
+          {item.stack.map((key) => tech[key].name).join(', ')}
+        </p>
+        <div class="ql-links">
+          {item.links.map((link) => (
+            <a class="tb-button text" href={link.url} target="_blank" rel="noopener noreferrer">
+              Open in {link.label === 'GitHub' ? 'GitHub' : 'Safari'}
+            </a>
+          ))}
+        </div>
+      </div>
+    ))
+  }
+</AppFrame>
+
+<dialog class="quicklook" aria-labelledby="quicklook-title">
+  <header class="ql-bar">
+    <button class="ql-close" data-quicklook-close aria-label="Close Quick Look"><Glyph name="xmark" /></button>
+    <span id="quicklook-title" class="ql-title"></span>
+  </header>
+  <div class="ql-body"></div>
+</dialog>
+
+<script>
+  const app = document.getElementById('app-finder')!;
+  const files = [...app.querySelectorAll<HTMLElement>('.file')];
+  const previews = [...app.querySelectorAll<HTMLElement>('[data-preview]')];
+  const places = [...app.querySelectorAll<HTMLElement>('[data-place-view]')];
+  const placeButtons = [...app.querySelectorAll<HTMLButtonElement>('[data-place]')];
+  const tagButtons = [...app.querySelectorAll<HTMLButtonElement>('[data-tag]')];
+  const title = app.querySelector<HTMLElement>('[data-finder-title]')!;
+  const status = app.querySelector<HTMLElement>('[data-finder-status]')!;
+  const search = app.querySelector<HTMLInputElement>('[data-finder-search]')!;
+  const content = app.querySelector<HTMLElement>('.finder-content')!;
+  const back = app.querySelector<HTMLButtonElement>('[data-history="back"]')!;
+  const forward = app.querySelector<HTMLButtonElement>('[data-history="forward"]')!;
+  const dialog = document.querySelector<HTMLDialogElement>('dialog.quicklook')!;
+  const phone = window.matchMedia('(max-width: 899px)');
+
+  type Location = { place: 'projects' | 'stack'; tag: string | null };
+  let location: Location = { place: 'projects', tag: null };
+  const history: Location[] = [location];
+  let cursor = 0;
+
+  const visibleFiles = () => files.filter((file) => !file.hidden);
+  const selected = () => files.find((file) => file.getAttribute('aria-selected') === 'true');
+
+  const updateStatus = () => {
+    if (location.place === 'stack') {
+      status.textContent = `${app.querySelectorAll('.stack-item').length} items`;
+      return;
+    }
+    const visible = visibleFiles();
+    const current = selected();
+    status.textContent = current && !current.hidden ? `1 of ${visible.length} selected` : `${visible.length} items`;
+  };
+
+  const select = (file: HTMLElement | undefined) => {
+    files.forEach((candidate) => candidate.setAttribute('aria-selected', String(candidate === file)));
+    previews.forEach((preview) => (preview.hidden = preview.dataset.preview !== file?.dataset.file));
+    updateStatus();
+  };
+
+  const render = () => {
+    places.forEach((view) => (view.hidden = view.dataset.placeView !== location.place));
+    placeButtons.forEach((button) => {
+      const on = button.dataset.place === location.place && !location.tag;
+      button.setAttribute(button.getAttribute('role') === 'tab' ? 'aria-selected' : 'aria-current', String(on));
+    });
+    tagButtons.forEach((button) => button.setAttribute('aria-current', String(button.dataset.tag === location.tag)));
+    title.textContent = location.tag ?? (location.place === 'projects' ? 'Projects' : 'Stack');
+    app.classList.toggle('is-stack', location.place === 'stack');
+
+    const query = search.value.trim().toLowerCase();
+    for (const file of files) {
+      const tagged = !location.tag || file.dataset.tags!.split('|').includes(location.tag);
+      file.hidden = !tagged || (!!query && !file.dataset.search!.toLowerCase().includes(query));
+    }
+    if (location.place === 'projects' && (!selected() || selected()!.hidden)) select(visibleFiles()[0]);
+    back.disabled = cursor === 0;
+    forward.disabled = cursor === history.length - 1;
+    updateStatus();
+  };
+
+  const go = (next: Location) => {
+    if (next.place === location.place && next.tag === location.tag) return;
+    history.splice(cursor + 1);
+    history.push(next);
+    cursor = history.length - 1;
+    location = next;
+    content.scrollTop = 0;
+    render();
+  };
+
+  placeButtons.forEach((button) =>
+    button.addEventListener('click', () => go({ place: button.dataset.place as Location['place'], tag: null })),
+  );
+  tagButtons.forEach((button) =>
+    button.addEventListener('click', () => go({ place: 'projects', tag: button.dataset.tag! })),
+  );
+  back.addEventListener('click', () => {
+    if (cursor === 0) return;
+    location = history[--cursor]!;
+    render();
+  });
+  forward.addEventListener('click', () => {
+    if (cursor === history.length - 1) return;
+    location = history[++cursor]!;
+    render();
+  });
+  search.addEventListener('input', render);
+
+  // ── View: icons or list ──
+  const viewButtons = [...app.querySelectorAll<HTMLButtonElement>('[data-view]')];
+  viewButtons.forEach((button) =>
+    button.addEventListener('click', () => {
+      viewButtons.forEach((other) => {
+        other.classList.toggle('is-active', other === button);
+        other.setAttribute('aria-checked', String(other === button));
+      });
+      app.classList.toggle('is-list', button.dataset.view === 'list');
+    }),
+  );
+
+  // ── Selection, Quick Look ──
+  const openQuickLook = (id: string) => {
+    const source = app.querySelector<HTMLElement>(`.ql-source[data-quicklook="${id}"]`);
+    if (!source) return;
+    const body = dialog.querySelector('.ql-body')!;
+    body.replaceChildren(...[...source.children].map((child) => child.cloneNode(true)));
+    dialog.querySelector('.ql-title')!.textContent = files
+      .find((file) => file.dataset.file === id)!
+      .querySelector('.file-name')!.textContent;
+    dialog.showModal();
+    body.scrollTop = 0;
+  };
+
+  const closeQuickLook = () => {
+    if (!dialog.open) return;
+    dialog.classList.add('is-closing');
+    setTimeout(() => {
+      dialog.classList.remove('is-closing');
+      dialog.close();
+    }, 180);
+  };
+
+  for (const file of files) {
+    file.addEventListener('click', () => {
+      select(file);
+      file.focus({ preventScroll: true });
+      if (phone.matches) openQuickLook(file.dataset.file!);
+    });
+    file.addEventListener('dblclick', () => openQuickLook(file.dataset.file!));
+  }
+
+  app
+    .querySelectorAll<HTMLButtonElement>('[data-quicklook-open]')
+    .forEach((button) => button.addEventListener('click', () => openQuickLook(button.dataset.quicklookOpen!)));
+  dialog.querySelector('[data-quicklook-close]')!.addEventListener('click', closeQuickLook);
+  dialog.addEventListener('cancel', (event) => {
+    event.preventDefault();
+    closeQuickLook();
+  });
+  dialog.addEventListener('click', (event) => event.target === dialog && closeQuickLook());
+
+  content.addEventListener('keydown', (event) => {
+    if (location.place !== 'projects') return;
+    const visible = visibleFiles();
+    const current = selected();
+    const index = current ? visible.indexOf(current) : -1;
+    const columns = Math.max(
+      1,
+      Math.round(content.querySelector('.icon-grid')!.clientWidth / (visible[0]?.offsetWidth || 1)),
+    );
+    const step: Record<string, number> = {
+      ArrowRight: 1,
+      ArrowLeft: -1,
+      ArrowDown: app.classList.contains('is-list') ? 1 : columns,
+      ArrowUp: app.classList.contains('is-list') ? -1 : -columns,
+    };
+    if (event.key === ' ' && current) {
+      event.preventDefault();
+      dialog.open ? closeQuickLook() : openQuickLook(current.dataset.file!);
+    } else if (event.key in step) {
+      event.preventDefault();
+      const next = visible[Math.max(0, Math.min(visible.length - 1, index + step[event.key]!))];
+      if (next) {
+        select(next);
+        next.focus();
+        next.scrollIntoView({ block: 'nearest' });
+      }
+    }
+  });
+  dialog.addEventListener('keydown', (event) => {
+    if (event.key === ' ') {
+      event.preventDefault();
+      closeQuickLook();
+    }
+  });
+
+  app.addEventListener('app:select', (event) => {
+    const id = (event as CustomEvent<string>).detail;
+    if (id === 'stack') return go({ place: 'stack', tag: null });
+    const file = files.find((candidate) => candidate.dataset.file === id);
+    if (!file) return;
+    go({ place: 'projects', tag: null });
+    search.value = '';
+    render();
+    select(file);
+    file.scrollIntoView({ block: 'nearest' });
+  });
+
+  render();
+</script>
+
+<style>
+  :global(.app-finder) {
+    --sidebar-w: 190px;
+  }
+
+  .finder-body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .finder-content {
+    flex: 1;
+    padding: 4px 14px 18px;
+    outline: none;
+  }
+
+  /* ── Icon view ── */
+  .icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+    gap: 6px 4px;
+  }
+
+  .file,
+  .stack-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 4px 6px;
+    text-align: center;
+    cursor: default;
+    outline: none;
+  }
+
+  .file-icon {
+    display: grid;
+    place-items: center;
+    width: 76px;
+    height: 76px;
+    border-radius: 12px;
+  }
+
+  .file-icon img {
+    width: 64px;
+    height: 64px;
+    border-radius: 22.5%;
+    object-fit: cover;
+    box-shadow:
+      0 0 0 0.5px rgb(0 0 0 / 0.12),
+      0 2px 6px -2px rgb(0 0 0 / 0.3);
+  }
+
+  .file-name {
+    max-width: 100%;
+    padding: 1px 6px;
+    border-radius: 5px;
+    font-size: 12px;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+
+  .file-date,
+  .file-kind,
+  .file-team {
+    display: none;
+  }
+
+  .file[aria-selected='true'] .file-icon {
+    background: var(--row-inactive);
+  }
+
+  .file[aria-selected='true'] .file-name {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  :global(.app-finder:not(.is-focused)) .file[aria-selected='true'] .file-name {
+    background: var(--row-inactive);
+    color: var(--label);
+  }
+
+  /* ── List view ── */
+  :global(.app-finder.is-list) .icon-grid:not(.stack-grid) {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  :global(.app-finder.is-list) .file {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1.4fr) 0.8fr 0.9fr 0.7fr;
+    align-items: center;
+    gap: 10px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    text-align: left;
+  }
+
+  :global(.app-finder.is-list) .file:nth-child(even) {
+    background: var(--fill);
+  }
+
+  :global(.app-finder.is-list) .file-icon {
+    width: 20px;
+    height: 20px;
+    background: none !important;
+  }
+
+  :global(.app-finder.is-list) .file-icon img {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+  }
+
+  :global(.app-finder.is-list) .file-name {
+    padding: 0;
+    font-size: 13px;
+    background: none !important;
+    color: inherit !important;
+  }
+
+  :global(.app-finder.is-list) .file-date,
+  :global(.app-finder.is-list) .file-kind,
+  :global(.app-finder.is-list) .file-team {
+    display: block;
+    font-size: 13px;
+    color: var(--label-2);
+  }
+
+  :global(.app-finder.is-list) .file[aria-selected='true'] {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  :global(.app-finder.is-list) .file[aria-selected='true'] span {
+    color: #fff;
+  }
+
+  /* ── Stack ── */
+  .stack-group + .stack-group {
+    margin-top: 10px;
+  }
+
+  .stack-group h3 {
+    margin: 8px 6px 4px;
+    padding-bottom: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    border-bottom: 0.5px solid var(--separator);
+  }
+
+  .stack-grid {
+    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  }
+
+  .stack-item {
+    border-radius: 10px;
+  }
+
+  .stack-item:hover .file-name {
+    background: var(--fill-2);
+  }
+
+  .stack-item .logo-tile {
+    margin: 6px 0 2px;
+    box-shadow:
+      0 0 0 0.5px rgb(0 0 0 / 0.1),
+      0 2px 6px -2px rgb(0 0 0 / 0.25);
+  }
+
+  /* ── Preview pane ── */
+  .finder-preview {
+    flex: none;
+    width: 270px;
+    padding: 6px 18px 18px;
+    border-left: 0.5px solid var(--separator);
+    overflow: auto;
+  }
+
+  :global(.app-finder.is-stack) .finder-preview {
+    display: none;
+  }
+
+  .preview-icon img {
+    width: 110px;
+    height: 110px;
+    margin: 6px auto 12px;
+    border-radius: 22.5%;
+    object-fit: cover;
+    box-shadow:
+      0 0 0 0.5px rgb(0 0 0 / 0.12),
+      0 10px 24px -10px rgb(0 0 0 / 0.45);
+  }
+
+  .preview-card h3 {
+    font-size: 15px;
+    font-weight: 650;
+  }
+
+  .preview-card > .secondary {
+    font-size: 12px;
+  }
+
+  .preview-tags {
+    display: flex;
+    gap: 2px;
+    margin-top: 6px;
+  }
+
+  .preview-heading {
+    margin: 14px 0 5px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .preview-info dl {
+    margin: 0;
+  }
+
+  .preview-info dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 2px 0;
+    font-size: 11.5px;
+  }
+
+  .preview-info dt {
+    color: var(--label-2);
+  }
+
+  .preview-info dd {
+    margin: 0;
+    text-align: right;
+  }
+
+  .preview-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .preview-comments {
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--label-2);
+  }
+
+  .preview-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 16px;
+  }
+
+  .preview-actions .tb-button {
+    height: 28px;
+    padding: 0 10px;
+    font-size: 12px;
+    background: var(--control-bg);
+    box-shadow: var(--control-shadow);
+  }
+
+  .preview-actions :global(.glyph) {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* ── Quick Look ── */
+  :global(dialog.quicklook) {
+    width: min(760px, calc(100vw - 32px));
+    max-height: min(78vh, 760px);
+    padding: 0;
+    border: 0;
+    border-radius: 22px;
+    color: var(--label);
+    background: var(--popover-bg);
+    -webkit-backdrop-filter: blur(50px) saturate(180%);
+    backdrop-filter: blur(50px) saturate(180%);
+    box-shadow:
+      0 0 0 0.5px var(--window-ring),
+      0 30px 80px -20px rgb(0 0 0 / 0.55);
+    overflow: hidden;
+  }
+
+  :global(dialog.quicklook[open]) {
+    display: flex;
+    flex-direction: column;
+    animation: ql-in 0.34s var(--spring) both;
+  }
+
+  :global(dialog.quicklook.is-closing) {
+    animation: ql-out 0.18s ease-in both;
+  }
+
+  :global(dialog.quicklook::backdrop) {
+    background: rgb(0 0 0 / 0.18);
+  }
+
+  @keyframes ql-in {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+  }
+
+  @keyframes ql-out {
+    to {
+      opacity: 0;
+      transform: scale(0.94);
+    }
+  }
+
+  :global(.ql-bar) {
+    display: grid;
+    grid-template-columns: 28px 1fr 28px;
+    align-items: center;
+    padding: 12px 14px 4px;
+  }
+
+  :global(.ql-close) {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--fill-2);
+    color: var(--label-2);
+  }
+
+  :global(.ql-close .glyph) {
+    width: 13px;
+    height: 13px;
+  }
+
+  :global(.ql-title) {
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--label-2);
+  }
+
+  :global(.ql-body) {
+    padding: 10px 28px 26px;
+    overflow: auto;
+  }
+
+  :global(.ql-hero) {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  :global(.ql-icon img) {
+    width: 84px;
+    height: 84px;
+    border-radius: 22.5%;
+    object-fit: cover;
+    box-shadow: 0 8px 22px -10px rgb(0 0 0 / 0.5);
+  }
+
+  :global(.ql-hero h3) {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  :global(.ql-gallery) {
+    display: flex;
+    gap: 12px;
+    margin: 20px -28px 0;
+    padding: 0 28px 4px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0 28px;
+  }
+
+  :global(.ql-gallery figure) {
+    flex: 0 0 86%;
+    scroll-snap-align: start;
+  }
+
+  :global(.ql-gallery img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+
+  :global(.ql-gallery figcaption) {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--label-2);
+  }
+
+  :global(.ql-text) {
+    margin-top: 18px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  :global(.ql-meta) {
+    margin-top: 10px;
+    font-size: 13px;
+  }
+
+  :global(.ql-links) {
+    display: flex;
+    gap: 8px;
+    margin-top: 18px;
+  }
+
+  :global(.ql-links .tb-button) {
+    height: 32px;
+    background: var(--control-bg);
+    box-shadow: var(--control-shadow);
+  }
+
+  /* ── Phone: Files ── */
+  .files-switch {
+    display: none;
+  }
+
+  @media (max-width: 899px) {
+    .toolbar [data-view-switch] {
+      display: none;
+    }
+
+    .files-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      margin: 4px 16px 14px;
+      padding: 2px;
+      border-radius: 9px;
+      background: var(--field-bg);
+    }
+
+    .files-switch button {
+      height: 30px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .files-switch [aria-selected='true'] {
+      background: var(--ios-card);
+      box-shadow: 0 2px 6px -2px rgb(0 0 0 / 0.25);
+    }
+
+    .finder-preview {
+      display: none;
+    }
+
+    .finder-content {
+      padding: 0 12px calc(40px + env(safe-area-inset-bottom));
+    }
+
+    .icon-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px 6px;
+    }
+
+    .stack-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .file-icon {
+      width: 86px;
+      height: 86px;
+    }
+
+    .file-icon img {
+      width: 74px;
+      height: 74px;
+    }
+
+    .file-name {
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .file-date {
+      display: block;
+      font-size: 12px;
+      color: var(--label-2);
+    }
+
+    .file[aria-selected='true'] .file-icon,
+    .file[aria-selected='true'] .file-name {
+      background: none;
+      color: inherit;
+    }
+
+    .stack-group h3 {
+      margin: 18px 4px 6px;
+      font-size: 20px;
+      border: 0;
+    }
+
+    :global(dialog.quicklook) {
+      width: 100vw;
+      max-width: none;
+      height: calc(100dvh - 44px);
+      max-height: none;
+      margin: auto 0 0;
+      border-radius: 28px 28px 0 0;
+      background: var(--ios-card);
+    }
+
+    :global(dialog.quicklook[open]) {
+      animation: sheet-in 0.45s cubic-bezier(0.32, 0.72, 0, 1) both;
+    }
+
+    :global(dialog.quicklook.is-closing) {
+      animation: sheet-out 0.25s ease-in both;
+    }
+
+    @keyframes sheet-in {
+      from {
+        transform: translateY(100%);
+      }
+    }
+
+    @keyframes sheet-out {
+      to {
+        transform: translateY(100%);
+      }
+    }
+
+    :global(.ql-body) {
+      padding: 6px 20px calc(30px + env(safe-area-inset-bottom));
+    }
+
+    :global(.ql-gallery) {
+      margin: 18px -20px 0;
+      padding: 0 20px 4px;
+    }
+  }
+</style>

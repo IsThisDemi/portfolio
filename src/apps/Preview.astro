@@ -1,0 +1,72 @@
+---
+import { profile } from '@/data/cv';
+import AppFrame from '@/components/AppFrame.astro';
+import Glyph from '@/components/Glyph.astro';
+---
+
+<AppFrame id="preview" name="Preview" label={profile.cv.fileName}>
+  <div class="main">
+    <header class="toolbar" data-drag>
+      <span class="toolbar-title">{profile.cv.fileName}</span>
+      <span class="toolbar-spacer"></span>
+      <div class="tb-group">
+        <a
+          class="tb-button"
+          href={profile.cv.url}
+          download={profile.cv.fileName}
+          aria-label="Download"
+          title="Download"
+        >
+          <Glyph name="download" />
+        </a>
+        <a
+          class="tb-button"
+          href={profile.cv.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Open in a new tab"
+          title="Open in a new tab"
+        >
+          <Glyph name="external" />
+        </a>
+      </div>
+    </header>
+    <div class="pane pdf-pane">
+      <!-- Loaded on first open, so the PDF isn't downloaded by every visitor. -->
+      <iframe data-src={`${profile.cv.url}#toolbar=0&navpanes=0&view=FitH`} title={profile.cv.fileName}></iframe>
+    </div>
+  </div>
+</AppFrame>
+
+<script>
+  const app = document.getElementById('app-preview')!;
+  const frame = app.querySelector<HTMLIFrameElement>('iframe')!;
+  app.addEventListener('app:open', () => {
+    if (!frame.src) frame.src = frame.dataset.src!;
+  });
+</script>
+
+<style>
+  :global(.app-preview) {
+    --content-bg: #e9e9ec;
+  }
+
+  :global(.dark .app-preview) {
+    --content-bg: #2a2a2d;
+  }
+
+  .pdf-pane {
+    display: flex;
+    padding: 0 10px 10px;
+    overflow: hidden;
+  }
+
+  iframe {
+    flex: 1;
+    width: 100%;
+    border: 0;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.15);
+  }
+</style>

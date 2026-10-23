@@ -1,0 +1,105 @@
+---
+import { profile } from '@/data/cv';
+import AppArt from './AppArt.astro';
+
+const icons = [
+  { label: 'Résumé.pdf', art: 'pdf', app: 'preview' },
+  { label: 'Projects', art: 'folder', app: 'finder', select: 'projects' },
+  { label: 'Stack', art: 'folder', app: 'finder', select: 'stack' },
+] as const;
+---
+
+<ul class="desktop-icons" aria-label="Desktop" data-launch="dblclick" data-cv={profile.cv.url}>
+  {
+    icons.map((icon) => (
+      <li>
+        <button
+          class="desktop-icon"
+          data-open-app={icon.app}
+          data-select={'select' in icon ? icon.select : undefined}
+          aria-label={`Open ${icon.label}`}
+        >
+          <AppArt name={icon.art} />
+          <span>{icon.label}</span>
+        </button>
+      </li>
+    ))
+  }
+</ul>
+
+<script>
+  import { openApp } from '@/scripts/shell';
+
+  // Desktop icons select on click and open on double-click (or Return), like Finder.
+  const icons = [...document.querySelectorAll<HTMLButtonElement>('.desktop-icon')];
+  const coarse = window.matchMedia('(pointer: coarse)');
+  const launch = (icon: HTMLButtonElement) =>
+    openApp(icon.dataset.openApp!, { select: icon.dataset.select, from: icon.querySelector('.app-art') });
+
+  for (const icon of icons) {
+    icon.addEventListener('click', (event) => {
+      event.stopPropagation();
+      icons.forEach((other) => other.classList.toggle('is-selected', other === icon));
+      if (coarse.matches) launch(icon);
+    });
+    icon.addEventListener('dblclick', () => launch(icon));
+    icon.addEventListener('keydown', (event) => event.key === 'Enter' && launch(icon));
+  }
+  document.addEventListener('click', () => icons.forEach((icon) => icon.classList.remove('is-selected')));
+</script>
+
+<style is:global>
+  .desktop-icons {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .desktop-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    width: 92px;
+    outline: none;
+  }
+
+  .desktop-icon .app-art {
+    width: 64px;
+    height: 64px;
+    padding: 3px;
+    border-radius: 9px;
+    filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.25));
+  }
+
+  .desktop-icon span {
+    max-width: 100%;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #fff;
+    text-shadow: 0 1px 2px rgb(0 0 0 / 0.6);
+  }
+
+  .desktop-icon.is-selected .app-art,
+  .desktop-icon:focus-visible .app-art {
+    background: rgb(0 0 0 / 0.22);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.25);
+  }
+
+  .desktop-icon.is-selected span,
+  .desktop-icon:focus-visible span {
+    background: var(--accent);
+    text-shadow: none;
+  }
+
+  @media (max-width: 899px) {
+    .desktop-icons {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,390 @@
+---
+import { education, jobs, profile, projects, skills } from '@/data/cv';
+import { tech } from '@/data/tech';
+import { formatPeriod, periodYears, slugify } from '@/lib/format';
+import AppFrame from '@/components/AppFrame.astro';
+
+const phone = profile.details.find((detail) => detail.label === 'Phone')!;
+
+// Everything the shell can print, computed at build time.
+const data = {
+  name: profile.name,
+  role: `${profile.role} · ${profile.subtitle}`,
+  about: profile.about,
+  status: profile.status.join(' · '),
+  location: profile.details.find((detail) => detail.label === 'Location')!.value,
+  email: profile.email,
+  phone: phone.value,
+  links: Object.fromEntries(profile.links.map((link) => [link.label.toLowerCase(), link.url])),
+  cv: profile.cv.url,
+  jobs: jobs.map((job) => ({
+    title: `${job.role}, ${job.company}`,
+    when: formatPeriod(job.period),
+    id: `note-${slugify(job.company)}`,
+  })),
+  education: education.map((diploma) => ({
+    title: `${diploma.title}, ${diploma.institution}`,
+    when: formatPeriod(diploma.period),
+  })),
+  projects: projects.map((project) => ({
+    name: project.name,
+    years: periodYears(project.period),
+    kind: project.categories[0],
+    id: `project-${slugify(project.name)}`,
+  })),
+  skills: skills.map((group) => ({ title: group.title, items: group.items.map((key) => tech[key].name) })),
+  stack: skills[0]!.items.slice(0, 6).map((key) => tech[key].name),
+  study: education[0]!,
+  job: jobs[0]!,
+};
+---
+
+<AppFrame id="terminal" name="Terminal" label="Terminal — riccardo">
+  <div class="main term-main">
+    <header class="toolbar term-toolbar" data-drag>
+      <span class="toolbar-title">riccardo — -zsh — 80×24</span>
+    </header>
+    <div class="pane term" role="log" aria-live="polite" aria-label="Terminal output" tabindex="-1">
+      <div class="term-output"></div>
+      <label class="term-line term-input-line">
+        <span class="term-prompt">riccardo@MacBook-Pro ~ %</span>
+        <input
+          class="term-input"
+          type="text"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          aria-label="Command"
+        />
+      </label>
+    </div>
+  </div>
+</AppFrame>
+
+<script type="application/json" id="terminal-data" set:html={JSON.stringify(data)} />
+
+<script>
+  import { openApp, closeApp } from '@/scripts/shell';
+
+  type Data = {
+    name: string;
+    role: string;
+    about: string;
+    status: string;
+    location: string;
+    email: string;
+    phone: string;
+    links: Record<string, string>;
+    cv: string;
+    jobs: { title: string; when: string; id: string }[];
+    education: { title: string; when: string }[];
+    projects: { name: string; years: string; kind: string; id: string }[];
+    skills: { title: string; items: string[] }[];
+    stack: string[];
+    study: { title: string; institution: string; period: { to: string | null } };
+    job: { role: string; company: string };
+  };
+
+  const data: Data = JSON.parse(document.getElementById('terminal-data')!.textContent!);
+  const app = document.getElementById('app-terminal')!;
+  const term = app.querySelector<HTMLElement>('.term')!;
+  const output = app.querySelector<HTMLElement>('.term-output')!;
+  const input = app.querySelector<HTMLInputElement>('.term-input')!;
+  const PROMPT = 'riccardo@MacBook-Pro ~ %';
+  const history: string[] = [];
+  let historyIndex = 0;
+
+  const esc = (text: string) =>
+    text.replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char]!);
+
+  const print = (html = '') => {
+    const line = document.createElement('div');
+    line.className = 'term-line';
+    line.innerHTML = html || '&nbsp;';
+    output.append(line);
+  };
+
+  const echo = (command: string) => print(`<span class="term-prompt">${PROMPT}</span> ${esc(command)}`);
+
+  const neofetch = () => {
+    const art = [
+      '        ▄▄▄▄▄▄▄        ',
+      '     ▄█▀▀     ▀▀█▄     ',
+      '   ▄█▀  ▄▄   ▄▄  ▀█▄   ',
+      '  ██   ████ ████   ██  ',
+      '  ██    ▀▀   ▀▀    ██  ',
+      '  ██  ▀▄       ▄▀  ██  ',
+      '   ▀█▄  ▀▀▀▀▀▀▀  ▄█▀   ',
+      '     ▀▀█▄▄▄▄▄▄▄█▀▀     ',
+    ];
+    const info = [
+      `<b class="c-green">riccardo</b>@<b class="c-green">MacBook-Pro</b>`,
+      '─────────────────────',
+      `<b class="c-blue">Role</b>: ${esc(data.job.role)} @ ${esc(data.job.company)}`,
+      `<b class="c-blue">Study</b>: ${esc(data.study.title)}, ${esc(data.study.institution)}`,
+      `<b class="c-blue">Location</b>: ${esc(data.location)}`,
+      `<b class="c-blue">Stack</b>: ${esc(data.stack.join(', '))}`,
+      `<b class="c-blue">Languages</b>: Italian, English (C1)`,
+      `<b class="c-blue">Status</b>: <span class="c-green">${esc(data.status)}</span>`,
+      '',
+      ['red', 'yellow', 'green', 'cyan', 'blue', 'magenta']
+        .map((c) => `<span class="block c-${c}">███</span>`)
+        .join(''),
+    ];
+    const rows = Math.max(art.length, info.length);
+    for (let i = 0; i < rows; i++) {
+      print(`<span class="c-green art">${esc(art[i] ?? ' '.repeat(23))}</span>  ${info[i] ?? ''}`);
+    }
+  };
+
+  const columns = (rows: [string, string][]) => {
+    const width = Math.max(...rows.map(([left]) => left.length)) + 3;
+    rows.forEach(([left, right]) => print(`${esc(left.padEnd(width))}<span class="c-dim">${esc(right)}</span>`));
+  };
+
+  const appTargets: Record<string, [string, string?]> = {
+    finder: ['finder'],
+    projects: ['finder'],
+    stack: ['finder', 'stack'],
+    notes: ['notes'],
+    experience: ['notes'],
+    contacts: ['contacts'],
+    mail: ['mail'],
+    preview: ['preview'],
+    resume: ['preview'],
+    résumé: ['preview'],
+    cv: ['preview'],
+  };
+
+  const commands: Record<string, (args: string[]) => void> = {
+    help: () => {
+      print('Commands:');
+      columns([
+        ['whoami', 'who I am'],
+        ['about', 'a few lines about me'],
+        ['experience', 'where I have worked'],
+        ['education', 'where I have studied'],
+        ['projects', 'things I have built'],
+        ['skills', 'languages and tools'],
+        ['contact', 'how to reach me'],
+        ['open <name>', 'github, linkedin, resume, projects, notes, mail…'],
+        ['neofetch', 'the summary from the top'],
+        ['clear', 'clear the screen (⌃L)'],
+        ['exit', 'close Terminal'],
+      ]);
+    },
+    whoami: () => print(`${esc(data.name)} — ${esc(data.role)}`),
+    about: () => print(esc(data.about)),
+    experience: () => columns(data.jobs.map((job) => [job.title, job.when])),
+    education: () => columns(data.education.map((item) => [item.title, item.when])),
+    projects: () => {
+      columns(data.projects.map((project) => [project.name, `${project.kind}, ${project.years}`]));
+      print('<span class="c-dim">Try: open projects</span>');
+    },
+    skills: () =>
+      data.skills.forEach((group) =>
+        print(`<b class="c-blue">${esc(group.title)}</b>: ${esc(group.items.join(', '))}`),
+      ),
+    contact: () =>
+      columns([
+        ['email', data.email],
+        ['phone', data.phone],
+        ...Object.entries(data.links).map(([name, url]) => [name, url] as [string, string]),
+      ]),
+    open: ([target = '']) => {
+      const key = target.toLowerCase();
+      if (data.links[key]) {
+        window.open(data.links[key], '_blank', 'noopener');
+        print(`<span class="c-dim">Opening ${esc(data.links[key])}</span>`);
+      } else if (appTargets[key]) {
+        const [id, select] = appTargets[key]!;
+        openApp(id, { select });
+      } else if (!key) {
+        print('usage: open github | linkedin | resume | projects | stack | notes | contacts | mail');
+      } else {
+        print(`The file /Users/riccardo/${esc(target)} does not exist.`);
+      }
+    },
+    ls: () => print('<b class="c-blue">Projects</b>   <b class="c-blue">Stack</b>   Résumé.pdf   about.md'),
+    cat: ([file = '']) => {
+      if (file === 'about.md') commands.about!([]);
+      else if (/r[eé]sum[eé]\.pdf/i.test(file)) print('cat: Résumé.pdf: binary file. Try: open resume');
+      else print(`cat: ${esc(file || '')}: No such file or directory`);
+    },
+    neofetch,
+    pwd: () => print('/Users/riccardo'),
+    date: () => print(esc(new Date().toString().replace(/ GMT.*/, ''))),
+    echo: (args) => print(esc(args.join(' '))),
+    history: () => history.forEach((entry, index) => print(`${String(index + 1).padStart(5)}  ${esc(entry)}`)),
+    sudo: () => print('riccardo is not in the sudoers file. This incident will be reported.'),
+    clear: () => output.replaceChildren(),
+    exit: () => {
+      print('<span class="c-dim">[Process completed]</span>');
+      setTimeout(() => closeApp('terminal'), 350);
+    },
+  };
+  commands.work = commands.experience!;
+  commands.stack = commands.skills!;
+
+  const run = (line: string) => {
+    echo(line);
+    const [name = '', ...args] = line.trim().split(/\s+/);
+    if (!name) return;
+    history.push(line.trim());
+    historyIndex = history.length;
+    const command = commands[name.toLowerCase()];
+    if (command) command(args);
+    else print(`zsh: command not found: ${esc(name)}`);
+  };
+
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      run(input.value);
+      input.value = '';
+      term.scrollTop = term.scrollHeight;
+    } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      historyIndex = Math.max(0, Math.min(history.length, historyIndex + (event.key === 'ArrowUp' ? -1 : 1)));
+      input.value = history[historyIndex] ?? '';
+    } else if (event.key === 'Tab') {
+      event.preventDefault();
+      const partial = input.value.trim().toLowerCase();
+      const match = Object.keys(commands).filter((name) => name.startsWith(partial));
+      if (partial && match.length === 1) input.value = `${match[0]} `;
+      else if (partial && match.length > 1) {
+        echo(input.value);
+        print(match.join('   '));
+      }
+    } else if (event.key === 'l' && event.ctrlKey) {
+      event.preventDefault();
+      commands.clear!([]);
+    }
+  });
+
+  // Clicking anywhere in the terminal focuses the prompt, unless text is being selected.
+  term.addEventListener('mouseup', () => {
+    if (!window.getSelection()?.toString()) input.focus({ preventScroll: true });
+  });
+
+  // Ready to type as soon as the window opens (not on phones: the keyboard would cover the output).
+  app.addEventListener('app:open', () => {
+    if (!window.matchMedia('(max-width: 899px)').matches) setTimeout(() => input.focus({ preventScroll: true }), 60);
+  });
+
+  const login = new Date().toString().slice(0, 24);
+  print(`<span class="c-dim">Last login: ${esc(login)} on ttys000</span>`);
+  echo('neofetch');
+  neofetch();
+  print();
+  print(`Type <b>help</b> to see what you can do here.`);
+</script>
+
+<style>
+  :global(.app-terminal) {
+    --content-bg: #1c1c1e;
+    --label: #e8e8ed;
+    --label-2: rgb(235 235 245 / 0.55);
+    --window-ring: rgb(0 0 0 / 0.8);
+    --tint: #34c759;
+    color-scheme: dark;
+  }
+
+  .term-toolbar {
+    justify-content: center;
+    height: 40px;
+    margin-top: 6px;
+  }
+
+  .term-toolbar .toolbar-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--label-2);
+  }
+
+  .term {
+    padding: 4px 14px 14px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #e8e8ed;
+    cursor: text;
+  }
+
+  .term-output :global(.term-line),
+  .term-line {
+    min-height: 1.45em;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .term-input-line {
+    display: flex;
+    gap: 0.6ch;
+  }
+
+  .term :global(.term-prompt) {
+    color: #e8e8ed;
+    font-weight: 600;
+  }
+
+  .term-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    caret-color: #e8e8ed;
+  }
+
+  .term :global(b) {
+    font-weight: 700;
+  }
+
+  .term :global(.art) {
+    white-space: pre;
+  }
+
+  .term :global(.c-green) {
+    color: #5fd38d;
+  }
+  .term :global(.c-blue) {
+    color: #6cb6ff;
+  }
+  .term :global(.c-red) {
+    color: #ff6b6b;
+  }
+  .term :global(.c-yellow) {
+    color: #ffd166;
+  }
+  .term :global(.c-cyan) {
+    color: #5ee6eb;
+  }
+  .term :global(.c-magenta) {
+    color: #e591ff;
+  }
+  .term :global(.c-dim) {
+    color: rgb(235 235 245 / 0.5);
+  }
+
+  .term :global(.block) {
+    letter-spacing: -0.1em;
+  }
+
+  @media (max-width: 899px) {
+    .term {
+      padding: 0 12px calc(40px + env(safe-area-inset-bottom));
+      font-size: 11px;
+    }
+
+    .term :global(.art) {
+      display: none;
+    }
+
+    .term-input {
+      font-size: 16px;
+    }
+  }
+</style>

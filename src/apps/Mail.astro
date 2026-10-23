@@ -1,0 +1,129 @@
+---
+import { profile } from '@/data/cv';
+import AppFrame from '@/components/AppFrame.astro';
+import Glyph from '@/components/Glyph.astro';
+---
+
+<AppFrame id="mail" name="Mail" label="New Message">
+  <form class="main compose" data-compose data-to={profile.email}>
+    <header class="toolbar" data-drag>
+      <span class="toolbar-title">New Message</span>
+      <span class="toolbar-spacer"></span>
+      <div class="tb-group">
+        <button class="tb-button send" type="submit" aria-label="Send">
+          <Glyph name="send" />
+        </button>
+      </div>
+    </header>
+    <div class="compose-fields">
+      <div class="compose-field">
+        <span class="secondary">To:</span>
+        <span class="recipient">{profile.name}</span>
+      </div>
+      <label class="compose-field">
+        <span class="secondary">Subject:</span>
+        <input name="subject" type="text" autocomplete="off" />
+      </label>
+    </div>
+    <textarea name="body" class="pane compose-body" aria-label="Message" placeholder={`Hi ${profile.firstName},`}
+    ></textarea>
+  </form>
+</AppFrame>
+
+<script>
+  import { notify } from '@/scripts/notify';
+
+  const form = document.querySelector<HTMLFormElement>('[data-compose]')!;
+
+  // There is no mail server behind this: "Send" hands the draft to the visitor's own mail app.
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const data = new FormData(form);
+    const params = new URLSearchParams();
+    const subject = String(data.get('subject') ?? '').trim();
+    const body = String(data.get('body') ?? '').trim();
+    if (subject) params.set('subject', subject);
+    if (body) params.set('body', body);
+    const query = params.toString().replace(/\+/g, '%20');
+    window.location.href = `mailto:${form.dataset.to}${query ? `?${query}` : ''}`;
+    notify({ title: 'Mail', body: 'Your draft is open in your mail app.', icon: 'send' });
+  });
+</script>
+
+<style>
+  .compose {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .compose-fields {
+    padding: 0 20px;
+  }
+
+  .compose-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+    border-bottom: 0.5px solid var(--separator);
+    font-size: 13px;
+  }
+
+  .compose-field input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: none;
+    font: inherit;
+    color: var(--label);
+  }
+
+  .recipient {
+    padding: 1px 8px;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .compose-body {
+    padding: 14px 20px;
+    border: 0;
+    outline: 0;
+    resize: none;
+    background: none;
+    font: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--label);
+  }
+
+  .compose-body::placeholder {
+    color: var(--label-3);
+  }
+
+  .send :global(.glyph) {
+    color: var(--accent);
+  }
+
+  @media (max-width: 899px) {
+    .compose-fields {
+      padding: 0 16px;
+    }
+
+    .compose-field,
+    .compose-field input,
+    .compose-body {
+      font-size: 17px;
+    }
+
+    .compose-field {
+      min-height: 46px;
+    }
+
+    .compose-body {
+      padding: 14px 16px;
+    }
+  }
+</style>

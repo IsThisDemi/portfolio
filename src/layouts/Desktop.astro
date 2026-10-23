@@ -1,11 +1,14 @@
 ---
 import { meta } from '@/data/cv';
+import DesktopIcons from '@/components/DesktopIcons.astro';
 import Dock from '@/components/Dock.astro';
+import HomeScreen from '@/components/HomeScreen.astro';
 import IconSprite from '@/components/IconSprite.astro';
 import MenuBar from '@/components/MenuBar.astro';
 import Spotlight from '@/components/Spotlight.astro';
 import Wallpaper from '@/components/Wallpaper.astro';
 import '@/styles/global.css';
+import '@/styles/apps.css';
 ---
 
 <!doctype html>
@@ -45,17 +48,18 @@ import '@/styles/global.css';
   </head>
   <body>
     <IconSprite />
-    <a class="skip-link" href="#about">Skip to content</a>
     <Wallpaper />
     <MenuBar />
     <main class="desktop">
+      <DesktopIcons />
       <slot />
     </main>
+    <HomeScreen />
     <Dock />
     <Spotlight />
 
     <script>
-      import '@/scripts/windows';
+      import '@/scripts/shell';
       import { initLiquidGlass } from '@/scripts/liquid-glass';
 
       initLiquidGlass();
@@ -64,81 +68,62 @@ import '@/styles/global.css';
 </html>
 
 <style is:global>
+  .js body {
+    height: 100dvh;
+    overflow: hidden;
+  }
+
   .desktop {
-    display: grid;
-    grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
-    align-items: start;
-    gap: 28px;
-    width: 100%;
-    max-width: 1220px;
-    margin: 0 auto;
-    padding: calc(var(--menubar-h) + 32px) 28px 140px;
+    --dock-space: 92px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: calc(var(--menubar-h) + 20px) 20px 120px;
   }
 
-  .desktop > .window:not(.about-window, .terminal-window) {
-    grid-column: 1 / -1;
-  }
-
-  .terminal-window {
-    align-self: stretch;
-    margin-top: 48px;
-  }
-
-  @media (max-width: 1023px) {
-    .desktop {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 22px;
-      max-width: 720px;
-      padding-inline: 20px;
-    }
-
-    .terminal-window {
-      margin-top: 0;
-    }
-  }
-
-  @media (max-width: 767px) {
-    .desktop {
-      gap: 16px;
-      padding: calc(var(--menubar-h) + env(safe-area-inset-top) + 18px) 10px calc(110px + env(safe-area-inset-bottom));
-    }
-  }
-
-  .skip-link {
+  .js .desktop {
     position: fixed;
-    top: 8px;
-    left: 8px;
-    z-index: 100;
-    padding: 8px 14px;
-    border-radius: 999px;
-    background: var(--accent);
-    color: var(--accent-ink);
-    font-weight: 600;
-    transform: translateY(-200%);
+    inset: var(--menubar-h) 0 0;
+    display: block;
+    padding: 0;
   }
 
-  .skip-link:focus {
-    transform: none;
+  /* On a phone the apps open above the home screen; the empty container must not eat taps. */
+  @media (max-width: 899px) {
+    .js .desktop {
+      inset: 0;
+      z-index: 80;
+      pointer-events: none;
+    }
+
+    .js .desktop > .app,
+    .js .desktop dialog {
+      pointer-events: auto;
+    }
   }
 
-  .theme-transition,
-  .theme-transition * {
-    transition:
-      background-color 0.4s ease,
-      color 0.4s ease,
-      box-shadow 0.4s ease !important;
+  .is-dragging,
+  .is-dragging * {
+    cursor: default !important;
+    user-select: none !important;
+  }
+
+  .is-resizing,
+  .is-resizing * {
+    cursor: nwse-resize !important;
+    user-select: none !important;
   }
 
   /* ── Notifications (src/scripts/notify.ts) ── */
   .notifications {
     position: fixed;
-    top: calc(var(--menubar-h) + 10px);
-    right: 12px;
+    top: calc(var(--menubar-h) + 8px);
+    right: 10px;
     z-index: 95;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    width: min(350px, calc(100vw - 24px));
+    width: min(350px, calc(100vw - 20px));
     pointer-events: none;
   }
 
@@ -146,12 +131,19 @@ import '@/styles/global.css';
     position: relative;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    border-radius: 22px;
+    gap: 11px;
+    padding: 11px 14px;
+    border-radius: 20px;
+    color: var(--label);
+    background: var(--popover-bg);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    backdrop-filter: blur(40px) saturate(180%);
+    box-shadow:
+      0 0 0 0.5px var(--window-ring),
+      0 12px 30px -10px rgb(0 0 0 / 0.35);
     pointer-events: auto;
     cursor: default;
-    animation: notification-in 0.55s var(--spring) both;
+    animation: notification-in 0.5s var(--spring) both;
   }
 
   .notification.is-leaving {
@@ -176,29 +168,29 @@ import '@/styles/global.css';
     display: grid;
     place-items: center;
     flex: none;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
     background: var(--accent);
-    color: var(--accent-ink);
+    color: #fff;
   }
 
   .notification-icon svg {
-    width: 20px;
-    height: 20px;
+    width: 19px;
+    height: 19px;
   }
 
   .notification-text {
     display: flex;
     flex-direction: column;
-    min-width: 0;
     flex: 1;
-    line-height: 1.3;
+    min-width: 0;
     font-size: 13px;
+    line-height: 1.3;
   }
 
   .notification-text span {
-    color: var(--text-2);
+    color: var(--label-2);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -207,15 +199,19 @@ import '@/styles/global.css';
   .notification-time {
     align-self: flex-start;
     font-size: 11.5px;
-    color: var(--text-3);
+    color: var(--label-3);
   }
 
-  @media (max-width: 767px) {
+  @media (max-width: 899px) {
     .notifications {
-      top: calc(var(--menubar-h) + env(safe-area-inset-top) + 8px);
-      left: 12px;
-      right: 12px;
+      top: calc(env(safe-area-inset-top) + 8px);
+      left: 8px;
+      right: 8px;
       width: auto;
+    }
+
+    .notification {
+      border-radius: 24px;
     }
   }
 </style>

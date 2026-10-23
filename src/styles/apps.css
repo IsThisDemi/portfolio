@@ -1,0 +1,425 @@
+/*
+ * Building blocks shared by the apps, after macOS Tahoe: floating sidebar, toolbar of glass
+ * capsules, search capsule, lists with solid selection, status bar. On a phone the same
+ * markup becomes iOS navigation bars and inset grouped lists.
+ */
+
+:root {
+  --label: #1d1d1f;
+  --label-2: rgb(60 60 67 / 0.66);
+  --label-3: rgb(60 60 67 / 0.45);
+  --separator: rgb(60 60 67 / 0.14);
+  --content-bg: #ffffff;
+  --sidebar-bg: rgb(244 244 246 / 0.94);
+  --sidebar-selected: rgb(0 0 0 / 0.075);
+  --window-ring: rgb(0 0 0 / 0.16);
+  --light-off: #d6d6da;
+  --control-bg: #ffffff;
+  --control-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.06), 0 2px 6px -1px rgb(0 0 0 / 0.1), 0 6px 16px -6px rgb(0 0 0 / 0.08);
+  --control-active: rgb(0 0 0 / 0.07);
+  --field-bg: rgb(118 118 128 / 0.12);
+  --row-inactive: rgb(0 0 0 / 0.08);
+  --ios-bg: #f2f2f7;
+  --ios-card: #ffffff;
+}
+
+:root.dark {
+  --label: #f5f5f7;
+  --label-2: rgb(235 235 245 / 0.62);
+  --label-3: rgb(235 235 245 / 0.38);
+  --separator: rgb(255 255 255 / 0.1);
+  --content-bg: #1e1e20;
+  --sidebar-bg: rgb(44 44 48 / 0.94);
+  --sidebar-selected: rgb(255 255 255 / 0.1);
+  --window-ring: rgb(0 0 0 / 0.75);
+  --light-off: #4b4b50;
+  --control-bg: #323236;
+  --control-shadow:
+    0 0 0 0.5px rgb(255 255 255 / 0.08), 0 2px 6px -1px rgb(0 0 0 / 0.4), 0 6px 16px -6px rgb(0 0 0 / 0.3);
+  --control-active: rgb(255 255 255 / 0.12);
+  --field-bg: rgb(118 118 128 / 0.24);
+  --row-inactive: rgb(255 255 255 / 0.1);
+  --ios-bg: #000000;
+  --ios-card: #1c1c1e;
+}
+
+/* ───────── Layout ───────── */
+.app .main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+.app .pane {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.app .sidebar {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  width: var(--sidebar-w, 200px);
+  margin: 8px 0 8px 8px;
+  padding: 52px 8px 10px;
+  border-radius: 19px;
+  background: var(--sidebar-bg);
+  box-shadow:
+    0 0 0 0.5px var(--separator),
+    0 1px 4px -1px rgb(0 0 0 / 0.06);
+  overflow: auto;
+}
+
+.sidebar-heading {
+  padding: 12px 10px 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--label-3);
+}
+
+.sidebar-heading:first-child {
+  padding-top: 2px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--label);
+  text-align: left;
+}
+
+.sidebar-item .glyph {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  color: var(--tint);
+}
+
+.sidebar-item .count {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--label-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.sidebar-item:hover {
+  background: color-mix(in srgb, var(--sidebar-selected) 55%, transparent);
+}
+
+.sidebar-item[aria-current='true'] {
+  background: var(--sidebar-selected);
+  color: var(--tint);
+}
+
+.tag-dot {
+  flex: none;
+  width: 11px;
+  height: 11px;
+  margin: 0 3px;
+  border-radius: 50%;
+  background: var(--dot);
+  box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0.15);
+}
+
+/* ───────── Toolbar ───────── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  height: 52px;
+  padding: 0 10px 0 14px;
+  margin-top: 8px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.app:not(:has(.sidebar)) .toolbar,
+.toolbar.after-lights {
+  padding-left: calc(var(--lights-w) + 22px);
+}
+
+.toolbar-title {
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toolbar-spacer {
+  flex: 1;
+}
+
+.tb-group {
+  display: flex;
+  align-items: center;
+  flex: none;
+  height: 36px;
+  padding: 0 3px;
+  border-radius: 999px;
+  background: var(--control-bg);
+  box-shadow: var(--control-shadow);
+}
+
+.tb-button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 30px;
+  border-radius: 999px;
+  color: var(--label-2);
+  transition: background-color 0.15s;
+}
+
+.tb-button .glyph {
+  width: 18px;
+  height: 18px;
+}
+
+.tb-button:hover:not(:disabled) {
+  color: var(--label);
+}
+
+.tb-button.is-active,
+.tb-button:active:not(:disabled) {
+  background: var(--control-active);
+  color: var(--label);
+}
+
+.tb-button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.tb-button.text {
+  width: auto;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--label);
+  gap: 6px;
+  display: flex;
+}
+
+.tb-button.prominent {
+  background: var(--tint);
+  color: #fff;
+}
+
+.search-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  width: var(--search-w, 200px);
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--field-bg);
+  color: var(--label-2);
+}
+
+.search-field .glyph {
+  flex: none;
+  width: 15px;
+  height: 15px;
+}
+
+.search-field input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  color: var(--label);
+}
+
+.search-field input::placeholder {
+  color: var(--label-2);
+}
+
+.search-field:focus-within {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+/* ───────── Lists and selection ───────── */
+.row {
+  display: block;
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.row[aria-selected='true'] {
+  background: var(--tint);
+  color: #fff;
+}
+
+.app:not(.is-focused) .row[aria-selected='true'] {
+  background: var(--row-inactive);
+  color: var(--label);
+}
+
+.statusbar {
+  flex: none;
+  padding: 6px 12px 8px;
+  font-size: 11px;
+  color: var(--label-2);
+  text-align: center;
+  border-top: 0.5px solid var(--separator);
+}
+
+.secondary {
+  color: var(--label-2);
+}
+
+.tertiary {
+  color: var(--label-3);
+}
+
+/* Small tech logo on a white plate. */
+.logo-tile {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: var(--size, 20px);
+  height: var(--size, 20px);
+  border-radius: calc(var(--size, 20px) * 0.24);
+  background: #fff;
+  color: #1d1d1f;
+  font-size: calc(var(--size, 20px) * 0.62);
+  box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.12);
+}
+
+/* ───────── Phone ───────── */
+.ios-only {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .mac-only {
+    display: none !important;
+  }
+
+  .ios-only {
+    display: revert;
+  }
+
+  .app .sidebar {
+    display: none;
+  }
+
+  .app {
+    font-size: 15px;
+  }
+
+  .toolbar,
+  .app:not(:has(.sidebar)) .toolbar,
+  .toolbar.after-lights {
+    height: 52px;
+    margin: 0;
+    padding: 0 14px;
+  }
+
+  .toolbar-title {
+    font-size: 17px;
+    font-weight: 600;
+  }
+
+  .tb-group {
+    height: 44px;
+    padding: 0 4px;
+    background: var(--glass-tint-strong);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+  }
+
+  .tb-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .tb-button .glyph {
+    width: 21px;
+    height: 21px;
+    color: var(--tint);
+  }
+
+  .ios-large-title {
+    display: block;
+    padding: 2px 20px 10px;
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  .search-field {
+    width: auto;
+    height: 38px;
+    margin: 0 16px 12px;
+    border-radius: 12px;
+    font-size: 17px;
+  }
+
+  .search-field input {
+    font-size: 17px;
+  }
+
+  /* Inset grouped list. */
+  .ios-group {
+    margin: 0 16px 22px;
+    border-radius: 14px;
+    background: var(--ios-card);
+    overflow: hidden;
+  }
+
+  .ios-group-title {
+    margin: 0 32px 7px;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: var(--label-2);
+  }
+
+  .row {
+    padding: 11px 16px;
+    border-radius: 0;
+    font-size: 17px;
+  }
+
+  .row + .row {
+    box-shadow:
+      inset 16px 0.5px 0 var(--ios-card),
+      inset 0 0.5px 0 var(--separator);
+  }
+
+  .row[aria-selected='true'],
+  .app:not(.is-focused) .row[aria-selected='true'] {
+    background: none;
+    color: inherit;
+  }
+
+  .row:active {
+    background: var(--control-active) !important;
+  }
+
+  .statusbar {
+    display: none;
+  }
+}

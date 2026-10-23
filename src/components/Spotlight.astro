@@ -1,89 +1,90 @@
 ---
-import { education, jobs, profile, projects, sections, skills } from '@/data/cv';
+import { education, jobs, profile, projects, skills } from '@/data/cv';
+import { apps } from '@/data/apps';
 import { tech } from '@/data/tech';
 import { slugify } from '@/lib/format';
 import { iconSvg } from '@/lib/icon';
+import { getImage } from 'astro:assets';
 
 interface Entry {
   title: string;
   subtitle: string;
   kind: string;
-  /** Window to focus, or an element id inside it. */
-  target?: string;
+  app?: string;
+  select?: string;
   url?: string;
+  /** Image URL, or inline SVG markup. */
   icon: string;
   keywords?: string;
 }
 
-const svg = (name: string) => iconSvg(name);
+const thumb = async (src: ImageMetadata) => (await getImage({ src, width: 64, height: 64, format: 'webp' })).src;
+const glyph = (name: string) => iconSvg(name);
 
 const entries: Entry[] = [
-  ...sections.map((section) => ({
-    title: section.title,
-    subtitle: 'Window',
-    kind: 'Windows',
-    target: section.id,
-    icon: svg(section.icon),
+  ...apps.map((app) => ({
+    title: app.name,
+    subtitle: 'Application',
+    kind: 'Applications',
+    app: app.id,
+    icon: `art:${app.art}`,
   })),
-  ...jobs.map((job) => ({
-    title: `${job.role} · ${job.company}`,
-    subtitle: job.place,
-    kind: 'Experience',
-    target: `job-${slugify(job.company)}`,
-    icon: svg('fa6-solid:briefcase'),
-    keywords: job.stack.map((key) => tech[key].name).join(' '),
-  })),
-  ...projects.map((project) => ({
-    title: project.name,
-    subtitle: project.tagline,
-    kind: 'Projects',
-    target: `project-${slugify(project.name)}`,
-    icon: svg('fa6-solid:rocket'),
-    keywords: [...project.stack.map((key) => tech[key].name), ...project.categories].join(' '),
-  })),
-  ...education.map((diploma) => ({
-    title: diploma.title,
-    subtitle: diploma.institution,
-    kind: 'Education',
-    target: 'education',
-    icon: svg('fa6-solid:graduation-cap'),
-  })),
+  ...(await Promise.all(
+    projects.map(async (project) => ({
+      title: project.name,
+      subtitle: `${project.categories[0]} — Finder`,
+      kind: 'Projects',
+      app: 'finder',
+      select: `project-${slugify(project.name)}`,
+      icon: await thumb(project.icon),
+      keywords: [...project.stack.map((key) => tech[key].name), ...project.categories, project.description].join(' '),
+    })),
+  )),
+  ...(await Promise.all(
+    jobs.map(async (job) => ({
+      title: `${job.role} at ${job.company}`,
+      subtitle: 'Notes',
+      kind: 'Experience',
+      app: 'notes',
+      select: `note-${slugify(job.company)}`,
+      icon: await thumb(job.logo),
+      keywords: [...job.stack.map((key) => tech[key].name), ...job.highlights].join(' '),
+    })),
+  )),
+  ...(await Promise.all(
+    education.map(async (diploma) => ({
+      title: diploma.title,
+      subtitle: `${diploma.institution} — Notes`,
+      kind: 'Education',
+      app: 'notes',
+      select: `note-${slugify(diploma.title)}`,
+      icon: await thumb(diploma.logo),
+    })),
+  )),
   ...skills.flatMap((group) =>
     group.items.map((key) => ({
       title: tech[key].name,
-      subtitle: group.title,
-      kind: 'Skills',
-      target: 'skills',
+      subtitle: `${group.title} — Stack`,
+      kind: 'Stack',
+      app: 'finder',
+      select: 'stack',
       icon: iconSvg(tech[key].icon),
     })),
   ),
   ...profile.links.map((link) => ({
     title: link.label,
-    subtitle: link.url.replace(/^https?:\/\//, ''),
+    subtitle: link.url.replace(/^https?:\/\/(www\.)?/, ''),
     kind: 'Links',
     url: link.url,
-    icon: svg(link.icon),
+    icon: glyph(link.icon),
   })),
-  {
-    title: 'Download CV',
-    subtitle: 'PDF',
-    kind: 'Links',
-    url: profile.cv.url,
-    icon: svg('fa6-solid:file-arrow-down'),
-  },
-  {
-    title: `Email ${profile.firstName}`,
-    subtitle: profile.email,
-    kind: 'Links',
-    url: `mailto:${profile.email}`,
-    icon: svg('fa6-solid:envelope'),
-  },
+  { title: 'Résumé.pdf', subtitle: 'PDF document', kind: 'Documents', app: 'preview', icon: 'art:pdf' },
 ];
 ---
 
 <div class="spotlight" hidden>
   <div class="spotlight-scrim"></div>
-  <div class="spotlight-panel glass glass-strong" role="dialog" aria-modal="true" aria-label="Spotlight Search">
+  <div class="spotlight-panel" role="dialog" aria-modal="true" aria-label="Spotlight">
     <label class="spotlight-field">
       <svg viewBox="0 0 24 24" aria-hidden="true"
         ><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L21 21"></path></svg
@@ -98,7 +99,6 @@ const entries: Entry[] = [
         aria-controls="spotlight-results"
         aria-autocomplete="list"
       />
-      <kbd>esc</kbd>
     </label>
     <ul class="spotlight-results" id="spotlight-results" role="listbox"></ul>
   </div>
@@ -107,13 +107,14 @@ const entries: Entry[] = [
 <script type="application/json" id="spotlight-index" set:html={JSON.stringify(entries)} />
 
 <script>
-  import { focusWindow } from '@/scripts/windows';
+  import { openApp } from '@/scripts/shell';
 
   interface Entry {
     title: string;
     subtitle: string;
     kind: string;
-    target?: string;
+    app?: string;
+    select?: string;
     url?: string;
     icon: string;
     keywords?: string;
@@ -123,41 +124,56 @@ const entries: Entry[] = [
   const input = root.querySelector('input')!;
   const list = root.querySelector<HTMLUListElement>('.spotlight-results')!;
   const entries: Entry[] = JSON.parse(document.getElementById('spotlight-index')!.textContent!);
-  const SUGGESTED = ['Windows', 'Links'];
 
   let results: Entry[] = [];
   let selected = 0;
-  let lastFocus: Element | null = null;
 
   const score = (entry: Entry, query: string) => {
     const title = entry.title.toLowerCase();
-    if (title.startsWith(query)) return 3;
-    if (title.split(/[\s·]+/).some((word) => word.startsWith(query))) return 2;
-    const haystack = `${title} ${entry.subtitle} ${entry.keywords ?? ''}`.toLowerCase();
-    return haystack.includes(query) ? 1 : 0;
+    if (title.startsWith(query)) return 4;
+    if (title.split(/[\s·]+/).some((word) => word.startsWith(query))) return 3;
+    if (title.includes(query)) return 2;
+    return `${entry.subtitle} ${entry.keywords ?? ''}`.toLowerCase().includes(query) ? 1 : 0;
+  };
+
+  const iconHtml = (icon: string) => {
+    if (icon.startsWith('art:')) {
+      // Clone a visible copy: its gradients are referenced by id and must be rendered somewhere.
+      const art = [...document.querySelectorAll<SVGElement>(`.app-art[data-art="${icon.slice(4)}"]`)].find(
+        (candidate) => candidate.getBoundingClientRect().width > 0,
+      );
+      return art ? art.outerHTML : '';
+    }
+    if (icon.startsWith('<svg')) return `<span class="spotlight-glyph">${icon}</span>`;
+    return `<img src="${icon}" alt="" />`;
   };
 
   const render = () => {
     const query = input.value.trim().toLowerCase();
-    results = query
-      ? entries
-          .map((entry) => ({ entry, score: score(entry, query) }))
-          .filter((item) => item.score > 0)
-          .sort((a, b) => b.score - a.score)
-          .slice(0, 9)
-          .map((item) => item.entry)
-      : entries.filter((entry) => SUGGESTED.includes(entry.kind));
-    selected = 0;
+    list.replaceChildren();
+    root.classList.toggle('has-query', !!query);
+    if (!query) {
+      results = [];
+      return;
+    }
+    results = entries
+      .map((entry) => ({ entry, score: score(entry, query) }))
+      .filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 10)
+      .map((item) => item.entry);
 
-    list.innerHTML = '';
     if (!results.length) {
       const empty = document.createElement('li');
       empty.className = 'spotlight-empty';
-      empty.textContent = 'No results';
+      empty.textContent = 'No Results';
       list.append(empty);
       return;
     }
 
+    // Group by kind, keeping the order of the best match in each group.
+    const kinds = [...new Set(results.map((entry) => entry.kind))];
+    results = kinds.flatMap((kind) => results.filter((entry) => entry.kind === kind));
     let lastKind = '';
     results.forEach((entry, index) => {
       if (entry.kind !== lastKind) {
@@ -165,14 +181,14 @@ const entries: Entry[] = [
         const heading = document.createElement('li');
         heading.className = 'spotlight-kind';
         heading.setAttribute('role', 'presentation');
-        heading.textContent = query ? entry.kind : `Suggested · ${entry.kind}`;
+        heading.textContent = entry.kind;
         list.append(heading);
       }
       const item = document.createElement('li');
       item.className = 'spotlight-item';
       item.id = `spotlight-option-${index}`;
       item.setAttribute('role', 'option');
-      item.innerHTML = `<span class="spotlight-icon">${entry.icon}</span><span class="spotlight-text"><strong></strong><span></span></span>`;
+      item.innerHTML = `<span class="spotlight-icon">${iconHtml(entry.icon)}</span><span class="spotlight-text"><strong></strong><span></span></span>`;
       item.querySelector('strong')!.textContent = entry.title;
       item.querySelector('.spotlight-text span')!.textContent = entry.subtitle;
       item.addEventListener('pointermove', () => select(index));
@@ -193,27 +209,12 @@ const entries: Entry[] = [
 
   const choose = (entry: Entry) => {
     close();
-    if (entry.url) {
-      if (entry.url.startsWith('http')) window.open(entry.url, '_blank', 'noopener');
-      else window.location.href = entry.url;
-      return;
-    }
-    const element = document.getElementById(entry.target!);
-    const win = element?.closest<HTMLElement>('.window[data-window]');
-    if (!win) return;
-    focusWindow(win.dataset.window!).then(() => {
-      if (element !== win) {
-        element!.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        element!.classList.remove('is-highlighted');
-        void element!.offsetWidth;
-        element!.classList.add('is-highlighted');
-      }
-    });
+    if (entry.url) window.open(entry.url, '_blank', 'noopener');
+    else if (entry.app) openApp(entry.app, { select: entry.select });
   };
 
   const open = () => {
     if (!root.hidden) return;
-    lastFocus = document.activeElement;
     root.hidden = false;
     input.value = '';
     render();
@@ -226,19 +227,17 @@ const entries: Entry[] = [
     setTimeout(() => {
       root.hidden = true;
       root.classList.remove('is-closing');
-    }, 150);
-    (lastFocus as HTMLElement | null)?.focus?.();
+    }, 140);
   };
 
   input.addEventListener('input', render);
   input.addEventListener('keydown', (event) => {
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault();
-      if (!results.length) return;
-      select((selected + (event.key === 'ArrowDown' ? 1 : -1) + results.length) % results.length);
+      if (results.length) select((selected + (event.key === 'ArrowDown' ? 1 : -1) + results.length) % results.length);
     } else if (event.key === 'Enter' && results[selected]) {
       event.preventDefault();
-      choose(results[selected]);
+      choose(results[selected]!);
     } else if (event.key === 'Escape') {
       event.preventDefault();
       close();
@@ -248,13 +247,9 @@ const entries: Entry[] = [
 
   document.addEventListener('spotlight:open', open);
   document.addEventListener('keydown', (event) => {
-    const typing = (event.target as Element).closest('input, textarea, [contenteditable]');
     if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
       event.preventDefault();
       root.hidden ? open() : close();
-    } else if (event.key === '/' && !typing) {
-      event.preventDefault();
-      open();
     }
   });
 </script>
@@ -269,51 +264,54 @@ const entries: Entry[] = [
   .spotlight-scrim {
     position: absolute;
     inset: 0;
-    background: rgb(0 0 0 / 0.12);
-    animation: fade-in 0.2s ease;
   }
 
   .spotlight-panel {
     position: absolute;
-    top: min(18vh, 160px);
+    top: 22vh;
     left: 50%;
-    width: min(640px, calc(100vw - 24px));
-    border-radius: 26px;
-    overflow: hidden;
+    width: min(680px, calc(100vw - 24px));
     transform: translateX(-50%);
-    animation: spotlight-in 0.38s var(--spring) both;
-    --glass-blur: 36px;
+    animation: spotlight-in 0.28s var(--spring) both;
   }
 
   .spotlight.is-closing .spotlight-panel {
-    animation: spotlight-out 0.15s ease-in both;
-  }
-
-  .spotlight.is-closing .spotlight-scrim {
-    opacity: 0;
-    transition: opacity 0.15s;
+    animation: spotlight-out 0.14s ease-in both;
   }
 
   @keyframes spotlight-in {
     from {
       opacity: 0;
-      transform: translateX(-50%) scale(0.94);
+      transform: translateX(-50%) scale(0.96);
     }
   }
 
   @keyframes spotlight-out {
     to {
       opacity: 0;
-      transform: translateX(-50%) scale(0.97);
+      transform: translateX(-50%) scale(0.98);
     }
+  }
+
+  .spotlight-field,
+  .spotlight-results {
+    color: var(--label);
+    background: var(--popover-bg);
+    -webkit-backdrop-filter: blur(50px) saturate(180%);
+    backdrop-filter: blur(50px) saturate(180%);
+    box-shadow:
+      0 0 0 0.5px var(--window-ring),
+      inset 0 0.5px 0 rgb(255 255 255 / 0.3),
+      0 20px 50px -14px rgb(0 0 0 / 0.45);
   }
 
   .spotlight-field {
     display: flex;
     align-items: center;
     gap: 12px;
-    height: 60px;
-    padding: 0 18px;
+    height: 56px;
+    padding: 0 20px;
+    border-radius: 999px;
   }
 
   .spotlight-field svg {
@@ -321,7 +319,7 @@ const entries: Entry[] = [
     height: 22px;
     flex: none;
     fill: none;
-    stroke: var(--text-2);
+    stroke: var(--label-2);
     stroke-width: 2;
     stroke-linecap: round;
   }
@@ -333,9 +331,8 @@ const entries: Entry[] = [
     outline: 0;
     background: none;
     font: inherit;
-    font-size: 21px;
-    font-weight: 400;
-    color: var(--text);
+    font-size: 22px;
+    color: var(--label);
     -webkit-appearance: none;
     appearance: none;
   }
@@ -345,57 +342,72 @@ const entries: Entry[] = [
   }
 
   .spotlight-field input::placeholder {
-    color: var(--text-3);
-  }
-
-  .spotlight-field kbd {
-    padding: 2px 7px;
-    border-radius: 6px;
-    font: inherit;
-    font-size: 11px;
-    color: var(--text-3);
-    box-shadow: inset 0 0 0 1px var(--sep);
+    color: var(--label-3);
   }
 
   .spotlight-results {
-    max-height: min(420px, 55vh);
+    max-height: min(440px, 52vh);
+    margin-top: 10px;
+    padding: 6px;
+    border-radius: 22px;
     overflow-y: auto;
-    padding: 0 8px 8px;
-    border-top: 0.5px solid var(--sep);
+  }
+
+  .spotlight:not(.has-query) .spotlight-results {
+    display: none;
   }
 
   .spotlight-kind {
-    padding: 10px 10px 4px;
+    padding: 8px 12px 3px;
     font-size: 11.5px;
     font-weight: 600;
-    color: var(--text-3);
+    color: var(--label-3);
   }
 
   .spotlight-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 7px 10px;
+    gap: 11px;
+    padding: 5px 10px;
     border-radius: 12px;
-    cursor: pointer;
+    cursor: default;
   }
 
   .spotlight-item[aria-selected='true'] {
     background: var(--accent);
-    color: var(--accent-ink);
+    color: #fff;
   }
 
   .spotlight-icon {
     display: grid;
     place-items: center;
     flex: none;
+    width: 32px;
+    height: 32px;
+  }
+
+  .spotlight-icon img {
     width: 30px;
     height: 30px;
-    border-radius: 8px;
-    font-size: 16px;
-    background: var(--tile-bg);
-    color: #3a3a3c;
-    box-shadow: 0 0 0 0.5px var(--tile-ring);
+    border-radius: 7px;
+    object-fit: cover;
+  }
+
+  .spotlight-icon .app-art {
+    width: 32px;
+    height: 32px;
+  }
+
+  .spotlight-glyph {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: #fff;
+    color: #1d1d1f;
+    font-size: 17px;
+    box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.12);
   }
 
   .spotlight-text {
@@ -407,34 +419,43 @@ const entries: Entry[] = [
 
   .spotlight-text strong {
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 500;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .spotlight-text span {
-    font-size: 12.5px;
-    opacity: 0.7;
+    font-size: 12px;
+    opacity: 0.65;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .spotlight-empty {
-    padding: 22px;
+    padding: 18px;
     text-align: center;
-    color: var(--text-3);
+    color: var(--label-3);
   }
 
-  .is-highlighted {
-    animation: highlight 1.6s ease;
-  }
+  @media (max-width: 899px) {
+    .spotlight-scrim {
+      background: rgb(0 0 0 / 0.35);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+    }
 
-  @keyframes highlight {
-    0%,
-    40% {
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 70%, transparent);
+    .spotlight-panel {
+      top: calc(env(safe-area-inset-top) + 56px);
+    }
+
+    .spotlight-field {
+      height: 48px;
+    }
+
+    .spotlight-field input {
+      font-size: 18px;
     }
   }
 </style>

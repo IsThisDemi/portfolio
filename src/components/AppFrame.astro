@@ -1,0 +1,240 @@
+---
+/**
+ * The frame every app lives in. On a desktop-sized screen it is a macOS window (traffic lights,
+ * drag by its toolbar, resize from the corner); on a phone it is a full-screen iOS app with a
+ * home indicator. The app itself provides the layout: `.sidebar`, `.main`, `.toolbar`, `.pane`.
+ */
+interface Props {
+  id: string;
+  name: string;
+  /** Accessible name of the window, e.g. the document it shows. */
+  label?: string;
+  /** Tint used by the app for selection and links (Notes is yellow, for instance). */
+  tint?: string;
+  class?: string;
+}
+
+const { id, name, label, tint, class: className } = Astro.props;
+---
+
+<section
+  class:list={['app', `app-${id}`, className]}
+  id={`app-${id}`}
+  data-app={id}
+  data-name={name}
+  aria-label={label ?? name}
+  style={tint ? `--tint: ${tint}` : undefined}
+>
+  <div class="window-lights" role="group" aria-label="Window controls">
+    <button class="light light-close" data-window-action="close" aria-label={`Close ${name}`}>
+      <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3.6 3.6l4.8 4.8m0-4.8L3.6 8.4"></path></svg>
+    </button>
+    <button class="light light-minimize" data-window-action="minimize" aria-label={`Minimize ${name}`}>
+      <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.9 6h6.2"></path></svg>
+    </button>
+    <button class="light light-zoom" data-window-action="zoom" aria-label={`Zoom ${name}`}>
+      <svg viewBox="0 0 12 12" aria-hidden="true"><path class="fill" d="M3.4 4.5v4.1h4.1zM8.6 7.5V3.4H4.5z"></path></svg
+      >
+    </button>
+  </div>
+
+  <slot />
+
+  <div class="window-resize" aria-hidden="true"></div>
+  <button class="home-indicator" data-window-action="close" aria-label={`Close ${name}`}><span></span></button>
+</section>
+
+<style is:global>
+  /* ───────── Shared: both macOS and iOS ───────── */
+  .app {
+    --tint: var(--accent);
+    --lights-w: 76px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    color: var(--label);
+    background: var(--content-bg);
+    font-size: 13px;
+    line-height: 1.38;
+    text-align: left;
+    overflow: clip;
+  }
+
+  .app ::selection {
+    background: color-mix(in srgb, var(--tint) 30%, transparent);
+  }
+
+  .home-indicator,
+  .window-resize {
+    display: none;
+  }
+
+  /* ───────── macOS window ───────── */
+  @media (min-width: 900px) {
+    .app {
+      position: relative;
+      flex-direction: row;
+      border-radius: 26px;
+      box-shadow:
+        0 0 0 0.5px var(--window-ring),
+        0 26px 70px -12px rgb(0 0 0 / 0.42),
+        0 10px 24px -8px rgb(0 0 0 / 0.22);
+    }
+
+    .js .app {
+      /* left/top, not transform: transform is kept free for open/close animations. */
+      position: absolute;
+      left: var(--x, 80px);
+      top: var(--y, 40px);
+      width: var(--w, 720px);
+      height: var(--h, 520px);
+      z-index: var(--z, 1);
+      display: none;
+    }
+
+    .js .app.is-open {
+      display: flex;
+    }
+
+    .js .app.is-minimized {
+      display: none;
+    }
+
+    .js .app.is-zoomed {
+      --x: 8px !important;
+      --y: 8px !important;
+      width: calc(100% - 16px);
+      height: calc(100% - 16px - var(--dock-space));
+    }
+
+    .app:not(.is-focused) {
+      box-shadow:
+        0 0 0 0.5px var(--window-ring),
+        0 18px 44px -14px rgb(0 0 0 / 0.32),
+        0 6px 14px -8px rgb(0 0 0 / 0.16);
+    }
+
+    .window-lights {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 20;
+      display: flex;
+      gap: 8px;
+    }
+
+    .window-resize {
+      display: block;
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      z-index: 20;
+      width: 18px;
+      height: 18px;
+      cursor: nwse-resize;
+    }
+
+    .js .app.is-zoomed .window-resize {
+      display: none;
+    }
+  }
+
+  .light {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--light-off);
+    box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0.12);
+  }
+
+  .light::after {
+    content: '';
+    position: absolute;
+    inset: -5px -4px;
+  }
+
+  .light svg {
+    width: 8px;
+    height: 8px;
+    fill: none;
+    stroke: rgb(0 0 0 / 0.55);
+    stroke-width: 1.3;
+    stroke-linecap: round;
+    opacity: 0;
+  }
+
+  .light svg .fill {
+    fill: rgb(0 0 0 / 0.55);
+    stroke: none;
+  }
+
+  .app.is-focused .light-close,
+  .window-lights:hover .light-close {
+    background: #ff5f57;
+  }
+  .app.is-focused .light-minimize,
+  .window-lights:hover .light-minimize {
+    background: #febc2e;
+  }
+  .app.is-focused .light-zoom,
+  .window-lights:hover .light-zoom {
+    background: #28c840;
+  }
+
+  .window-lights:hover svg,
+  .light:focus-visible svg {
+    opacity: 1;
+  }
+
+  .light:active {
+    filter: brightness(0.82);
+  }
+
+  /* ───────── iOS app ───────── */
+  @media (max-width: 899px) {
+    .window-lights {
+      display: none;
+    }
+
+    .js .app {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: none;
+      padding-top: env(safe-area-inset-top);
+      background: var(--ios-bg);
+    }
+
+    .js .app.is-open {
+      display: flex;
+    }
+
+    .home-indicator {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 30;
+      display: grid;
+      place-items: center;
+      height: calc(26px + env(safe-area-inset-bottom));
+      padding-bottom: env(safe-area-inset-bottom);
+      touch-action: none;
+    }
+
+    .home-indicator span {
+      width: 136px;
+      height: 5px;
+      border-radius: 3px;
+      background: var(--label);
+      opacity: 0.85;
+    }
+
+    .app-terminal .home-indicator span {
+      background: #f2f2f2;
+    }
+  }
+</style>

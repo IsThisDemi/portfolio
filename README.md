@@ -1,33 +1,34 @@
 # Riccardo Martinello — Portfolio
 
-My portfolio, built as a small macOS desktop in the browser: a menu bar, a Dock, and one window per section,
-in a Liquid Glass style. On phones the Dock becomes a floating tab bar.
+My portfolio as a small Mac: a desktop with a menu bar, a Dock and real apps, in the style of macOS Tahoe.
+On a phone it becomes an iPhone home screen and the same apps open full screen.
 
-Built with [Astro](https://astro.build). No UI framework and no runtime dependencies: plain CSS and a few small TypeScript modules.
+Built with [Astro](https://astro.build), plain CSS and a few small TypeScript modules. No runtime dependencies.
 
-## Features
+## The apps
 
-- **Windows**: traffic lights work. Red/yellow minimize the window into the Dock, green zooms it to fill the
-  screen (Esc to exit). The window in focus gets colored lights and a deeper shadow.
-- **Dock**: magnification on hover, launch bounce, running indicators. On phones it becomes a tab bar with a sliding selection.
-- **Spotlight** (`⌘K`, `Ctrl+K` or `/`): search sections, jobs, projects, skills and links.
-- **Control Center**: light/dark/auto appearance (dark by default), accent color, wallpaper. Choices are saved in the browser.
-- **Quick Look**: project cards open a full-detail panel with screenshots.
-- **Liquid Glass**: blurred, saturated glass with specular rims everywhere. On Chromium, the menu bar and Dock
-  also refract their edges through an SVG displacement map (`src/scripts/liquid-glass.ts`).
-- Respects `prefers-reduced-motion` and `prefers-reduced-transparency`, and works without JavaScript (content is plain HTML).
+| App      | What's in it                                                                                   |
+| -------- | ---------------------------------------------------------------------------------------------- |
+| Contacts | My card: photo, contact fields, a note about me. _Share_ downloads a real vCard.               |
+| Notes    | Work and Education folders; each job or diploma is a note.                                     |
+| Finder   | Projects (icon or list view, tags, preview pane, Quick Look with space) and the Stack folder.  |
+| Terminal | Interactive: `help`, `whoami`, `projects`, `experience`, `skills`, `contact`, `open github`, … |
+| Mail     | A new message to me; _Send_ hands the draft to the visitor's own mail app.                     |
+| Preview  | My résumé (PDF).                                                                               |
+
+On the desktop, windows can be dragged by their toolbar, resized from the corner, minimized into the Dock, zoomed
+(green button or double-click on the toolbar) and closed. The menus in the menu bar work, Spotlight opens with
+`⌘K`, and the Control Center switches appearance (dark by default), accent color and wallpaper.
+
+On a phone, apps open out of their icon and close with the home indicator (tap or swipe up) or the back button.
 
 ## Editing content
 
-Everything shown on the site lives in two files:
-
-- `src/data/cv.ts`: profile, skills, jobs, projects, education, and the list of sections/windows.
+- `src/data/cv.ts`: profile, skills, jobs, projects, education.
 - `src/data/tech.ts`: every technology (name, logo, link), referenced by key from `cv.ts`.
+- `src/data/apps.ts`: which apps exist, in Dock order.
 
-Icons are [Iconify](https://icon-sets.iconify.design) names (`set:name`) rendered to SVG at build time. The
-available sets are listed in `src/lib/icon.ts`; to use another set, install `@iconify-json/<set>` and add it there.
-
-The downloadable CV is the static file `public/cv.pdf`.
+The downloadable résumé is the static file `public/cv.pdf`.
 
 ## Development
 
@@ -42,10 +43,10 @@ npm run build    # static site in dist/
 
 ```
 src/
-  data/        content (cv.ts, tech.ts)
+  apps/        one file per app (Contacts, Notes, Finder, Terminal, Mail, Preview)
+  components/  menu bar, Dock, desktop icons, iPhone home screen, Spotlight, window frame, icons
+  data/        content and app list
   layouts/     Desktop.astro: page shell, appearance bootstrap
-  components/  MenuBar, Dock, Window, Spotlight, Wallpaper, icons and chips
-  sections/    one window per section
-  scripts/     window manager, preferences, notifications, liquid glass
-  styles/      global tokens and the glass material
+  scripts/     shell.ts (window server), preferences, notifications, liquid glass
+  styles/      tokens and the controls shared by the apps
 ```

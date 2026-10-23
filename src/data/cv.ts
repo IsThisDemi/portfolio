@@ -30,17 +30,6 @@ const website = (url: string): Link => ({ label: 'Website', url, icon: 'fa6-soli
 const github = (url: string): Link => ({ label: 'GitHub', url, icon: 'fa6-brands:github' });
 const linkedin = (url: string): Link => ({ label: 'LinkedIn', url, icon: 'fa6-brands:linkedin-in' });
 
-/** The windows on the desktop, in order. Each one gets a Dock icon and a menu bar entry. */
-export const sections = [
-  { id: 'about', title: 'About', icon: 'fa6-solid:user', tint: ['#64d2ff', '#0a84ff'] },
-  { id: 'skills', title: 'Skills', icon: 'fa6-solid:layer-group', tint: ['#b4b4bc', '#5d5d66'] },
-  { id: 'experience', title: 'Experience', icon: 'fa6-solid:briefcase', tint: ['#ffd60a', '#ff9500'] },
-  { id: 'projects', title: 'Projects', icon: 'fa6-solid:rocket', tint: ['#da8fff', '#5e5ce6'] },
-  { id: 'education', title: 'Education', icon: 'fa6-solid:graduation-cap', tint: ['#5fe38a', '#13a454'] },
-] as const;
-
-export type SectionId = (typeof sections)[number]['id'];
-
 export const meta = {
   title: 'Riccardo Martinello — Full-Stack Developer',
   description:
@@ -185,7 +174,6 @@ export interface Project {
   name: string;
   icon: ImageMetadata;
   period: Period;
-  tagline: string;
   description: string;
   team: number;
   roles: string[];
@@ -200,7 +188,6 @@ export const projects: Project[] = [
     name: 'SnoutSpace',
     icon: snoutspaceIcon,
     period: { from: '2024-08', to: '2024-10' },
-    tagline: 'A social network for creatives',
     description:
       "SnoutSpace is a social networking platform where users can create profiles, share photos, and engage with content from other users, similar to Instagram and DeviantArt. Whether you're an artist showcasing your latest work, a photographer sharing your favorite shots, or just someone looking to connect with others, SnoutSpace provides a fun and interactive space to express yourself.",
     team: 1,
@@ -213,7 +200,6 @@ export const projects: Project[] = [
     name: 'PowsUp',
     icon: powsupIcon,
     period: { from: '2023-09', to: null },
-    tagline: 'Events website and IT for a community group',
     description:
       'PowsUp! is an Italian group that organizes furry events in Lazio and Central Italy. I manage the website and the general IT infrastructure together with three other developers. We are building a blog to post upcoming events; it is a work in progress, built with Astro and Contentful.',
     team: 10,
@@ -226,7 +212,6 @@ export const projects: Project[] = [
     name: 'WhiskerWatcher',
     icon: whiskerIcon,
     period: { from: '2024-01', to: '2024-07' },
-    tagline: 'Sensor monitoring desktop app',
     description: 'Object-Oriented Programming university project: a sensors application built with C++ and Qt.',
     team: 1,
     roles: ['Front-end Developer', 'Back-end Developer'],
@@ -238,7 +223,6 @@ export const projects: Project[] = [
     name: 'FitnessCenter',
     icon: fitnessIcon,
     period: { from: '2023-05', to: '2023-09' },
-    tagline: 'Accessible website, WCAG 2.1 compliant',
     description:
       'Web Technologies university project: a website built with only plain HTML and CSS, fully WCAG 2.1 compliant, using PHP to connect to and manage data in a database.',
     team: 3,
@@ -251,7 +235,6 @@ export const projects: Project[] = [
     name: 'Svelasca',
     icon: svelascaIcon,
     period: { from: '2023-07', to: '2023-08' },
-    tagline: 'PostgreSQL database design',
     description:
       'Databases university project: designing, creating, and populating a PostgreSQL database for a fictional company from a given specification, with queries run through the PostgreSQL library in C++.',
     team: 1,
@@ -264,7 +247,6 @@ export const projects: Project[] = [
     name: 'Oziverse',
     icon: oziverseIcon,
     period: { from: '2018-11', to: '2020-09' },
-    tagline: 'A platform to build, share and play games',
     description:
       'Oziverse was a social platform where people could build, share and play their own games. It had an active community and peaked at 60+ monthly active users.',
     team: 20,

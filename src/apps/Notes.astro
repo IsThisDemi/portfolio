@@ -1,0 +1,474 @@
+---
+import { education, jobs } from '@/data/cv';
+import { tech } from '@/data/tech';
+import { formatPeriod, slugify } from '@/lib/format';
+import AppFrame from '@/components/AppFrame.astro';
+import Glyph from '@/components/Glyph.astro';
+
+const hashtag = (name: string) => `#${name.replace(/[^A-Za-z0-9+#.]/g, '')}`;
+const year = (value: string) => value.slice(0, 4);
+
+const notes = [
+  ...jobs.map((job) => ({
+    id: `note-${slugify(job.company)}`,
+    folder: 'Work',
+    title: `${job.role} at ${job.company.replace(/ S\.r\.l\.$/, '')}`,
+    date: job.period.to ? year(job.period.to) : 'Now',
+    preview: job.summary,
+    job,
+    diploma: undefined,
+  })),
+  ...education.map((diploma) => ({
+    id: `note-${slugify(diploma.title)}`,
+    folder: 'Education',
+    title: diploma.title,
+    date: diploma.period.to ? year(diploma.period.to) : 'Now',
+    preview: `${diploma.institution}. ${diploma.description}`,
+    job: undefined,
+    diploma,
+  })),
+];
+
+const folders = ['Work', 'Education'].map((name) => ({
+  name,
+  count: notes.filter((note) => note.folder === name).length,
+}));
+---
+
+<AppFrame id="notes" name="Notes" tint="#d8a10b">
+  <aside class="sidebar" aria-label="Folders">
+    <p class="sidebar-heading">iCloud</p>
+    {
+      folders.map((folder, index) => (
+        <button class="sidebar-item" data-folder={folder.name} aria-current={index === 0 ? 'true' : 'false'}>
+          <Glyph name="folder" />
+          {folder.name}
+          <span class="count">{folder.count}</span>
+        </button>
+      ))
+    }
+  </aside>
+
+  <div class="main">
+    <header class="toolbar" data-drag>
+      <button class="tb-group ios-only notes-back" data-notes-back aria-label="Back to notes">
+        <span class="tb-button"><Glyph name="chevron-left" /></span>
+      </button>
+      <span class="toolbar-title mac-only" data-folder-title>{folders[0]!.name}</span>
+      <span class="tertiary mac-only" data-folder-count>{folders[0]!.count} notes</span>
+      <span class="toolbar-spacer"></span>
+      <label class="search-field mac-only">
+        <Glyph name="search" />
+        <input type="search" placeholder="Search" aria-label="Search notes" data-notes-search />
+      </label>
+    </header>
+
+    <div class="notes-split">
+      <div class="pane notes-list">
+        <h2 class="ios-large-title ios-only">Notes</h2>
+        {
+          folders.map((folder) => (
+            <section class="notes-group" data-group={folder.name}>
+              <h3 class="ios-group-title ios-only">{folder.name}</h3>
+              <div class="notes-rows ios-group" role="listbox" aria-label={folder.name}>
+                {notes
+                  .filter((note) => note.folder === folder.name)
+                  .map((note, index) => (
+                    <button
+                      class="row note-row"
+                      role="option"
+                      data-note={note.id}
+                      aria-selected={folder.name === 'Work' && index === 0 ? 'true' : 'false'}
+                    >
+                      <strong>{note.title}</strong>
+                      <span class="note-meta">
+                        <span class="note-date">{note.date}</span>
+                        <span class="note-preview">{note.preview}</span>
+                      </span>
+                    </button>
+                  ))}
+              </div>
+            </section>
+          ))
+        }
+      </div>
+
+      <div class="pane note-view">
+        {
+          notes.map((note, index) => (
+            <article class="note" id={note.id} hidden={index !== 0} aria-label={note.title}>
+              {note.job && (
+                <>
+                  <p class="note-stamp">
+                    {formatPeriod(note.job.period)} · {note.job.place}
+                  </p>
+                  <h2>{note.title}</h2>
+                  <p>{note.job.summary}</p>
+                  <h3>What I did</h3>
+                  <ul>
+                    {note.job.highlights.map((item) => (
+                      <li>{item}</li>
+                    ))}
+                  </ul>
+                  <p class="note-tags">
+                    {note.job.stack.map((key) => (
+                      <span>{hashtag(tech[key].name)}</span>
+                    ))}
+                  </p>
+                  <p class="note-links">
+                    {note.job.links.map((link) => (
+                      <a href={link.url} target="_blank" rel="noopener noreferrer">
+                        {link.label}
+                      </a>
+                    ))}
+                  </p>
+                </>
+              )}
+              {note.diploma && (
+                <>
+                  <p class="note-stamp">{formatPeriod(note.diploma.period)}</p>
+                  <h2>{note.title}</h2>
+                  <p class="note-institution">{note.diploma.institution}</p>
+                  <p>{note.diploma.description}</p>
+                  {note.diploma.result && (
+                    <p>
+                      Result: <strong>{note.diploma.result}</strong>
+                    </p>
+                  )}
+                  <p class="note-links">
+                    <a href={note.diploma.url} target="_blank" rel="noopener noreferrer">
+                      {new URL(note.diploma.url).hostname.replace(/^www\./, '')}
+                    </a>
+                  </p>
+                </>
+              )}
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</AppFrame>
+
+<script>
+  const app = document.getElementById('app-notes')!;
+  const folders = [...app.querySelectorAll<HTMLButtonElement>('[data-folder]')];
+  const rows = [...app.querySelectorAll<HTMLButtonElement>('.note-row')];
+  const notes = [...app.querySelectorAll<HTMLElement>('.note')];
+  const search = app.querySelector<HTMLInputElement>('[data-notes-search]')!;
+  const title = app.querySelector<HTMLElement>('[data-folder-title]')!;
+  const count = app.querySelector<HTMLElement>('[data-folder-count]')!;
+  const phone = window.matchMedia('(max-width: 899px)');
+  let folder = folders[0]!.dataset.folder!;
+
+  const groupOf = (row: HTMLElement) => row.closest<HTMLElement>('[data-group]')!.dataset.group!;
+
+  const visibleRows = () => rows.filter((row) => !row.hidden);
+
+  const show = (id: string, push = false) => {
+    rows.forEach((row) => row.setAttribute('aria-selected', String(row.dataset.note === id)));
+    notes.forEach((note) => (note.hidden = note.id !== id));
+    app.querySelector('.note-view')!.scrollTop = 0;
+    if (push && phone.matches) app.classList.add('is-detail');
+  };
+
+  const filter = () => {
+    const query = search.value.trim().toLowerCase();
+    for (const row of rows) {
+      const note = document.getElementById(row.dataset.note!)!;
+      const inFolder = phone.matches || groupOf(row) === folder;
+      row.hidden = !inFolder || (!!query && !note.textContent!.toLowerCase().includes(query));
+    }
+    app.querySelectorAll<HTMLElement>('[data-group]').forEach((group) => {
+      group.hidden = !group.querySelector('.note-row:not([hidden])');
+    });
+    const visible = visibleRows();
+    count.textContent = `${visible.length} ${visible.length === 1 ? 'note' : 'notes'}`;
+    if (!phone.matches && visible.length && !visible.some((row) => row.getAttribute('aria-selected') === 'true')) {
+      show(visible[0]!.dataset.note!);
+    }
+  };
+
+  const selectFolder = (name: string) => {
+    folder = name;
+    folders.forEach((item) => item.setAttribute('aria-current', String(item.dataset.folder === name)));
+    title.textContent = name;
+    filter();
+  };
+
+  folders.forEach((item) => item.addEventListener('click', () => selectFolder(item.dataset.folder!)));
+  rows.forEach((row) => row.addEventListener('click', () => show(row.dataset.note!, true)));
+  search.addEventListener('input', filter);
+
+  app.querySelector('.notes-list')!.addEventListener('keydown', (event) => {
+    const key = (event as KeyboardEvent).key;
+    if (key !== 'ArrowDown' && key !== 'ArrowUp') return;
+    event.preventDefault();
+    const visible = visibleRows();
+    const current = visible.findIndex((row) => row.getAttribute('aria-selected') === 'true');
+    const next = visible[Math.max(0, Math.min(visible.length - 1, current + (key === 'ArrowDown' ? 1 : -1)))];
+    if (next) {
+      show(next.dataset.note!);
+      next.focus();
+    }
+  });
+
+  app.querySelector('[data-notes-back]')!.addEventListener('click', () => app.classList.remove('is-detail'));
+
+  // Spotlight and links can ask for a specific note.
+  app.addEventListener('app:select', (event) => {
+    const id = (event as CustomEvent<string>).detail;
+    const row = rows.find((candidate) => candidate.dataset.note === id);
+    if (!row) return;
+    selectFolder(groupOf(row));
+    show(id, true);
+  });
+
+  phone.addEventListener('change', filter);
+  filter();
+</script>
+
+<style>
+  :global(.app-notes) {
+    --sidebar-w: 186px;
+  }
+
+  .notes-split {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .notes-list {
+    flex: none;
+    width: 270px;
+    padding: 0 8px 10px 10px;
+    border-right: 0.5px solid var(--separator);
+  }
+
+  .notes-rows {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .note-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 9px 12px;
+  }
+
+  .note-row + .note-row {
+    box-shadow: inset 12px 0.5px 0 var(--content-bg);
+  }
+
+  .note-row strong {
+    font-size: 13px;
+    font-weight: 650;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .note-meta {
+    display: flex;
+    gap: 8px;
+    font-size: 12px;
+    min-width: 0;
+  }
+
+  .note-date {
+    flex: none;
+    font-weight: 500;
+  }
+
+  .note-preview {
+    color: var(--label-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Notes selects with its own yellow. */
+  .note-row[aria-selected='true'] {
+    background: #ffd84a;
+    color: #1d1d1f;
+  }
+
+  .note-row[aria-selected='true'] .note-preview {
+    color: rgb(29 29 31 / 0.65);
+  }
+
+  :global(.app-notes:not(.is-focused)) .note-row[aria-selected='true'] {
+    background: var(--row-inactive);
+    color: var(--label);
+  }
+
+  .note-view {
+    flex: 1;
+    padding: 6px 34px 40px;
+  }
+
+  .note {
+    max-width: 640px;
+    margin: 0 auto;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .note-stamp {
+    margin-bottom: 18px;
+    font-size: 12px;
+    color: var(--label-3);
+    text-align: center;
+  }
+
+  .note h2 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+  }
+
+  .note h3 {
+    margin-top: 18px;
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  .note p {
+    margin-top: 10px;
+  }
+
+  .note ul {
+    margin-top: 8px;
+    padding-left: 22px;
+    list-style: disc;
+  }
+
+  .note li + li {
+    margin-top: 5px;
+  }
+
+  .note li::marker {
+    color: var(--label-2);
+  }
+
+  .note-institution {
+    margin-top: 4px !important;
+    font-weight: 600;
+  }
+
+  .note-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    margin-top: 18px !important;
+    color: var(--tint);
+    font-weight: 500;
+  }
+
+  .note-links {
+    display: flex;
+    gap: 16px;
+  }
+
+  .note-links a {
+    color: var(--tint);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+
+  @media (max-width: 899px) {
+    .notes-split {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .notes-list {
+      width: 100%;
+      padding: 0 0 calc(40px + env(safe-area-inset-bottom));
+      border: 0;
+    }
+
+    .note-row {
+      gap: 3px;
+      padding: 11px 16px;
+    }
+
+    .note-row + .note-row {
+      box-shadow:
+        inset 16px 0.5px 0 var(--ios-card),
+        inset 0 0.5px 0 var(--separator);
+    }
+
+    .note-row strong {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .note-meta {
+      font-size: 15px;
+    }
+
+    .note-row[aria-selected='true'] {
+      background: none;
+      color: inherit;
+    }
+
+    .note-row[aria-selected='true'] .note-preview {
+      color: var(--label-2);
+    }
+
+    .note-view {
+      position: absolute;
+      inset: 0;
+      padding: 0 20px calc(48px + env(safe-area-inset-bottom));
+      background: var(--content-bg);
+      transform: translateX(100%);
+      transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    :global(.app-notes.is-detail) .note-view {
+      transform: none;
+    }
+
+    :global(.app-notes.is-detail) .notes-list {
+      transform: translateX(-25%);
+      opacity: 0.6;
+    }
+
+    .notes-list {
+      transition:
+        transform 0.42s cubic-bezier(0.32, 0.72, 0, 1),
+        opacity 0.42s;
+    }
+
+    .notes-back {
+      visibility: hidden;
+      width: 44px;
+      padding: 0 3px;
+    }
+
+    :global(.app-notes.is-detail) .notes-back {
+      visibility: visible;
+    }
+
+    .note {
+      font-size: 17px;
+    }
+
+    .note h2 {
+      font-size: 28px;
+    }
+
+    :global(.app-notes) {
+      background: var(--ios-bg);
+    }
+
+    :global(.app-notes.is-detail) {
+      background: var(--content-bg);
+    }
+  }
+</style>

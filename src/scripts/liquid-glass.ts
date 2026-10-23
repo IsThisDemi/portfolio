@@ -3,7 +3,7 @@
  *
  * Each element gets an SVG filter whose displacement map bends the backdrop near its rounded
  * edges, like light through the rim of a glass lens. Only Chromium can use an SVG filter in
- * `backdrop-filter`, so elsewhere the CSS blur/rim from `.glass` stays on its own.
+ * `backdrop-filter`, so elsewhere the element keeps its plain CSS blur.
  */
 
 const SVG_NS = 'http://www.w3.org/2000/svg';

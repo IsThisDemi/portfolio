@@ -4,6 +4,7 @@ const ICONS: Record<string, string> = {
   download:
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>',
   copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"/></svg>',
+  send: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 10.2 13.8M21 3l-6.5 18-4.3-7.2L3 9.5Z"/></svg>',
   windows:
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 9h18"/></svg>',
 };
@@ -20,7 +21,7 @@ export const notify = ({ title, body, icon = 'windows' }: { title: string; body?
   }
 
   const banner = document.createElement('div');
-  banner.className = 'notification glass glass-strong';
+  banner.className = 'notification';
   banner.innerHTML = `<span class="notification-icon">${ICONS[icon] ?? ICONS.windows}</span>
     <span class="notification-text"><strong></strong><span></span></span>
     <time class="notification-time">now</time>`;
