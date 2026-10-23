@@ -1,0 +1,181 @@
+---
+import { Image } from 'astro:assets';
+import { profile, sections } from '@/data/cv';
+import Icon from '@/components/Icon.astro';
+import Window from '@/components/Window.astro';
+
+const section = sections.find((s) => s.id === 'about')!;
+---
+
+<Window id="about" title={section.title} icon={section.icon} tint={section.tint} class="about-window">
+  <div class="about">
+    <div class="about-photo">
+      <Image src={profile.photo} alt={profile.name} width={320} height={320} loading="eager" fetchpriority="high" />
+    </div>
+    <h1 class="about-name">{profile.name}</h1>
+    <p class="about-role">{profile.role} · {profile.subtitle}</p>
+    <ul class="about-status">
+      {
+        profile.status.map((status) => (
+          <li>
+            <span class="status-dot" />
+            {status}
+          </li>
+        ))
+      }
+    </ul>
+    <dl class="about-specs">
+      {
+        profile.details.map((detail) => (
+          <div>
+            <dt>{detail.label}</dt>
+            <dd>{detail.url ? <a href={detail.url}>{detail.value}</a> : detail.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+    <div class="about-actions">
+      <a class="button-accent" href={profile.cv.url} download={profile.cv.fileName}>
+        <Icon name="fa6-solid:file-arrow-down" /> Download CV
+      </a>
+      {
+        profile.links.map((link) => (
+          <a
+            class="glass glass-button icon-only"
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={link.label}
+            title={link.label}
+          >
+            <Icon name={link.icon} />
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</Window>
+
+<style>
+  .about {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: 6px;
+  }
+
+  .about-photo {
+    position: relative;
+    width: 148px;
+    height: 148px;
+    margin-bottom: 18px;
+    border-radius: 50%;
+    padding: 4px;
+    background: conic-gradient(from 200deg, var(--accent), #64d2ff, #bf5af2, var(--accent));
+    box-shadow: 0 18px 40px -16px color-mix(in srgb, var(--accent) 70%, transparent);
+    animation: photo-in 0.9s var(--spring) both 0.35s;
+  }
+
+  .about-photo img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--win-bg);
+  }
+
+  @keyframes photo-in {
+    from {
+      opacity: 0;
+      transform: scale(0.7);
+    }
+  }
+
+  .about-name {
+    font-family: var(--font-display);
+    font-size: clamp(26px, 3.4vw, 32px);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+  }
+
+  .about-role {
+    margin-top: 6px;
+    font-size: 14.5px;
+    color: var(--text-2);
+  }
+
+  .about-status {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .about-status li {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 26px;
+    padding: 0 11px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #1f9d48;
+    background: rgb(48 209 88 / 0.13);
+  }
+
+  :global(.dark) .about-status li {
+    color: #4ade80;
+  }
+
+  .about-specs {
+    width: 100%;
+    margin: 22px 0 0;
+    border-radius: var(--radius-group);
+    background: var(--group-bg);
+    box-shadow: inset 0 0 0 0.5px var(--sep);
+    text-align: left;
+  }
+
+  .about-specs div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 14px;
+    font-size: 13.5px;
+  }
+
+  .about-specs div + div {
+    box-shadow: inset 0 0.5px 0 var(--sep);
+  }
+
+  .about-specs dt {
+    font-weight: 600;
+  }
+
+  .about-specs dd {
+    margin: 0;
+    color: var(--text-2);
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .about-specs a {
+    color: var(--accent);
+  }
+
+  .about-specs a:hover {
+    text-decoration: underline;
+  }
+
+  .about-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+</style>

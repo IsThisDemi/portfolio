@@ -1,29 +1,51 @@
-# DevsCard
+# Riccardo Martinello — Portfolio
 
-A fully customizable template to create your online (and paper) resume without writing a single line of code.
+My portfolio, built as a small macOS desktop in the browser: a menu bar, a Dock, and one window per section,
+in a Liquid Glass style. On phones the Dock becomes a floating tab bar.
+
+Built with [Astro](https://astro.build). No UI framework and no runtime dependencies: plain CSS and a few small TypeScript modules.
 
 ## Features
 
-- **✍️ Intellisense** — provide your data in TypeScript files, getting autocompletion and description of each property right in your IDE.
-- **📱 Responsiveness** — the resume is created and automatically tested to look good both on mobile and desktop devices.
-- **🌠 Assets optimization** — all images in your CV are minimized and resized automatically at build time.
-- **⚡️ Performance** — get 100 for all Lighthouse metrics, ensuring a great experience for visitors and a high score for search engines.
-- **📄 PDF generation** — generate an accompanying PDF version of your CV with one command.
-- **🔶 Built-in icon sets** — choose from over 100 000 [Iconify](https://iconify.design/) icons to represent your skills.
-- **🌍 I18n** — customize your resume's locale, date formatting, and used translations.
-- **🔎 SEO friendly** — the entire website is designed with SEO in mind. All SEO-related config properties are required and well-described.
-- **🏭 Favicons generation** — invoke one command to generate all favicons and full app manifest for your website.
-- **🛠 Data helpers** — use built-in helpers to define your skills/socials once and reuse them across the configuration.
-- **🔀 Data transformers** — utilize type-safe data transformers to create multiple variants of your resume without duplicating your data.
+- **Windows**: traffic lights work. Red/yellow minimize the window into the Dock, green zooms it to fill the
+  screen (Esc to exit). The window in focus gets colored lights and a deeper shadow.
+- **Dock**: magnification on hover, launch bounce, running indicators. On phones it becomes a tab bar with a sliding selection.
+- **Spotlight** (`⌘K`, `Ctrl+K` or `/`): search sections, jobs, projects, skills and links.
+- **Control Center**: light/dark/auto appearance (dark by default), accent color, wallpaper. Choices are saved in the browser.
+- **Quick Look**: project cards open a full-detail panel with screenshots.
+- **Liquid Glass**: blurred, saturated glass with specular rims everywhere. On Chromium, the menu bar and Dock
+  also refract their edges through an SVG displacement map (`src/scripts/liquid-glass.ts`).
+- Respects `prefers-reduced-motion` and `prefers-reduced-transparency`, and works without JavaScript (content is plain HTML).
 
-## Documentation
+## Editing content
 
-To learn how to set up your resume, go to:
+Everything shown on the site lives in two files:
 
-[https://devscard.gitbook.io/docs](https://devscard.gitbook.io/docs/setup-guide)
+- `src/data/cv.ts`: profile, skills, jobs, projects, education, and the list of sections/windows.
+- `src/data/tech.ts`: every technology (name, logo, link), referenced by key from `cv.ts`.
 
-## Example
+Icons are [Iconify](https://icon-sets.iconify.design) names (`set:name`) rendered to SVG at build time. The
+available sets are listed in `src/lib/icon.ts`; to use another set, install `@iconify-json/<set>` and add it there.
 
-To see an example CV, visit the link below:
+The downloadable CV is the static file `public/cv.pdf`.
 
-[https://devscard.netlify.app](https://devscard.netlify.app/)
+## Development
+
+```sh
+npm install
+npm run dev      # http://localhost:4321
+npm run check    # type check
+npm run build    # static site in dist/
+```
+
+## Structure
+
+```
+src/
+  data/        content (cv.ts, tech.ts)
+  layouts/     Desktop.astro: page shell, appearance bootstrap
+  components/  MenuBar, Dock, Window, Spotlight, Wallpaper, icons and chips
+  sections/    one window per section
+  scripts/     window manager, preferences, notifications, liquid glass
+  styles/      global tokens and the glass material
+```

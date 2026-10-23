@@ -1,0 +1,440 @@
+---
+import { education, jobs, profile, projects, sections, skills } from '@/data/cv';
+import { tech } from '@/data/tech';
+import { slugify } from '@/lib/format';
+import { iconSvg } from '@/lib/icon';
+
+interface Entry {
+  title: string;
+  subtitle: string;
+  kind: string;
+  /** Window to focus, or an element id inside it. */
+  target?: string;
+  url?: string;
+  icon: string;
+  keywords?: string;
+}
+
+const svg = (name: string) => iconSvg(name);
+
+const entries: Entry[] = [
+  ...sections.map((section) => ({
+    title: section.title,
+    subtitle: 'Window',
+    kind: 'Windows',
+    target: section.id,
+    icon: svg(section.icon),
+  })),
+  ...jobs.map((job) => ({
+    title: `${job.role} · ${job.company}`,
+    subtitle: job.place,
+    kind: 'Experience',
+    target: `job-${slugify(job.company)}`,
+    icon: svg('fa6-solid:briefcase'),
+    keywords: job.stack.map((key) => tech[key].name).join(' '),
+  })),
+  ...projects.map((project) => ({
+    title: project.name,
+    subtitle: project.tagline,
+    kind: 'Projects',
+    target: `project-${slugify(project.name)}`,
+    icon: svg('fa6-solid:rocket'),
+    keywords: [...project.stack.map((key) => tech[key].name), ...project.categories].join(' '),
+  })),
+  ...education.map((diploma) => ({
+    title: diploma.title,
+    subtitle: diploma.institution,
+    kind: 'Education',
+    target: 'education',
+    icon: svg('fa6-solid:graduation-cap'),
+  })),
+  ...skills.flatMap((group) =>
+    group.items.map((key) => ({
+      title: tech[key].name,
+      subtitle: group.title,
+      kind: 'Skills',
+      target: 'skills',
+      icon: iconSvg(tech[key].icon),
+    })),
+  ),
+  ...profile.links.map((link) => ({
+    title: link.label,
+    subtitle: link.url.replace(/^https?:\/\//, ''),
+    kind: 'Links',
+    url: link.url,
+    icon: svg(link.icon),
+  })),
+  {
+    title: 'Download CV',
+    subtitle: 'PDF',
+    kind: 'Links',
+    url: profile.cv.url,
+    icon: svg('fa6-solid:file-arrow-down'),
+  },
+  {
+    title: `Email ${profile.firstName}`,
+    subtitle: profile.email,
+    kind: 'Links',
+    url: `mailto:${profile.email}`,
+    icon: svg('fa6-solid:envelope'),
+  },
+];
+---
+
+<div class="spotlight" hidden>
+  <div class="spotlight-scrim"></div>
+  <div class="spotlight-panel glass glass-strong" role="dialog" aria-modal="true" aria-label="Spotlight Search">
+    <label class="spotlight-field">
+      <svg viewBox="0 0 24 24" aria-hidden="true"
+        ><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L21 21"></path></svg
+      >
+      <input
+        type="search"
+        placeholder="Spotlight Search"
+        autocomplete="off"
+        spellcheck="false"
+        role="combobox"
+        aria-expanded="true"
+        aria-controls="spotlight-results"
+        aria-autocomplete="list"
+      />
+      <kbd>esc</kbd>
+    </label>
+    <ul class="spotlight-results" id="spotlight-results" role="listbox"></ul>
+  </div>
+</div>
+
+<script type="application/json" id="spotlight-index" set:html={JSON.stringify(entries)} />
+
+<script>
+  import { focusWindow } from '@/scripts/windows';
+
+  interface Entry {
+    title: string;
+    subtitle: string;
+    kind: string;
+    target?: string;
+    url?: string;
+    icon: string;
+    keywords?: string;
+  }
+
+  const root = document.querySelector<HTMLElement>('.spotlight')!;
+  const input = root.querySelector('input')!;
+  const list = root.querySelector<HTMLUListElement>('.spotlight-results')!;
+  const entries: Entry[] = JSON.parse(document.getElementById('spotlight-index')!.textContent!);
+  const SUGGESTED = ['Windows', 'Links'];
+
+  let results: Entry[] = [];
+  let selected = 0;
+  let lastFocus: Element | null = null;
+
+  const score = (entry: Entry, query: string) => {
+    const title = entry.title.toLowerCase();
+    if (title.startsWith(query)) return 3;
+    if (title.split(/[\s·]+/).some((word) => word.startsWith(query))) return 2;
+    const haystack = `${title} ${entry.subtitle} ${entry.keywords ?? ''}`.toLowerCase();
+    return haystack.includes(query) ? 1 : 0;
+  };
+
+  const render = () => {
+    const query = input.value.trim().toLowerCase();
+    results = query
+      ? entries
+          .map((entry) => ({ entry, score: score(entry, query) }))
+          .filter((item) => item.score > 0)
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 9)
+          .map((item) => item.entry)
+      : entries.filter((entry) => SUGGESTED.includes(entry.kind));
+    selected = 0;
+
+    list.innerHTML = '';
+    if (!results.length) {
+      const empty = document.createElement('li');
+      empty.className = 'spotlight-empty';
+      empty.textContent = 'No results';
+      list.append(empty);
+      return;
+    }
+
+    let lastKind = '';
+    results.forEach((entry, index) => {
+      if (entry.kind !== lastKind) {
+        lastKind = entry.kind;
+        const heading = document.createElement('li');
+        heading.className = 'spotlight-kind';
+        heading.setAttribute('role', 'presentation');
+        heading.textContent = query ? entry.kind : `Suggested · ${entry.kind}`;
+        list.append(heading);
+      }
+      const item = document.createElement('li');
+      item.className = 'spotlight-item';
+      item.id = `spotlight-option-${index}`;
+      item.setAttribute('role', 'option');
+      item.innerHTML = `<span class="spotlight-icon">${entry.icon}</span><span class="spotlight-text"><strong></strong><span></span></span>`;
+      item.querySelector('strong')!.textContent = entry.title;
+      item.querySelector('.spotlight-text span')!.textContent = entry.subtitle;
+      item.addEventListener('pointermove', () => select(index));
+      item.addEventListener('click', () => choose(entry));
+      list.append(item);
+    });
+    select(0);
+  };
+
+  const select = (index: number) => {
+    selected = index;
+    list
+      .querySelectorAll('.spotlight-item')
+      .forEach((item, i) => item.setAttribute('aria-selected', String(i === index)));
+    input.setAttribute('aria-activedescendant', `spotlight-option-${index}`);
+    list.querySelector(`#spotlight-option-${index}`)?.scrollIntoView({ block: 'nearest' });
+  };
+
+  const choose = (entry: Entry) => {
+    close();
+    if (entry.url) {
+      if (entry.url.startsWith('http')) window.open(entry.url, '_blank', 'noopener');
+      else window.location.href = entry.url;
+      return;
+    }
+    const element = document.getElementById(entry.target!);
+    const win = element?.closest<HTMLElement>('.window[data-window]');
+    if (!win) return;
+    focusWindow(win.dataset.window!).then(() => {
+      if (element !== win) {
+        element!.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        element!.classList.remove('is-highlighted');
+        void element!.offsetWidth;
+        element!.classList.add('is-highlighted');
+      }
+    });
+  };
+
+  const open = () => {
+    if (!root.hidden) return;
+    lastFocus = document.activeElement;
+    root.hidden = false;
+    input.value = '';
+    render();
+    input.focus();
+  };
+
+  const close = () => {
+    if (root.hidden) return;
+    root.classList.add('is-closing');
+    setTimeout(() => {
+      root.hidden = true;
+      root.classList.remove('is-closing');
+    }, 150);
+    (lastFocus as HTMLElement | null)?.focus?.();
+  };
+
+  input.addEventListener('input', render);
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      if (!results.length) return;
+      select((selected + (event.key === 'ArrowDown' ? 1 : -1) + results.length) % results.length);
+    } else if (event.key === 'Enter' && results[selected]) {
+      event.preventDefault();
+      choose(results[selected]);
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+      close();
+    }
+  });
+  root.querySelector('.spotlight-scrim')!.addEventListener('click', close);
+
+  document.addEventListener('spotlight:open', open);
+  document.addEventListener('keydown', (event) => {
+    const typing = (event.target as Element).closest('input, textarea, [contenteditable]');
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      root.hidden ? open() : close();
+    } else if (event.key === '/' && !typing) {
+      event.preventDefault();
+      open();
+    }
+  });
+</script>
+
+<style is:global>
+  .spotlight {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+  }
+
+  .spotlight-scrim {
+    position: absolute;
+    inset: 0;
+    background: rgb(0 0 0 / 0.12);
+    animation: fade-in 0.2s ease;
+  }
+
+  .spotlight-panel {
+    position: absolute;
+    top: min(18vh, 160px);
+    left: 50%;
+    width: min(640px, calc(100vw - 24px));
+    border-radius: 26px;
+    overflow: hidden;
+    transform: translateX(-50%);
+    animation: spotlight-in 0.38s var(--spring) both;
+    --glass-blur: 36px;
+  }
+
+  .spotlight.is-closing .spotlight-panel {
+    animation: spotlight-out 0.15s ease-in both;
+  }
+
+  .spotlight.is-closing .spotlight-scrim {
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  @keyframes spotlight-in {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) scale(0.94);
+    }
+  }
+
+  @keyframes spotlight-out {
+    to {
+      opacity: 0;
+      transform: translateX(-50%) scale(0.97);
+    }
+  }
+
+  .spotlight-field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 60px;
+    padding: 0 18px;
+  }
+
+  .spotlight-field svg {
+    width: 22px;
+    height: 22px;
+    flex: none;
+    fill: none;
+    stroke: var(--text-2);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  .spotlight-field input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: none;
+    font: inherit;
+    font-size: 21px;
+    font-weight: 400;
+    color: var(--text);
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .spotlight-field input::-webkit-search-cancel-button {
+    display: none;
+  }
+
+  .spotlight-field input::placeholder {
+    color: var(--text-3);
+  }
+
+  .spotlight-field kbd {
+    padding: 2px 7px;
+    border-radius: 6px;
+    font: inherit;
+    font-size: 11px;
+    color: var(--text-3);
+    box-shadow: inset 0 0 0 1px var(--sep);
+  }
+
+  .spotlight-results {
+    max-height: min(420px, 55vh);
+    overflow-y: auto;
+    padding: 0 8px 8px;
+    border-top: 0.5px solid var(--sep);
+  }
+
+  .spotlight-kind {
+    padding: 10px 10px 4px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-3);
+  }
+
+  .spotlight-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 7px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+
+  .spotlight-item[aria-selected='true'] {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  .spotlight-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    background: var(--tile-bg);
+    color: #3a3a3c;
+    box-shadow: 0 0 0 0.5px var(--tile-ring);
+  }
+
+  .spotlight-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.3;
+  }
+
+  .spotlight-text strong {
+    font-size: 14px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .spotlight-text span {
+    font-size: 12.5px;
+    opacity: 0.7;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .spotlight-empty {
+    padding: 22px;
+    text-align: center;
+    color: var(--text-3);
+  }
+
+  .is-highlighted {
+    animation: highlight 1.6s ease;
+  }
+
+  @keyframes highlight {
+    0%,
+    40% {
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 70%, transparent);
+    }
+  }
+</style>

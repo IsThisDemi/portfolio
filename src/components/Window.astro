@@ -1,0 +1,286 @@
+---
+import AppIcon from './AppIcon.astro';
+
+interface Props {
+  /** Section id: anchor, Dock target and window key. Omit for decorative windows. */
+  id?: string;
+  title: string;
+  icon?: string;
+  tint?: readonly [string, string];
+  variant?: 'default' | 'terminal';
+  class?: string;
+}
+
+const { id, title, icon, tint, variant = 'default', class: className } = Astro.props;
+const titleId = `${id ?? title.toLowerCase().replace(/\W+/g, '-')}-title`;
+---
+
+<section class:list={['window', `window-${variant}`, className]} id={id} data-window={id} aria-labelledby={titleId}>
+  <header class="titlebar">
+    <div class="traffic-lights" role="group" aria-label="Window controls">
+      <button class="light light-close" data-action="close" aria-label={`Close ${title}`}>
+        <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 3.5l5 5m0-5l-5 5"></path></svg>
+      </button>
+      <button class="light light-minimize" data-action="minimize" aria-label={`Minimize ${title}`}>
+        <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.8 6h6.4"></path></svg>
+      </button>
+      <button class="light light-zoom" data-action="zoom" aria-label={`Zoom ${title}`}>
+        <svg viewBox="0 0 12 12" aria-hidden="true"
+          ><path class="fill" d="M3.3 4.4v4.3h4.3zM8.7 7.6V3.3H4.4z"></path></svg
+        >
+      </button>
+    </div>
+    <h2 class="window-title" id={titleId}>
+      {icon && tint && <AppIcon icon={icon} tint={tint} size={22} class="window-title-icon" />}
+      <span>{title}</span>
+    </h2>
+    <div class="toolbar"><slot name="toolbar" /></div>
+  </header>
+  <div class="window-body"><slot /></div>
+</section>
+
+<style is:global>
+  .window {
+    --titlebar-h: 54px;
+    --sticky-top: calc(var(--menubar-h) + 8px);
+    position: relative;
+    min-width: 0;
+    border-radius: var(--radius-window);
+    background: var(--win-bg);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    backdrop-filter: blur(40px) saturate(180%);
+    box-shadow:
+      0 0 0 0.5px var(--win-ring),
+      inset 0 0.5px 0 var(--win-highlight),
+      var(--win-shadow);
+    overflow: clip;
+    transition:
+      box-shadow 0.4s ease,
+      transform 0.5s var(--spring-soft),
+      opacity 0.4s ease;
+  }
+
+  .window.is-active {
+    box-shadow:
+      0 0 0 0.5px var(--win-ring),
+      inset 0 0.5px 0 var(--win-highlight),
+      var(--win-shadow-active);
+  }
+
+  /* Windows "launch" as they scroll into view. Without JS they are simply visible. */
+  @media (prefers-reduced-motion: no-preference) {
+    .js .window:not(.is-launched) {
+      opacity: 0;
+      transform: translateY(28px) scale(0.965);
+    }
+  }
+
+  .titlebar {
+    position: sticky;
+    top: var(--sticky-top);
+    z-index: 5;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    min-height: var(--titlebar-h);
+    padding: 0 14px 0 18px;
+    border-radius: var(--radius-window) var(--radius-window) 0 0;
+    background: color-mix(in srgb, var(--win-bg) 82%, transparent);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+    box-shadow: 0 0.5px 0 var(--sep);
+  }
+
+  .window-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+  }
+
+  .window-title span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .toolbar:empty {
+    display: none;
+  }
+
+  /* ── Traffic lights ── */
+  .traffic-lights {
+    display: flex;
+    gap: 8px;
+  }
+
+  .light {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--light-off, #d0d0d4);
+    box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0.14);
+    transition:
+      background-color 0.25s,
+      transform 0.3s var(--spring);
+  }
+
+  .light::after {
+    /* Bigger hit area for touch. */
+    content: '';
+    position: absolute;
+    inset: -8px -4px;
+  }
+
+  :root.dark .light {
+    --light-off: #4a4a50;
+  }
+
+  .light svg {
+    width: 9px;
+    height: 9px;
+    stroke: rgb(0 0 0 / 0.58);
+    stroke-width: 1.3;
+    stroke-linecap: round;
+    fill: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .light svg .fill {
+    fill: rgb(0 0 0 / 0.58);
+    stroke: none;
+  }
+
+  .window.is-active .light-close,
+  .traffic-lights:hover .light-close {
+    background: #ff5f57;
+  }
+  .window.is-active .light-minimize,
+  .traffic-lights:hover .light-minimize {
+    background: #febc2e;
+  }
+  .window.is-active .light-zoom,
+  .traffic-lights:hover .light-zoom {
+    background: #28c840;
+  }
+
+  .traffic-lights:hover svg,
+  .light:focus-visible svg {
+    opacity: 1;
+  }
+
+  .light:active {
+    transform: scale(0.86);
+    filter: brightness(0.85);
+  }
+
+  .window-body {
+    padding: 22px 24px 26px;
+  }
+
+  /* ── Terminal variant ── */
+  .window-terminal {
+    --win-bg: rgb(22 22 26 / 0.86);
+    --sep: rgb(255 255 255 / 0.08);
+    --win-highlight: rgb(255 255 255 / 0.14);
+    color: #e9e9ee;
+  }
+
+  .window-terminal .titlebar {
+    --titlebar-h: 44px;
+    color: rgb(255 255 255 / 0.62);
+  }
+
+  .window-terminal .window-title {
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .window-terminal .light {
+    --light-off: #4a4a50;
+  }
+
+  /* ── States driven by windows.ts ── */
+  .window.is-zoomed {
+    position: fixed;
+    inset: calc(var(--menubar-h) + 12px) 12px 104px;
+    z-index: 70;
+    overflow: auto;
+    overscroll-behavior: contain;
+    --sticky-top: 0px;
+  }
+
+  .window-placeholder {
+    border-radius: var(--radius-window);
+    background: color-mix(in srgb, var(--win-bg) 30%, transparent);
+    outline: 1.5px dashed var(--sep);
+    outline-offset: -1.5px;
+  }
+
+  .window.is-minimized {
+    display: none;
+  }
+
+  .zoom-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 65;
+    background: rgb(0 0 0 / 0.28);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    animation: fade-in 0.3s ease;
+  }
+
+  @media (max-width: 767px) {
+    .window {
+      --titlebar-h: 50px;
+      --radius-window: 24px;
+      --sticky-top: calc(var(--menubar-h) + 6px);
+    }
+
+    .titlebar {
+      gap: 10px;
+      padding: 0 10px 0 16px;
+    }
+
+    .light {
+      width: 12px;
+      height: 12px;
+    }
+
+    /* Phones have no window focus: keep the lights colored. */
+    .light-close {
+      background: #ff5f57;
+    }
+    .light-minimize {
+      background: #febc2e;
+    }
+    .light-zoom {
+      background: #28c840;
+    }
+
+    .window-body {
+      padding: 18px 16px 20px;
+    }
+
+    .window.is-zoomed {
+      inset: calc(var(--menubar-h) + 8px) 8px calc(88px + env(safe-area-inset-bottom));
+    }
+  }
+</style>

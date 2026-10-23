@@ -1,0 +1,224 @@
+---
+/**
+ * Layered dune wallpaper in the spirit of recent macOS releases. Colors come from CSS variables
+ * set per wallpaper (data-wallpaper on <html>) and per appearance, so the Control Center can swap them.
+ */
+---
+
+<div class="wallpaper" aria-hidden="true">
+  <svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <linearGradient id="wp-sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" style="stop-color: var(--wp-sky-a)"></stop>
+        <stop offset="1" style="stop-color: var(--wp-sky-b)"></stop>
+      </linearGradient>
+      <linearGradient id="wp-1" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" style="stop-color: var(--wp-1a)"></stop>
+        <stop offset="1" style="stop-color: var(--wp-1b)"></stop>
+      </linearGradient>
+      <linearGradient id="wp-2" x1="1" y1="0" x2="0" y2="1">
+        <stop offset="0" style="stop-color: var(--wp-2a)"></stop>
+        <stop offset="1" style="stop-color: var(--wp-2b)"></stop>
+      </linearGradient>
+      <linearGradient id="wp-3" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" style="stop-color: var(--wp-3a)"></stop>
+        <stop offset="1" style="stop-color: var(--wp-3b)"></stop>
+      </linearGradient>
+      <linearGradient id="wp-4" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" style="stop-color: var(--wp-4a)"></stop>
+        <stop offset="1" style="stop-color: var(--wp-4b)"></stop>
+      </linearGradient>
+      <radialGradient id="wp-sun" cx="0.72" cy="0.18" r="0.55">
+        <stop offset="0" style="stop-color: var(--wp-glow); stop-opacity: 0.85"></stop>
+        <stop offset="1" style="stop-color: var(--wp-glow); stop-opacity: 0"></stop>
+      </radialGradient>
+      <filter id="wp-soft" x="-10%" y="-10%" width="120%" height="120%">
+        <feGaussianBlur stdDeviation="6"></feGaussianBlur>
+      </filter>
+    </defs>
+
+    <rect width="1600" height="1000" fill="url(#wp-sky)"></rect>
+    <rect width="1600" height="1000" fill="url(#wp-sun)"></rect>
+
+    <g class="wp-layer wp-layer-1" filter="url(#wp-soft)">
+      <path fill="url(#wp-1)" d="M-200 430 C 120 300, 420 520, 760 420 S 1380 260, 1800 380 L 1800 1100 L -200 1100 Z"
+      ></path>
+    </g>
+    <g class="wp-layer wp-layer-2">
+      <path fill="url(#wp-2)" d="M-200 600 C 200 470, 520 700, 900 590 S 1500 470, 1800 560 L 1800 1100 L -200 1100 Z"
+      ></path>
+    </g>
+    <g class="wp-layer wp-layer-3">
+      <path fill="url(#wp-3)" d="M-200 760 C 240 650, 600 860, 1000 760 S 1560 650, 1800 730 L 1800 1100 L -200 1100 Z"
+      ></path>
+    </g>
+    <g class="wp-layer wp-layer-4">
+      <path fill="url(#wp-4)" d="M-200 900 C 300 820, 700 980, 1100 900 S 1600 840, 1800 880 L 1800 1100 L -200 1100 Z"
+      ></path>
+    </g>
+  </svg>
+</div>
+
+<style is:global>
+  .wallpaper {
+    position: fixed;
+    inset: -4vh -4vw;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--wp-sky-b);
+    transition: filter 0.6s;
+  }
+
+  .wallpaper svg {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+  }
+
+  .wallpaper stop {
+    transition: stop-color 0.8s ease;
+  }
+
+  /* Dunes drift slowly at different speeds, like a dynamic wallpaper. */
+  .wp-layer {
+    animation: wp-drift 38s ease-in-out infinite alternate;
+  }
+  .wp-layer-2 {
+    animation-duration: 46s;
+    animation-delay: -12s;
+  }
+  .wp-layer-3 {
+    animation-duration: 54s;
+    animation-delay: -20s;
+  }
+  .wp-layer-4 {
+    animation-duration: 62s;
+    animation-delay: -31s;
+  }
+
+  @keyframes wp-drift {
+    from {
+      transform: translate3d(-60px, 0, 0);
+    }
+    to {
+      transform: translate3d(60px, -14px, 0);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .wp-layer {
+      animation: none;
+    }
+  }
+
+  /* ── Wallpapers × appearance ── */
+  :root,
+  :root[data-wallpaper='lake'] {
+    --wp-sky-a: #7cc4ff;
+    --wp-sky-b: #d7ecff;
+    --wp-glow: #fff6d8;
+    --wp-1a: #8fd3ff;
+    --wp-1b: #3f8cff;
+    --wp-2a: #4ba3ff;
+    --wp-2b: #1d5fe0;
+    --wp-3a: #2a6df0;
+    --wp-3b: #0f3aa8;
+    --wp-4a: #173f9e;
+    --wp-4b: #0a1f5c;
+  }
+  :root.dark,
+  :root.dark[data-wallpaper='lake'] {
+    --wp-sky-a: #050d24;
+    --wp-sky-b: #10275e;
+    --wp-glow: #3a6bd6;
+    --wp-1a: #1b3f8f;
+    --wp-1b: #0c1f52;
+    --wp-2a: #1f4fb8;
+    --wp-2b: #0b1c4a;
+    --wp-3a: #14348a;
+    --wp-3b: #070f30;
+    --wp-4a: #0b1a4d;
+    --wp-4b: #03081c;
+  }
+
+  :root[data-wallpaper='dusk'] {
+    --wp-sky-a: #ffb38a;
+    --wp-sky-b: #ffd9c4;
+    --wp-glow: #fff1c9;
+    --wp-1a: #ff9a8b;
+    --wp-1b: #e0507a;
+    --wp-2a: #e0628f;
+    --wp-2b: #9b3aa8;
+    --wp-3a: #8b3fb8;
+    --wp-3b: #4a1f84;
+    --wp-4a: #44207a;
+    --wp-4b: #1e0d40;
+  }
+  :root.dark[data-wallpaper='dusk'] {
+    --wp-sky-a: #1a0822;
+    --wp-sky-b: #3a1240;
+    --wp-glow: #c2457a;
+    --wp-1a: #6b2152;
+    --wp-1b: #3a0f38;
+    --wp-2a: #7a2668;
+    --wp-2b: #2e0c36;
+    --wp-3a: #4c1a6e;
+    --wp-3b: #1a0830;
+    --wp-4a: #24103e;
+    --wp-4b: #0a0414;
+  }
+
+  :root[data-wallpaper='meadow'] {
+    --wp-sky-a: #b7f0d9;
+    --wp-sky-b: #eafff4;
+    --wp-glow: #fffbd6;
+    --wp-1a: #9fe6b4;
+    --wp-1b: #3fbf7f;
+    --wp-2a: #43c28a;
+    --wp-2b: #13876a;
+    --wp-3a: #1a9a7c;
+    --wp-3b: #0b5c58;
+    --wp-4a: #0f5c5a;
+    --wp-4b: #06302f;
+  }
+  :root.dark[data-wallpaper='meadow'] {
+    --wp-sky-a: #03140f;
+    --wp-sky-b: #0b2e24;
+    --wp-glow: #2a8a6a;
+    --wp-1a: #145c45;
+    --wp-1b: #0a3326;
+    --wp-2a: #17705a;
+    --wp-2b: #0a2f27;
+    --wp-3a: #0f4a44;
+    --wp-3b: #05201e;
+    --wp-4a: #082a28;
+    --wp-4b: #020c0b;
+  }
+
+  :root[data-wallpaper='graphite'] {
+    --wp-sky-a: #d9dbe0;
+    --wp-sky-b: #f3f4f6;
+    --wp-glow: #ffffff;
+    --wp-1a: #c4c7ce;
+    --wp-1b: #8e939d;
+    --wp-2a: #9a9fa9;
+    --wp-2b: #666b75;
+    --wp-3a: #6f747e;
+    --wp-3b: #43474f;
+    --wp-4a: #4a4e56;
+    --wp-4b: #26282d;
+  }
+  :root.dark[data-wallpaper='graphite'] {
+    --wp-sky-a: #0c0c0e;
+    --wp-sky-b: #1c1d21;
+    --wp-glow: #4a4c55;
+    --wp-1a: #34363c;
+    --wp-1b: #1e1f23;
+    --wp-2a: #2c2e33;
+    --wp-2b: #16171a;
+    --wp-3a: #222328;
+    --wp-3b: #0e0f11;
+    --wp-4a: #16171a;
+    --wp-4b: #060607;
+  }
+</style>

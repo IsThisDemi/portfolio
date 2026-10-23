@@ -1,0 +1,427 @@
+---
+import { profile, sections } from '@/data/cv';
+import AppIcon from './AppIcon.astro';
+
+const extras = [
+  { id: 'terminal', label: 'Terminal', icon: 'fa6-solid:terminal', tint: ['#4a4a50', '#111113'] as const },
+];
+
+const links = [
+  ...profile.links.map((link) => ({
+    label: link.label,
+    url: link.url,
+    icon: link.icon,
+    tint: link.label === 'LinkedIn' ? (['#3a9bef', '#0a5cb0'] as const) : (['#4a4a50', '#0d0d0f'] as const),
+  })),
+  { label: 'Mail', url: `mailto:${profile.email}`, icon: 'fa6-solid:envelope', tint: ['#6ad1ff', '#1a7cf5'] as const },
+];
+---
+
+<nav class="dock-wrap" aria-label="Sections">
+  <div class="dock glass" data-liquid>
+    <span class="dock-selection glass" aria-hidden="true"></span>
+    <ul class="dock-items">
+      {
+        sections.map((section) => (
+          <li class="dock-cell">
+            <a class="dock-item" href={`#${section.id}`} data-target={section.id} aria-label={section.title}>
+              <AppIcon icon={section.icon} tint={section.tint} />
+              <span class="dock-label">{section.title}</span>
+              <span class="dock-dot" aria-hidden="true" />
+            </a>
+          </li>
+        ))
+      }
+      <li class="dock-separator dock-extra" aria-hidden="true"></li>
+      {
+        extras.map((extra) => (
+          <li class="dock-cell dock-extra">
+            <a class="dock-item" href={`#${extra.id}`} data-target={extra.id} aria-label={extra.label}>
+              <AppIcon icon={extra.icon} tint={extra.tint} />
+              <span class="dock-label">{extra.label}</span>
+              <span class="dock-dot" aria-hidden="true" />
+            </a>
+          </li>
+        ))
+      }
+      {
+        links.map((link) => (
+          <li class="dock-cell dock-extra">
+            <a
+              class="dock-item"
+              href={link.url}
+              target={link.url.startsWith('http') ? '_blank' : undefined}
+              rel="noopener noreferrer"
+              aria-label={link.label}
+            >
+              <AppIcon icon={link.icon} tint={link.tint} />
+              <span class="dock-label">{link.label}</span>
+            </a>
+          </li>
+        ))
+      }
+      <li class="dock-separator dock-extra" aria-hidden="true"></li>
+      <li class="dock-cell dock-extra">
+        <a
+          class="dock-item"
+          href={profile.cv.url}
+          download={profile.cv.fileName}
+          data-download
+          aria-label="Download CV"
+        >
+          <AppIcon icon="fa6-solid:file-arrow-down" tint={['#8fd0ff', '#2f86f0']} />
+          <span class="dock-label">Download CV</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<script>
+  import { activeWindow, focusWindow, isMinimized, onWindowChange } from '@/scripts/windows';
+  import { notify } from '@/scripts/notify';
+
+  const dock = document.querySelector<HTMLElement>('.dock')!;
+  const items = [...dock.querySelectorAll<HTMLAnchorElement>('.dock-item')];
+  const selection = dock.querySelector<HTMLElement>('.dock-selection')!;
+  const mobile = window.matchMedia('(max-width: 767px)');
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+  // ── Magnification: icons swell toward the pointer, like the macOS Dock. ──
+  const BASE = 52;
+  const MAX = 80;
+  const RANGE = 150;
+
+  const magnify = (x: number) => {
+    for (const item of items) {
+      const rect = item.getBoundingClientRect();
+      const distance = Math.abs(x - (rect.left + rect.width / 2));
+      const t = Math.max(0, 1 - distance / RANGE);
+      const eased = (1 - Math.cos(Math.PI * t)) / 2;
+      item.style.setProperty('--icon', `${BASE + (MAX - BASE) * eased}px`);
+    }
+  };
+
+  const reset = () => items.forEach((item) => item.style.removeProperty('--icon'));
+
+  dock.addEventListener('pointermove', (event) => {
+    if (mobile.matches || !finePointer.matches || event.pointerType !== 'mouse') return;
+    dock.classList.add('is-magnifying');
+    magnify(event.clientX);
+  });
+
+  dock.addEventListener('pointerleave', () => {
+    dock.classList.remove('is-magnifying');
+    reset();
+  });
+
+  // ── Launch bounce and navigation. ──
+  const bounce = (item: HTMLElement) => {
+    item.classList.remove('is-bouncing');
+    void item.offsetWidth;
+    item.classList.add('is-bouncing');
+    item.addEventListener('animationend', () => item.classList.remove('is-bouncing'), { once: true });
+  };
+
+  for (const item of items) {
+    item.addEventListener('click', (event) => {
+      const target = item.dataset.target;
+      if (target) {
+        event.preventDefault();
+        if (isMinimized(target) && !mobile.matches) bounce(item);
+        focusWindow(target);
+        return;
+      }
+      if (!mobile.matches) bounce(item);
+      if (item.hasAttribute('data-download')) {
+        notify({ title: 'Downloading CV', body: 'CV-Riccardo_Martinello.pdf', icon: 'download' });
+      }
+    });
+  }
+
+  // ── Running dots, and the sliding selection on the phone tab bar. ──
+  const moveSelection = (id: string | null) => {
+    const item = items.find((candidate) => candidate.dataset.target === id);
+    if (!item || !mobile.matches) {
+      selection.style.opacity = '0';
+      return;
+    }
+    const dockRect = dock.getBoundingClientRect();
+    const rect = item.getBoundingClientRect();
+    selection.style.opacity = '1';
+    selection.style.width = `${rect.width}px`;
+    selection.style.transform = `translateX(${rect.left - dockRect.left}px)`;
+  };
+
+  const sync = () => {
+    const active = activeWindow();
+    for (const item of items) {
+      const target = item.dataset.target;
+      if (!target) continue;
+      item.classList.toggle('is-running', !isMinimized(target));
+      item.classList.toggle('is-current', target === active);
+      if (target === active) item.setAttribute('aria-current', 'true');
+      else item.removeAttribute('aria-current');
+    }
+    moveSelection(active);
+  };
+
+  onWindowChange(sync);
+  mobile.addEventListener('change', sync);
+  window.addEventListener('resize', sync);
+  sync();
+</script>
+
+<style is:global>
+  .dock-wrap {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 10px;
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .dock {
+    position: relative;
+    --glass-blur: 10px;
+    padding: 7px 8px;
+    border-radius: 28px;
+    pointer-events: auto;
+    animation: dock-rise 0.9s var(--spring-soft) both 0.15s;
+  }
+
+  @keyframes dock-rise {
+    from {
+      transform: translateY(120%);
+    }
+  }
+
+  .dock-items {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  .dock-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    outline-offset: 4px;
+  }
+
+  .dock-item .app-icon {
+    --icon: 52px;
+    transition:
+      width 0.45s var(--spring),
+      height 0.45s var(--spring),
+      font-size 0.45s var(--spring),
+      transform 0.3s var(--spring);
+  }
+
+  .dock-item[style*='--icon'] .app-icon {
+    --icon: inherit;
+  }
+
+  .dock.is-magnifying .app-icon {
+    transition-duration: 0.12s;
+    transition-timing-function: ease-out;
+  }
+
+  .dock-item:active .app-icon {
+    filter: brightness(0.82);
+  }
+
+  .dock-item.is-bouncing .app-icon {
+    animation: dock-bounce 0.9s cubic-bezier(0.3, 0, 0.3, 1);
+  }
+
+  @keyframes dock-bounce {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    25% {
+      transform: translateY(-22px);
+    }
+    50% {
+      transform: translateY(0);
+    }
+    70% {
+      transform: translateY(-10px);
+    }
+    85% {
+      transform: translateY(0);
+    }
+  }
+
+  .dock-label {
+    position: absolute;
+    bottom: calc(100% + 14px);
+    left: 50%;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--text);
+    background: var(--glass-tint-strong);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    box-shadow:
+      inset 0 0 0 0.5px var(--glass-rim-soft),
+      0 6px 18px -6px rgb(0 0 0 / 0.35);
+    opacity: 0;
+    transform: translate(-50%, 6px) scale(0.9);
+    transition:
+      opacity 0.15s,
+      transform 0.3s var(--spring);
+    pointer-events: none;
+  }
+
+  .dock-item:hover .dock-label,
+  .dock-item:focus-visible .dock-label {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+
+  .dock-dot {
+    position: absolute;
+    bottom: -5px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--text);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .dock-item.is-running .dock-dot {
+    opacity: 0.55;
+  }
+
+  .dock-item.is-current .dock-dot {
+    opacity: 1;
+    box-shadow: 0 0 6px var(--text);
+  }
+
+  .dock-separator {
+    align-self: stretch;
+    width: 1px;
+    margin: 4px 4px;
+    background: var(--sep);
+    box-shadow: 1px 0 0 var(--glass-rim-soft);
+  }
+
+  .dock-selection {
+    display: none;
+  }
+
+  /* ── Phone: the Dock becomes a floating Liquid Glass tab bar. ── */
+  @media (max-width: 767px) {
+    .dock-wrap {
+      bottom: calc(10px + env(safe-area-inset-bottom));
+      padding: 0 12px;
+    }
+
+    .dock {
+      width: 100%;
+      max-width: 460px;
+      padding: 5px;
+      border-radius: 999px;
+      --glass-blur: 8px;
+    }
+
+    .dock-extra {
+      display: none;
+    }
+
+    .dock-items {
+      position: relative;
+      z-index: 1;
+      gap: 0;
+    }
+
+    .dock-cell {
+      flex: 1;
+    }
+
+    .dock-item {
+      gap: 1px;
+      padding: 7px 0 6px;
+      color: var(--text);
+      transition:
+        color 0.25s,
+        transform 0.35s var(--spring);
+    }
+
+    .dock-item:active {
+      transform: scale(0.92);
+    }
+
+    .dock-item .app-icon {
+      --icon: 26px;
+      width: 26px;
+      height: 26px;
+      font-size: 19px;
+      background: none;
+      box-shadow: none;
+      color: inherit;
+    }
+
+    .dock-item .app-icon::after {
+      display: none;
+    }
+
+    .dock-item .app-icon svg {
+      filter: none;
+    }
+
+    .dock-label {
+      position: static;
+      padding: 0;
+      font-size: 10.5px;
+      font-weight: 600;
+      color: inherit;
+      background: none;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      box-shadow: none;
+      opacity: 1;
+      transform: none;
+    }
+
+    .dock-item:hover .dock-label,
+    .dock-item:focus-visible .dock-label {
+      transform: none;
+    }
+
+    .dock-dot {
+      display: none;
+    }
+
+    .dock-item.is-current {
+      color: var(--accent);
+    }
+
+    .dock-selection {
+      position: absolute;
+      top: 5px;
+      bottom: 5px;
+      left: 0;
+      z-index: 0;
+      display: block;
+      width: 0;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--text) 9%, transparent);
+      --glass-shadow: 0 2px 10px -4px rgb(0 0 0 / 0.25);
+      transition:
+        transform 0.55s var(--spring),
+        width 0.55s var(--spring),
+        opacity 0.3s;
+    }
+  }
+</style>

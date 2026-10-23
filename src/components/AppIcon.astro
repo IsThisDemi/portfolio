@@ -1,0 +1,15 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  icon: string;
+  tint: readonly [string, string];
+  size?: number;
+  class?: string;
+}
+
+const { icon, tint, size, class: className } = Astro.props;
+const style = `--tint-a:${tint[0]};--tint-b:${tint[1]};${size ? `--icon:${size}px;` : ''}`;
+---
+
+<span class:list={['app-icon', className]} style={style} aria-hidden="true"><Icon name={icon} /></span>

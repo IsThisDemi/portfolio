@@ -1,30 +1,18 @@
 ---
-import Layout from '@/web/components/layout.astro';
-import Sidebar from '@/web/components/sidebar.astro';
-import MainSection from '@/web/sections/main/main-section.web.astro';
-import SkillsSection from '@/web/sections/skills/skills-section.web.astro';
-import ExperienceSection from '@/web/sections/experience/experience-section.web.astro';
-import PortfolioSection from '@/web/sections/portfolio/portfolio-section.web.astro';
-import EducationSection from '@/web/sections/education/education-section.web.astro';
-// import TestimonialsSection from '@/web/sections/testimonials/testimonials-section.web.astro';
-// import FavoritesSection from '@/web/sections/favorites/favorites-section.web.astro';
-import cv from '@/data';
-
-const { config, sections } = cv();
+import Desktop from '@/layouts/Desktop.astro';
+import About from '@/sections/About.astro';
+import Education from '@/sections/Education.astro';
+import Experience from '@/sections/Experience.astro';
+import Projects from '@/sections/Projects.astro';
+import Skills from '@/sections/Skills.astro';
+import Terminal from '@/sections/Terminal.astro';
 ---
 
-<Layout {...config} sections={sections}>
-  <div class="mx-auto flex w-full max-w-7xl justify-center gap-8 px-4 py-8 xl:px-8">
-    <main class="flex-1 space-y-4 sm:space-y-6 lg:space-y-8">
-      <MainSection {...sections.main} />
-      <SkillsSection {...sections.skills} />
-      <ExperienceSection {...sections.experience} />
-      <PortfolioSection {...sections.portfolio} />
-      <EducationSection {...sections.education} />
-      <!-- <TestimonialsSection {...sections.testimonials} />
-      <FavoritesSection {...sections.favorites} /> -->
-    </main>
-    <Sidebar sections={sections} className="sticky top-8 mt-20" />
-  </div>
-  <script src="../web/scripts/initialize-tooltips.ts"></script>
-</Layout>
+<Desktop>
+  <About />
+  <Terminal />
+  <Skills />
+  <Experience />
+  <Projects />
+  <Education />
+</Desktop>

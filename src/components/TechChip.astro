@@ -1,0 +1,18 @@
+---
+import { tech, type TechKey } from '@/data/tech';
+import Icon from './Icon.astro';
+
+interface Props {
+  id: TechKey;
+}
+
+const item = tech[Astro.props.id];
+const color = 'color' in item ? item.color : undefined;
+const Tag = 'url' in item ? 'a' : 'span';
+const linkProps = 'url' in item ? { href: item.url, target: '_blank', rel: 'noopener noreferrer' } : {};
+---
+
+<Tag class="chip" {...linkProps}>
+  <span class="tile"><Icon name={item.icon} style={color ? `color:${color}` : undefined} /></span>
+  {item.name}
+</Tag>

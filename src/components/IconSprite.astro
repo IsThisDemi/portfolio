@@ -1,0 +1,15 @@
+---
+import { spriteSymbols } from '@/lib/icon';
+---
+
+<svg class="icon-sprite" aria-hidden="true" set:html={spriteSymbols().join('')} />
+
+<style>
+  /* Not display:none: gradients inside hidden symbols stop rendering in some browsers. */
+  .icon-sprite {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+</style>

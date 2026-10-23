@@ -1,0 +1,165 @@
+---
+import { sections, skills } from '@/data/cv';
+import { slugify } from '@/lib/format';
+import AppIcon from '@/components/AppIcon.astro';
+import TechChip from '@/components/TechChip.astro';
+import Window from '@/components/Window.astro';
+
+const section = sections.find((s) => s.id === 'skills')!;
+const groups = skills.map((group) => ({ ...group, id: `skills-${slugify(group.title)}` }));
+---
+
+<Window id="skills" title={section.title} icon={section.icon} tint={section.tint}>
+  <div class="settings">
+    <nav class="settings-sidebar" aria-label="Skill categories">
+      {
+        groups.map((group) => (
+          <a href={`#${group.id}`} class="settings-link">
+            <AppIcon icon={group.icon} tint={group.tint} size={26} />
+            <span>{group.title}</span>
+            <span class="count">{group.items.length}</span>
+          </a>
+        ))
+      }
+    </nav>
+    <div class="settings-content">
+      {
+        groups.map((group) => (
+          <section class="settings-group" id={group.id} aria-labelledby={`${group.id}-title`}>
+            <h3 id={`${group.id}-title`}>
+              <AppIcon icon={group.icon} tint={group.tint} size={22} class="group-icon" />
+              {group.title}
+            </h3>
+            <ul class="settings-card">
+              {group.items.map((key) => (
+                <li>
+                  <TechChip id={key} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+  </div>
+</Window>
+
+<script>
+  // Sidebar links scroll inside the page and highlight the group briefly.
+  document.querySelectorAll<HTMLAnchorElement>('.settings-link').forEach((link) =>
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      const target = document.querySelector<HTMLElement>(link.hash)!;
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document
+        .querySelectorAll('.settings-link')
+        .forEach((other) => other.classList.toggle('is-selected', other === link));
+      target.classList.remove('is-highlighted');
+      void target.offsetWidth;
+      target.classList.add('is-highlighted');
+    }),
+  );
+</script>
+
+<style>
+  .settings {
+    display: grid;
+    grid-template-columns: 210px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+
+  .settings-sidebar {
+    position: sticky;
+    top: calc(var(--menubar-h) + 76px);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px;
+    border-radius: 18px;
+    background: var(--fill);
+    box-shadow: inset 0 0 0 0.5px var(--sep);
+  }
+
+  .settings-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: background-color 0.15s;
+  }
+
+  .settings-link:hover {
+    background: var(--fill-2);
+  }
+
+  .settings-link.is-selected {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  .count {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--text-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .settings-link.is-selected .count {
+    color: inherit;
+    opacity: 0.7;
+  }
+
+  .settings-content {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .settings-group:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .settings-group {
+    border-radius: var(--radius-group);
+  }
+
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0 4px 9px;
+    font-size: 13px;
+    font-weight: 650;
+    color: var(--text-2);
+  }
+
+  .settings-card {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px;
+    border-radius: var(--radius-group);
+    background: var(--group-bg);
+    box-shadow: inset 0 0 0 0.5px var(--sep);
+  }
+
+  @media (max-width: 899px) {
+    .settings {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .settings-sidebar {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .settings-content {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

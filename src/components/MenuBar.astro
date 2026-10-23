@@ -1,0 +1,792 @@
+---
+import { Image } from 'astro:assets';
+import { profile, sections } from '@/data/cv';
+import Icon from './Icon.astro';
+
+const accents = [
+  ['blue', '#0a84ff'],
+  ['purple', '#a550e6'],
+  ['pink', '#f2418d'],
+  ['red', '#ff453a'],
+  ['orange', '#ff8a00'],
+  ['yellow', '#f5c400'],
+  ['green', '#2fb84f'],
+  ['lime', '#a6d800'],
+  ['graphite', '#8e8e93'],
+] as const;
+
+const wallpapers = [
+  ['lake', 'Lake', 'linear-gradient(160deg, #8fd3ff, #2a6df0 55%, #0a1f5c)'],
+  ['dusk', 'Dusk', 'linear-gradient(160deg, #ffb38a, #e0628f 50%, #44207a)'],
+  ['meadow', 'Meadow', 'linear-gradient(160deg, #b7f0d9, #43c28a 50%, #0f5c5a)'],
+  ['graphite', 'Graphite', 'linear-gradient(160deg, #e6e7ea, #8e939d 50%, #26282d)'],
+] as const;
+---
+
+<header class="menubar" data-email={profile.email}>
+  <div class="menubar-inner glass" data-liquid>
+    <div class="menubar-left">
+      <div class="menu">
+        <button
+          class="menubar-button menu-logo"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          data-menu-toggle="main-menu"
+        >
+          <Image src={profile.photo} alt="" width={44} height={44} class="menu-avatar" />
+          <span class="menu-name"><strong>{profile.name}</strong></span>
+          <span class="visually-hidden">Menu</span>
+        </button>
+      </div>
+      <span class="menubar-app" aria-live="polite"><strong data-active-title>About</strong></span>
+      <nav class="menubar-nav" aria-label="Sections">
+        {
+          sections.map((section) => (
+            <a class="menubar-button" href={`#${section.id}`} data-target={section.id}>
+              {section.title}
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+
+    <div class="menubar-right">
+      <span class="menubar-status"><span class="status-dot"></span>Available</span>
+      <button class="menubar-button icon" data-command="spotlight" aria-label="Spotlight Search">
+        <Icon name="fa6-solid:magnifying-glass" />
+      </button>
+      <div class="menu">
+        <button
+          class="menubar-button icon"
+          aria-haspopup="dialog"
+          aria-expanded="false"
+          data-menu-toggle="control-center"
+          aria-label="Control Center"
+        >
+          <svg viewBox="0 0 20 20" aria-hidden="true" class="cc-glyph">
+            <rect x="2" y="3.5" width="16" height="5" rx="2.5"></rect>
+            <circle cx="13.5" cy="6" r="1.6" class="knob"></circle>
+            <rect x="2" y="11.5" width="16" height="5" rx="2.5"></rect>
+            <circle cx="6.5" cy="14" r="1.6" class="knob"></circle>
+          </svg>
+        </button>
+      </div>
+      <time class="menubar-clock" data-clock></time>
+    </div>
+  </div>
+
+  <!-- Popovers live outside the glass bar: a backdrop-filter nested in another one only sees that parent, not the page. -->
+  <div class="popover glass glass-strong menu-panel" id="main-menu" role="menu" hidden>
+    <a role="menuitem" href="#about" data-focus="about">About {profile.firstName}</a>
+    <hr />
+    <a role="menuitem" href={profile.cv.url} download={profile.cv.fileName}>Download CV… <kbd>PDF</kbd></a>
+    <a role="menuitem" href={`mailto:${profile.email}`}>Email {profile.firstName}…</a>
+    {
+      profile.links.map((link) => (
+        <a role="menuitem" href={link.url} target="_blank" rel="noopener noreferrer">
+          {link.label} <Icon name="fa6-solid:arrow-up-right-from-square" class="menu-external" />
+        </a>
+      ))
+    }
+    <hr />
+    <button role="menuitem" data-command="spotlight">Spotlight Search <kbd>⌘K</kbd></button>
+    <button role="menuitem" data-command="restore">Bring All to Front</button>
+  </div>
+  <div
+    class="popover glass glass-strong control-center"
+    id="control-center"
+    role="dialog"
+    aria-label="Control Center"
+    hidden
+  >
+    <section class="cc-module cc-wide">
+      <h3>Appearance</h3>
+      <div class="segmented" role="radiogroup" aria-label="Appearance">
+        <span class="segmented-thumb" aria-hidden="true"></span>
+        <button role="radio" data-theme-option="light"><Icon name="fa6-solid:sun" /> Light</button>
+        <button role="radio" data-theme-option="dark"><Icon name="fa6-solid:moon" /> Dark</button>
+        <button role="radio" data-theme-option="auto"><Icon name="fa6-solid:circle-half-stroke" /> Auto</button>
+      </div>
+    </section>
+    <section class="cc-module cc-wide">
+      <h3>Accent color</h3>
+      <div class="accent-swatches" role="radiogroup" aria-label="Accent color">
+        {
+          accents.map(([name, color]) => (
+            <button role="radio" data-accent-option={name} style={`--swatch:${color}`} aria-label={name} />
+          ))
+        }
+      </div>
+    </section>
+    <section class="cc-module cc-wide">
+      <h3>Wallpaper</h3>
+      <div class="wallpaper-options" role="radiogroup" aria-label="Wallpaper">
+        {
+          wallpapers.map(([name, label, preview]) => (
+            <button role="radio" data-wallpaper-option={name} aria-label={label}>
+              <span style={`background:${preview}`} />
+              {label}
+            </button>
+          ))
+        }
+      </div>
+    </section>
+    <button class="cc-module cc-action" data-command="copy-email">
+      <span class="cc-action-icon"><Icon name="fa6-solid:envelope" /></span>
+      <span>Copy email</span>
+    </button>
+    <a class="cc-module cc-action" href={profile.cv.url} download={profile.cv.fileName}>
+      <span class="cc-action-icon accent"><Icon name="fa6-solid:file-arrow-down" /></span>
+      <span>Download CV</span>
+    </a>
+  </div>
+</header>
+
+<script>
+  import { focusWindow, onWindowChange, activeWindow, restoreAll } from '@/scripts/windows';
+  import { getAccent, getTheme, getWallpaper, setAccent, setTheme, setWallpaper, type Theme } from '@/scripts/prefs';
+  import { notify } from '@/scripts/notify';
+
+  const bar = document.querySelector<HTMLElement>('.menubar')!;
+  const email = bar.dataset.email!;
+
+  // ── Popovers (main menu, Control Center) ──
+  const toggles = [...bar.querySelectorAll<HTMLButtonElement>('[data-menu-toggle]')];
+
+  const close = (except?: HTMLButtonElement) => {
+    for (const toggle of toggles) {
+      if (toggle === except) continue;
+      toggle.setAttribute('aria-expanded', 'false');
+      const panel = document.getElementById(toggle.dataset.menuToggle!)!;
+      if (!panel.hidden) {
+        panel.classList.add('is-closing');
+        setTimeout(() => {
+          panel.hidden = true;
+          panel.classList.remove('is-closing');
+        }, 160);
+      }
+    }
+  };
+
+  for (const toggle of toggles) {
+    toggle.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const panel = document.getElementById(toggle.dataset.menuToggle!)!;
+      const opening = panel.hidden;
+      close(toggle);
+      panel.hidden = !opening;
+      toggle.setAttribute('aria-expanded', String(opening));
+      if (opening) syncControls();
+    });
+  }
+
+  document.addEventListener('click', (event) => {
+    if (!(event.target as Element).closest('.popover')) close();
+  });
+  document.addEventListener('keydown', (event) => event.key === 'Escape' && close());
+
+  bar
+    .querySelectorAll<HTMLElement>('.menu-panel a, .menu-panel button')
+    .forEach((item) => item.addEventListener('click', () => close()));
+
+  // ── Navigation ──
+  bar.querySelectorAll<HTMLAnchorElement>('[data-target], [data-focus]').forEach((link) =>
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      focusWindow(link.dataset.target ?? link.dataset.focus!);
+    }),
+  );
+
+  const titleEl = bar.querySelector<HTMLElement>('[data-active-title]')!;
+  const titles: Record<string, string> = { terminal: 'Terminal' };
+  bar.querySelectorAll<HTMLElement>('.menubar-nav [data-target]').forEach((link) => {
+    titles[link.dataset.target!] = link.textContent!.trim();
+  });
+  onWindowChange(() => {
+    const id = activeWindow();
+    const title = (id && titles[id]) || titleEl.textContent!;
+    if (title !== titleEl.textContent) {
+      titleEl.animate(
+        [
+          { opacity: 0, transform: 'translateY(-4px)' },
+          { opacity: 1, transform: 'none' },
+        ],
+        {
+          duration: 260,
+          easing: 'ease-out',
+        },
+      );
+      titleEl.textContent = title;
+    }
+    bar.querySelectorAll<HTMLElement>('.menubar-nav [data-target]').forEach((link) => {
+      link.classList.toggle('is-current', link.dataset.target === id);
+    });
+  });
+
+  // ── Commands ──
+  bar.addEventListener('click', async (event) => {
+    const command = (event.target as Element).closest<HTMLElement>('[data-command]')?.dataset.command;
+    if (command === 'spotlight') document.dispatchEvent(new CustomEvent('spotlight:open'));
+    if (command === 'restore') restoreAll();
+    if (command === 'copy-email') {
+      try {
+        await navigator.clipboard.writeText(email);
+        notify({ title: 'Email copied', body: email, icon: 'copy' });
+      } catch {
+        window.location.href = `mailto:${email}`;
+      }
+    }
+  });
+
+  // ── Control Center ──
+  const themeButtons = [...bar.querySelectorAll<HTMLButtonElement>('[data-theme-option]')];
+  const thumb = bar.querySelector<HTMLElement>('.segmented-thumb')!;
+  const accentButtons = [...bar.querySelectorAll<HTMLButtonElement>('[data-accent-option]')];
+  const wallpaperButtons = [...bar.querySelectorAll<HTMLButtonElement>('[data-wallpaper-option]')];
+
+  const check = (buttons: HTMLButtonElement[], attr: string, value: string) =>
+    buttons.forEach((button) => button.setAttribute('aria-checked', String(button.dataset[attr] === value)));
+
+  function syncControls() {
+    const theme = getTheme();
+    check(themeButtons, 'themeOption', theme);
+    const current = themeButtons.find((button) => button.dataset.themeOption === theme)!;
+    thumb.style.width = `${current.offsetWidth}px`;
+    thumb.style.transform = `translateX(${current.offsetLeft}px)`;
+    check(accentButtons, 'accentOption', getAccent());
+    check(wallpaperButtons, 'wallpaperOption', getWallpaper());
+  }
+
+  themeButtons.forEach((button) =>
+    button.addEventListener('click', () => {
+      setTheme(button.dataset.themeOption as Theme);
+      syncControls();
+    }),
+  );
+  accentButtons.forEach((button) =>
+    button.addEventListener('click', () => {
+      setAccent(button.dataset.accentOption!);
+      syncControls();
+    }),
+  );
+  wallpaperButtons.forEach((button) =>
+    button.addEventListener('click', () => {
+      setWallpaper(button.dataset.wallpaperOption!);
+      syncControls();
+    }),
+  );
+
+  // ── Clock ──
+  const clock = bar.querySelector<HTMLTimeElement>('[data-clock]')!;
+  const format = new Intl.DateTimeFormat('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+  const tick = () => {
+    const now = new Date();
+    clock.textContent = format.format(now).replace(/,/g, '');
+    clock.dateTime = now.toISOString();
+  };
+  tick();
+  setInterval(tick, 10_000);
+</script>
+
+<style is:global>
+  .menubar {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 60;
+    height: var(--menubar-h);
+    animation: menubar-in 0.7s var(--ease-out) backwards;
+  }
+
+  @keyframes menubar-in {
+    from {
+      transform: translateY(-100%);
+    }
+  }
+
+  .menubar-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    height: 100%;
+    padding: 0 10px;
+    --glass-blur: 22px;
+    --glass-tint: color-mix(in srgb, var(--glass-tint-strong) 70%, transparent);
+    font-size: 13.5px;
+    border-radius: 0;
+    box-shadow:
+      inset 0 -0.5px 0 var(--glass-rim-soft),
+      0 4px 20px -10px rgb(0 0 0 / 0.25);
+  }
+
+  .menubar-inner::before {
+    display: none;
+  }
+
+  .menubar-left,
+  .menubar-right {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .menubar-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 24px;
+    padding: 0 9px;
+    border-radius: 7px;
+    white-space: nowrap;
+    color: var(--text);
+    transition: background-color 0.15s;
+  }
+
+  .menubar-button:hover,
+  .menubar-button[aria-expanded='true'] {
+    background: var(--fill-2);
+  }
+
+  .menubar-button.icon {
+    width: 30px;
+    padding: 0;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  .menubar-button.is-current {
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+  }
+
+  .menu-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 0.5px var(--sep);
+  }
+
+  .menu-name {
+    display: none;
+  }
+
+  .menubar-app {
+    padding: 0 8px 0 4px;
+    min-width: 76px;
+  }
+
+  .menubar-app strong {
+    display: inline-block;
+    font-weight: 700;
+  }
+
+  .menubar-nav {
+    display: flex;
+    gap: 2px;
+  }
+
+  .menubar-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 10px;
+    font-weight: 500;
+    color: var(--text-2);
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #30d158;
+    box-shadow: 0 0 0 0 rgb(48 209 88 / 0.6);
+    animation: status-pulse 2.4s ease-out infinite;
+  }
+
+  @keyframes status-pulse {
+    70% {
+      box-shadow: 0 0 0 7px rgb(48 209 88 / 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgb(48 209 88 / 0);
+    }
+  }
+
+  .menubar-clock {
+    padding: 0 8px 0 6px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .cc-glyph {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+  }
+
+  .cc-glyph .knob {
+    fill: currentColor;
+    stroke: none;
+  }
+
+  /* ── Popovers ── */
+  .menu {
+    position: relative;
+  }
+
+  .popover.glass {
+    --glass-blur: 50px;
+    background: var(--popover-bg);
+  }
+
+  .popover {
+    position: fixed;
+    top: calc(var(--menubar-h) + 6px);
+    left: 8px;
+    z-index: 2;
+    border-radius: 14px;
+    transform-origin: top left;
+    animation: popover-in 0.32s var(--spring) both;
+  }
+
+  .popover.is-closing {
+    animation: popover-out 0.16s ease-in both;
+  }
+
+  @keyframes popover-in {
+    from {
+      opacity: 0;
+      transform: scale(0.92) translateY(-6px);
+    }
+  }
+
+  @keyframes popover-out {
+    to {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+  }
+
+  .menu-panel {
+    display: flex;
+    flex-direction: column;
+    min-width: 250px;
+    padding: 6px;
+  }
+
+  .menu-panel a,
+  .menu-panel button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    text-align: left;
+    font-size: 13.5px;
+  }
+
+  .menu-panel a:hover,
+  .menu-panel button:hover,
+  .menu-panel a:focus-visible,
+  .menu-panel button:focus-visible {
+    background: var(--accent);
+    color: var(--accent-ink);
+    outline: none;
+  }
+
+  .menu-panel hr {
+    margin: 5px 10px;
+    border: 0;
+    border-top: 1px solid var(--sep);
+  }
+
+  .menu-panel kbd {
+    font: inherit;
+    font-size: 12px;
+    opacity: 0.55;
+  }
+
+  .menu-external {
+    font-size: 10px;
+    opacity: 0.55;
+  }
+
+  /* ── Control Center ── */
+  .control-center {
+    left: auto;
+    right: 8px;
+    transform-origin: top right;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 340px;
+    padding: 12px;
+    border-radius: 26px;
+  }
+
+  .cc-module {
+    position: relative;
+    padding: 12px;
+    border-radius: 18px;
+    background: var(--fill-2);
+    box-shadow: inset 0 0 0 0.5px var(--glass-rim-soft);
+  }
+
+  .cc-wide {
+    grid-column: 1 / -1;
+  }
+
+  .cc-module h3 {
+    margin-bottom: 9px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-2);
+  }
+
+  .segmented {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 3px;
+    border-radius: 999px;
+    background: var(--fill-2);
+  }
+
+  .segmented button {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 30px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 500;
+  }
+
+  .segmented button svg {
+    font-size: 12px;
+  }
+
+  .segmented-thumb {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 0;
+    border-radius: 999px;
+    background: var(--glass-tint-strong);
+    box-shadow:
+      inset 0 0.5px 0 var(--glass-rim),
+      0 2px 8px -2px rgb(0 0 0 / 0.25);
+    transition:
+      transform 0.45s var(--spring),
+      width 0.45s var(--spring);
+  }
+
+  .accent-swatches {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .accent-swatches button {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--swatch);
+    box-shadow:
+      inset 0 0 0 0.5px rgb(0 0 0 / 0.15),
+      inset 0 1px 0 rgb(255 255 255 / 0.35);
+    transition: transform 0.3s var(--spring);
+  }
+
+  .accent-swatches button:hover {
+    transform: scale(1.12);
+  }
+
+  .accent-swatches button[aria-checked='true'] {
+    box-shadow:
+      0 0 0 2px var(--glass-tint-strong),
+      0 0 0 4px var(--swatch);
+  }
+
+  .wallpaper-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .wallpaper-options button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--text-2);
+  }
+
+  .wallpaper-options span {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border-radius: 8px;
+    box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0.15);
+    transition:
+      transform 0.3s var(--spring),
+      box-shadow 0.2s;
+  }
+
+  .wallpaper-options button:hover span {
+    transform: scale(1.05);
+  }
+
+  .wallpaper-options button[aria-checked='true'] {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .wallpaper-options button[aria-checked='true'] span {
+    box-shadow:
+      0 0 0 2px var(--glass-tint-strong),
+      0 0 0 4px var(--accent);
+  }
+
+  .cc-action {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
+    transition:
+      transform 0.3s var(--spring),
+      background-color 0.2s;
+  }
+
+  .cc-action:hover {
+    background: var(--fill-3);
+  }
+
+  .cc-action:active {
+    transform: scale(0.95);
+  }
+
+  .cc-action-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--fill-3);
+    font-size: 13px;
+  }
+
+  .cc-action-icon.accent {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  /* ── Smaller screens ── */
+  @media (max-width: 1100px) {
+    .menubar-nav,
+    .menubar-status {
+      display: none;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .menubar {
+      padding: 8px 10px 0;
+      padding-top: calc(8px + env(safe-area-inset-top));
+      height: calc(var(--menubar-h) + env(safe-area-inset-top));
+    }
+
+    .menubar::before {
+      /* Scroll edge effect: content fades and blurs under the floating bar instead of peeking out. */
+      content: '';
+      position: absolute;
+      inset: 0 0 -18px;
+      z-index: -1;
+      background: linear-gradient(to bottom, color-mix(in srgb, var(--wp-sky-a) 70%, transparent), transparent);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      -webkit-mask: linear-gradient(to bottom, #000 55%, transparent);
+      mask: linear-gradient(to bottom, #000 55%, transparent);
+      pointer-events: none;
+    }
+
+    .menubar-inner {
+      border-radius: 999px;
+      padding: 0 6px;
+      font-size: 14px;
+      --glass-tint: var(--glass-tint);
+      box-shadow: none;
+    }
+
+    .menubar-inner::before {
+      display: block;
+    }
+
+    .menubar-inner.glass {
+      box-shadow:
+        inset 0 0 0 0.5px var(--glass-rim-soft),
+        inset 0 1px 1px -0.5px var(--glass-rim),
+        var(--glass-shadow);
+    }
+
+    .menubar-app,
+    .menubar-clock {
+      display: none;
+    }
+
+    .menu-logo {
+      height: 36px;
+      padding: 0 12px 0 4px;
+      border-radius: 999px;
+    }
+
+    .menu-avatar {
+      width: 28px;
+      height: 28px;
+    }
+
+    .menu-name {
+      display: inline;
+      font-size: 14px;
+    }
+
+    .menubar-button.icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 15px;
+    }
+
+    .popover {
+      top: calc(var(--menubar-h) + env(safe-area-inset-top) + 6px);
+      left: 10px;
+      right: 10px;
+    }
+
+    .menu-panel {
+      right: auto;
+      min-width: 0;
+      width: min(300px, calc(100vw - 20px));
+    }
+
+    .control-center {
+      width: auto;
+    }
+  }
+</style>

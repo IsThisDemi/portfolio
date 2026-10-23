@@ -1,0 +1,16 @@
+---
+import { iconSvg } from '@/lib/icon';
+
+interface Props {
+  name: string;
+  class?: string;
+  style?: string;
+}
+
+const { name, class: className, style } = Astro.props;
+const attrs: Record<string, string> = {};
+if (className) attrs.class = className;
+if (style) attrs.style = style;
+---
+
+<Fragment set:html={iconSvg(name, attrs)} />
