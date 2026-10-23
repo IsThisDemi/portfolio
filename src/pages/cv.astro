@@ -8,7 +8,7 @@
  */
 import { education, jobs, profile, projects, skills } from '@/data/cv';
 import { categories, tech, techCategory, type TechKey } from '@/data/tech';
-import { formatPeriod } from '@/lib/format';
+import { formatPeriod, periodYears } from '@/lib/format';
 
 const detail = (label: string) => profile.details.find((item) => item.label === label)!;
 const bare = (url: string) => url.replace(/^(https?:\/\/)?(www\.)?/, '').replace(/\/$/, '');
@@ -16,7 +16,7 @@ const linkedin = profile.links.find((link) => link.label === 'LinkedIn')!;
 const github = profile.links.find((link) => link.label === 'GitHub')!;
 
 const contacts = [
-  { text: `${detail('Location').value} (open to relocation)` },
+  { text: detail('Location').value },
   { text: detail('Phone').value, url: detail('Phone').url },
   { text: profile.email, url: `mailto:${profile.email}` },
   { text: bare(linkedin.url), url: linkedin.url },
@@ -36,6 +36,11 @@ const skillLines = (Object.keys(categories) as (keyof typeof categories)[])
   .filter((line) => line.items.length);
 
 const names = (keys: TechKey[]) => keys.map((key) => tech[key].name).join(', ');
+
+// Projects carry no job-style title line or month ranges: parsers would count them as employment.
+const projectYears = (project: (typeof projects)[number]) => periodYears(project.period).replace('now', 'present');
+const projectRole = (project: (typeof projects)[number]) =>
+  `${project.team > 1 ? `Team of ${project.team}` : 'Solo project'}, my role: ${project.roles.join(', ').toLowerCase()}.`;
 const degrees = education.filter((item) => !item.certificate);
 const grade = (item: (typeof education)[number]) =>
   item.period.to && item.result ? ` Final grade: ${item.result}.` : '';
@@ -70,7 +75,7 @@ const keywords = [
     <main class="cv">
       <header>
         <h1>{profile.name}</h1>
-        <p class="headline">{profile.role} | {profile.subtitle}</p>
+        <p class="headline">{profile.role} | {profile.subtitle} | Open to relocation</p>
         <p class="contacts">
           {
             contacts.map((item, index) => (
@@ -93,21 +98,18 @@ const keywords = [
         {
           jobs.map((job) => (
             <article>
-              <h3>
-                {job.role}, {job.company}
-              </h3>
-              <p class="meta">
-                {formatPeriod(job.period)} | {job.place}
+              <h3>{job.role}</h3>
+              <p class="org">
+                {job.company} | {job.place}
               </p>
+              <p class="meta">{formatPeriod(job.period)}</p>
               <p>{job.summary}</p>
               <ul>
                 {job.highlights.map((item) => (
                   <li>{item}</li>
                 ))}
               </ul>
-              <p class="tech">
-                <strong>Technologies:</strong> {names(job.stack)}
-              </p>
+              <p class="tech">Technologies: {names(job.stack)}</p>
             </article>
           ))
         }
@@ -118,9 +120,8 @@ const keywords = [
         {
           degrees.map((item) => (
             <article>
-              <h3>
-                {item.title}, {item.institution}
-              </h3>
+              <h3>{item.institution}</h3>
+              <p class="org">{item.title}</p>
               <p class="meta">
                 {formatPeriod(item.period)} | {item.description}
                 {grade(item)}
@@ -151,19 +152,18 @@ const keywords = [
       </section>
 
       <section>
-        <h2>Projects</h2>
+        <h2>Personal and University Projects</h2>
         {
           projects.map((project) => (
             <article class="project">
               <h3>
-                {project.name}, {project.roles.join(', ')}
+                {project.name} ({projectYears(project)})
               </h3>
-              <p class="meta">{formatPeriod(project.period)}</p>
               <p>
-                {project.description} {project.team > 1 ? `Team of ${project.team}.` : 'Solo project.'}
+                {project.description} {projectRole(project)}
               </p>
               <p class="tech">
-                <strong>Technologies:</strong> {names(project.stack)}
+                Technologies: {names(project.stack)}
                 {project.links.map((link) => (
                   <>
                     {' | '}
@@ -185,7 +185,10 @@ const keywords = [
 
       <section>
         <h2>Languages</h2>
-        <p>Italian (native), English (C1, Cambridge C1 Advanced)</p>
+        <ul class="plain">
+          <li>Italian: native (C2)</li>
+          <li>English: C1 (Cambridge C1 Advanced)</li>
+        </ul>
       </section>
 
       <p class="consent">{profile.consent}</p>
@@ -196,7 +199,7 @@ const keywords = [
 <style is:global>
   @page {
     size: A4;
-    margin: 14mm 16mm 14mm;
+    margin: 12mm 15mm 12mm;
   }
 
   *,
@@ -226,8 +229,8 @@ const keywords = [
     margin: 0 auto;
     /* Static fonts only: Chrome turns variable fonts into Type 3 fonts, which some parsers misread. */
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 9.6pt;
-    line-height: 1.4;
+    font-size: 9.5pt;
+    line-height: 1.36;
   }
 
   @media screen {
@@ -265,7 +268,7 @@ const keywords = [
   }
 
   .cv section {
-    margin-top: 11pt;
+    margin-top: 9pt;
   }
 
   .cv h2 {
@@ -284,13 +287,18 @@ const keywords = [
     break-inside: avoid;
   }
 
+  /* A clear gap between entries: parsers split jobs and schools on vertical whitespace. */
   .cv article + article {
-    margin-top: 7pt;
+    margin-top: 8pt;
   }
 
   .cv h3 {
     font-size: 10pt;
     font-weight: 700;
+  }
+
+  .cv .org {
+    font-weight: 500;
   }
 
   .cv .meta {

@@ -46,7 +46,7 @@ export const profile = {
   details: [
     { label: 'Email', value: 'rickyma686@gmail.com', url: 'mailto:rickyma686@gmail.com' },
     { label: 'Phone', value: '+39 331 580 4865', url: 'tel:+393315804865' },
-    { label: 'Location', value: 'Vicenza, Italy' },
+    { label: 'Location', value: 'Vicenza, VI, Italy' },
     { label: 'Relocation', value: 'Open to relocation' },
   ],
   about:
@@ -290,11 +290,11 @@ export const education: Diploma[] = [
     url: 'https://informatica.math.unipd.it/en/',
   },
   {
-    title: 'Scientific High School Diploma',
-    institution: 'Liceo Scientifico G.B. Quadri',
+    title: 'Scientific Diploma (Applied Sciences)',
+    institution: 'Liceo Scientifico G.B. Quadri (Scientific High School)',
     logo: quadriLogo,
     period: { from: '2015-09', to: '2020-07' },
-    description: 'Applied sciences track.',
+    description: 'Upper secondary diploma, applied sciences track.',
     result: '88/100',
     url: 'https://www.liceoquadri.edu.it/',
   },
